@@ -8,14 +8,15 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 
 /**
- * Provider holder data class is a function holder with params for future call
+ * Provider holder data class is a function holder with params for future or immediately call
  */
 data class ProviderHolder<T>(var function: KFunction<T>? = null, var params: MutableMap<KParameter, Any>? = null) {
     /**
      * Call the function with given params
      */
     fun call(newParams:List<Any>? = null): T {
-        return function?.callBy(newParams?.toValMap(function?.parameters) ?: params ?: mutableMapOf())!!
+        params = newParams?.toValMap(function?.parameters) ?: params ?: mutableMapOf()
+        return function?.callBy(params!!)!!
     }
 
     /**
@@ -40,7 +41,7 @@ private object Kodi : IMapper<Any> {
 interface IKodi
 
 /**
- * GET a single object reference it garanted that you have only one instance of an given generic class object
+ * GET a single object reference, it garanted that you have only one instance of an given generic class
  */
 inline fun <reified T : Any> IKodi.single(params: List<Any>? = null): T {
     return Kodi.createOrGet(T::class.className()) {
@@ -70,20 +71,20 @@ inline fun <reified T : Any> IKodi.instanceByTag(tag:String, vararg params: Any)
 }
 
 /**
- * Gives to us an instance of ProviderHolder class that store and reference to function and parameters for future calls
+ * Gives to us an instance of ProviderHolder class that store a reference to function and parameters for future calls
  * @param tag
  * Tag name for instance to save
  *
  * @param function
- * This is a function for call later
+ * This is a function for call later. If there is no tag or function does not exist in current instanceStore it's throw an Error
  *
  * @param params
- * function params as listOf(...)
+ * function params as listOf<Any>(...)
  */
 inline fun <reified T : Any> IKodi.provider(tag: String = "", function: KFunction<T>? = null, params: List<Any>? = null): ProviderHolder<T> {
     if(!Kodi.has(tag) && function == null) throw RuntimeException("There is no provider for given tag '$tag'. You must set function for provider")
     val valmap = params?.toValMap(function?.parameters)
-    val key = if (tag.isEmpty()) function!!.name else tag
+    val key = if (tag.isEmpty()) function?.name ?: throw RuntimeException("There is no provider for given tag '$tag'. You must set function for provider") else tag
     return Kodi.createOrGet(key) {
         ProviderHolder(function, valmap)
     } as ProviderHolder<T>
@@ -103,11 +104,26 @@ inline fun <reified T : Any> IKodi.providerCallByTag(tag: String = "", vararg pa
     return provider<T>(tag).call(params.asList())
 }
 
+
 /**
- * Remove an isntance from store by given tag or generic class
+ * Check if an instance from store by given tag or generic class exist
+ */
+inline fun <reified T : Any> IKodi.has(tag:String? = null) {
+    Kodi.has(tag?:T::class.className())
+}
+
+/**
+ * Remove an instance from store by given tag or generic class
  */
 inline fun <reified T : Any> IKodi.remove(tag:String? = null) {
     Kodi.remove(tag?:T::class.className())
+}
+
+/**
+ * Remove all instances from store
+ */
+fun IKodi.removeAll() {
+    Kodi.removeAll()
 }
 
 /**

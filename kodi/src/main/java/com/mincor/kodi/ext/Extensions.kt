@@ -25,21 +25,26 @@ inline fun <reified T : Any> KClass<T>.createInstance(values: List<Any>? = null)
  * All properties must be a KMutableProperty1
  */
 fun Any.injectInConstructor(consParams:List<Any>? = null):Any {
-    this.javaClass.kotlin.memberProperties.forEach { kProperty1 ->
-        consParams?.forEach { param ->
-            val paramName = param.className()
-            val propName = kProperty1.returnType.toString().replace("?","")
-            if(paramName == propName) {
-                (kProperty1 as? KMutableProperty1<Any, Any>)?.set(this, param)
+    consParams?.let {params ->
+        val members = this.javaClass.kotlin.memberProperties as List<KProperty1<Any, Any>>
+        val ms = members.size
+        params.forEachIndexed { index, param ->
+            if(ms > index){
+                val kProperty1 = members[index]
+                val paramName = param.className()
+                val propName = kProperty1.returnType.toString().replace("?","")
+                if(paramName == propName) {
+                    (kProperty1 as? KMutableProperty1<Any, Any>)?.set(this, param)
+                }
             }
         }
     }
-
-
-
     return this
 }
 
+/**
+ * Helper extension function to convert list of params to valmap params of provider function
+ */
 fun List<Any>.toValMap(params:List<KParameter>?):MutableMap<KParameter, Any> {
     val valmap = mutableMapOf<KParameter, Any>()
     if (this.isNotEmpty()) {

@@ -21,7 +21,8 @@ class MainActivity : AppCompatActivity(), IKodi {
         println("-----> SINGLE INSTANCE '${singleInstance.name}'")
         val posts = mutableListOf<Post>()
         (0..25).forEach {
-            posts.add(instance(UUID.randomUUID().toString(), single<UserData>(), "Title $it", "Desc $it"))
+            // Only instances with 'var' constructor params can be ovveriden by input params if another case check
+            posts.add(instance(UUID.randomUUID().toString(), single<UserData>(listOf("1", "2", "3", "4", "5", "6")), "Title $it", "Desc $it"))
         }
 
         val providerData = providerWithReturnAndParams.call()
@@ -73,4 +74,8 @@ class MainActivity : AppCompatActivity(), IKodi {
 
     fun funcWithReturnAndParams(user:UserData):String = user.id
 
+    override fun onDestroy() {
+        removeAll()
+        super.onDestroy()
+    }
 }
