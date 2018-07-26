@@ -12,7 +12,7 @@ It contains three type of functionality:
 5) providerCall() - call the providing function with tag, function and params
 6) providerCallByTag() - call already saved provider by tag and params
 
-in every function you can pass and params for injection and put a tag to get it later.
+in every function you can pass params for injection and put a tag to get it later.
 You can use lazy instantiating by extension functions
 - singleLazy
 - providerLazy
