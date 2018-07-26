@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), IKodi {
        // val instanceWithTag = instanceByTag<Post>(INSTANCE_TAG, UUID.randomUUID().toString(), singleInstance, "Title with tag", "Desc with tag")
        // println("-----> INSTANCE WITH TAG TITLE '${instanceWithTag.title}'")
 
-        // take an singleton of an object
+        // take an singleton of given class
         val singleUser = single<UserData>()
         // immediatly call the function
         providerCall("", ::funcWithoutParams)
