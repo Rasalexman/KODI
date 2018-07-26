@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), IKodi {
         val singleUser = single<UserData>()
         // immidiatly call the function
         providerCall("", ::funcWithoutParams)
-
+        // this is a tag for provider
         val tagForParams = "fun_withParams"
         providerCall(tagForParams, ::funcWithParams, posts)
 
@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity(), IKodi {
     fun funcWithReturnAndParams(user:UserData):String = user.id
 
     override fun onDestroy() {
+        // clear all saved instances
         removeAll()
         super.onDestroy()
     }
