@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), IKodi {
 
         // take an singleton of an object
         val singleUser = single<UserData>()
-        // immidiatly call the function
+        // immediatly call the function
         providerCall("", ::funcWithoutParams)
         // this is a tag for provider
         val tagForParams = "fun_withParams"
