@@ -9,8 +9,8 @@ It contains three type of functionality:
 2) instance() - simple create an instance of given generic class
 3) instanceByTag() - create an instance of given generic class and save it instanceMap
 4) provider() - it's  create or give an holder class for your functions and save it into instanceMap to call later
-5) providerCall() - call the providing function
-6) providerCallByTag() - call already saved provider
+5) providerCall() - call the providing function with tag, function and params
+6) providerCallByTag() - call already saved provider by tag and params
 
 in every function you can pass and params for injection and put a tag to get it later.
 You can use lazy instantiating by extension functions
