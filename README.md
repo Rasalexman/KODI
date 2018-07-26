@@ -1,7 +1,7 @@
 # KODI
 KOtlin Dependency Injection (KODI) 
 
-This is simple and useful dependency injection tool for used in your regular projects. It's use a kotlin reflect library to create and inject instances into constructor properties. 
+This is simple and useful dependency injection tool for used in your regular projects. It's use a kotlin reflect library to create instances and inject parameters into constructor. 
 
 For start using this you need to implement `IKodi` interface to take all features of injection like lazy property initialization or direct access to instances of given generic classe. 
 It contains three type of functionality: 
