@@ -1,6 +1,8 @@
 # KODI
 KOtlin Dependency Injection (KODI) 
 
+[ ![Kotlin 1.2.51](https://img.shields.io/badge/Kotlin-1.2.51-blue.svg)](http://kotlinlang.org) [ ![Download](https://api.bintray.com/packages/sphc/FlairFramework/flair-framework/images/download.svg) ](https://bintray.com/sphc/FlairFramework/flair-framework/_latestVersion)
+
 This is simple and useful dependency injection tool for used in your regular projects. It's use a kotlin reflect library to create instances and inject parameters into constructor. 
 
 For start using this you need to implement `IKodi` interface to take all features of injection, like lazy property initialization or direct access to instances of given generic classe. 
@@ -102,7 +104,7 @@ class MainActivity : AppCompatActivity(), IKodi {
 
 Gradle:
 ```
-implementation 'com.rasalexman.kodi:kodi:0.1.3'
+implementation 'com.rasalexman.kodi:kodi:x.y.z'
 ```
 
 Maven:
@@ -110,7 +112,7 @@ Maven:
 <dependency>
   <groupId>com.rasalexman.kodi</groupId>
   <artifactId>kodi</artifactId>
-  <version>0.1.3</version>
+  <version>x.y.z</version>
   <type>pom</type>
 </dependency>
 ```
