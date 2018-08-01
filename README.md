@@ -9,8 +9,8 @@ For start using this you need to implement `IKodi` interface to take all feature
 It contains three type of functionality: 
 1) single() - create a one and only one instace of given generic class and save it in instanceMap
 2) instance() - simple create an instance of given generic class
-3) instanceByTag() - create an instance of given generic class and save it instanceMap
-4) provider() - it's  create or give an holder class for your functions and save it into instanceMap to call later
+3) instanceByTag() - create an instance of given generic class and save it to instanceMap
+4) provider() - it's create or give an holder class for your functions and save it into instanceMap to call later
 5) providerCall() - call the providing function with tag, function and params
 6) providerCallByTag() - call already saved provider by tag and params
 
