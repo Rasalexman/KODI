@@ -7,7 +7,7 @@ This is simple and useful dependency injection tool for used in your regular pro
 
 For start using this you need to implement `IKodi` interface to take all features of injection, like lazy property initialization or direct access to instances of given generic classe. 
 It contains some functionality like: 
-1) `single()` - create a one and only one instace of given generic class and save it in instanceMap
+1) `single()` - create the one and only one instace of given generic class and save it in instanceMap
 
 2) `instance()` - simple create an instance of given generic class
 2.1) `instanceByTag()` - create an instance of given generic class and save it to instanceMap
