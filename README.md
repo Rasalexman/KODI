@@ -13,10 +13,8 @@ It contains some functionality like:
 4) `provider()` - it's create or give an holder class for your functions and save it into instanceMap to call later
 5) `providerCall()` - call the providing function with tag, function and params
 6) `providerCallByTag()` - call already saved provider by tag and params
-
-Sinse version 0.1.5:
-7) `bind<Interface, Implementation>(... params)` - you can use binding function to map your interfaces to instance in just one line of code
-8) `constant(TAG, VALUE)` - map constants to tag
+7) `bind<Interface, Implementation>(... params)` - you can use binding function to map your interfaces to instance in just one line of code (Sinse version 0.1.5)
+8) `constant(TAG, VALUE)` - map constants to tag (Sinse version 0.1.5)
 
 And from 0.1.5 you can initialize you instances, singel, providers, binding and constants in just one place:
 `val kodi = initKODI { }`
@@ -59,7 +57,7 @@ class MainActivity : AppCompatActivity(), IKodi {
 
         bind<IUserData, UserDataInstance>()
 
-        constant(MY_GLOBAL_CONST, "hello world from KODI!!!")
+        constant(MY_GLOBAL_CONST, "https://myamazingaddress.com")
 
         provider(TAG_FUN_FOR_INIT, ::checkInstanceWithTag)
     }
