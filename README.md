@@ -8,17 +8,15 @@ This is simple and useful dependency injection tool for used in your regular pro
 For start using this you need to implement `IKodi` interface to take all features of injection, like lazy property initialization or direct access to instances of given generic classe. 
 It contains some functionality like: 
 1) `single()` - create the one and only one instace of given generic class and save it in instanceMap
-
 2) `instance()` - simple create an instance of given generic class
-2.1) `instanceByTag()` - create an instance of given generic class and save it to instanceMap
-
-3) `provider()` - it's create or give an holder class for your functions and save it into instanceMap to call later
-3.1) `providerCall()` - call the providing function with tag, function and params
-3.2) `providerCallByTag()` - call already saved provider by tag and params
+3) `instanceByTag()` - create an instance of given generic class and save it to instanceMap
+4) `provider()` - it's create or give an holder class for your functions and save it into instanceMap to call later
+5) `providerCall()` - call the providing function with tag, function and params
+6) `providerCallByTag()` - call already saved provider by tag and params
 
 Sinse version 0.1.5:
-4) `bind<Interface, Implementation>(... params)` - you can use binding function to map your interfaces to instance in just one line of code
-5) `constant(TAG, VALUE)` - map constants to tag
+7) `bind<Interface, Implementation>(... params)` - you can use binding function to map your interfaces to instance in just one line of code
+8) `constant(TAG, VALUE)` - map constants to tag
 
 And from 0.1.5 you can initialize you instances, singel, providers, binding and constants in just one place:
 `val kodi = initKODI { }`
