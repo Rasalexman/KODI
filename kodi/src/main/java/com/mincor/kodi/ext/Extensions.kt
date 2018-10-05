@@ -24,20 +24,23 @@ inline fun <reified T : Any> KClass<T>.createInstance(values: List<Any>? = null)
  * Inject given params to constructor instance members properties
  * All properties must be a KMutableProperty1
  */
-fun Any.injectInConstructor(consParams:List<Any>? = null):Any {
-    consParams?.let {params ->
-        val members = this.javaClass.kotlin.memberProperties as List<KProperty1<Any, Any>>
-        val ms = members.size
-        params.forEachIndexed { index, param ->
-            if(ms > index){
-                val kProperty1 = members[index]
-                val paramName = param.className()
-                val propName = kProperty1.returnType.toString().replace("?","")
-                if(paramName == propName) {
-                    (kProperty1 as? KMutableProperty1<Any, Any>)?.set(this, param)
+fun Any.injectInConstructor(consParams: List<Any>? = null): Any {
+    consParams?.let { params ->
+        val members = this.javaClass.kotlin.memberProperties as? List<KProperty1<Any, Any>>
+        members?.let {
+            val ms = it.size
+            params.forEachIndexed { index, param ->
+                if (ms > index) {
+                    val kProperty1 = it[index]
+                    val paramName = param.className()
+                    val propName = kProperty1.returnType.toString().replace("?", "")
+                    if (paramName == propName) {
+                        (kProperty1 as? KMutableProperty1<Any, Any>)?.set(this, param)
+                    }
                 }
             }
         }
+
     }
     return this
 }
@@ -45,7 +48,7 @@ fun Any.injectInConstructor(consParams:List<Any>? = null):Any {
 /**
  * Helper extension function to convert list of params to valmap params of provider function
  */
-fun List<Any>.toValMap(params:List<KParameter>?):MutableMap<KParameter, Any> {
+fun List<Any>.toValMap(params: List<KParameter>?): MutableMap<KParameter, Any> {
     val valmap = mutableMapOf<KParameter, Any>()
     if (this.isNotEmpty()) {
         params?.forEachIndexed { index, kParameter ->

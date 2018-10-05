@@ -8,13 +8,13 @@ interface IMapper<T : Any> {
 }
 
 inline fun <reified T : Any> IMapper<T>.createOrGet(key: String, inst: () -> T): T = this.instanceMap.getOrPut(key) { inst() }
-inline fun <reified T : Any> IMapper<T>.has(key: String):Boolean = this.instanceMap.containsKey(key)
+inline fun <reified T : Any> IMapper<T>.hasInstance(key: String):Boolean = this.instanceMap.containsKey(key)
 inline fun <reified T : Any> IMapper<T>.removeAll() {
-    instanceMap.forEach { _, instance ->
+    instanceMap.forEach { (_, instance) ->
         (instance as? ProviderHolder<T>)?.clear()
     }
     instanceMap.clear()
 }
-inline fun <reified T : Any> IMapper<T>.remove(key: String) {
+inline fun <reified T : Any> IMapper<T>.removeInstance(key: String) {
     if(this.instanceMap.containsKey(key)) (this.instanceMap.remove(key) as? ProviderHolder<T>)?.clear()
 }
