@@ -16,7 +16,7 @@ It contains some functionality like:
 7) `bind<Interface, Implementation>(... params)` - you can use binding function to map your interfaces to instance in just one line of code (Sinse version 0.1.5)
 8) `constant(TAG, VALUE)` - map constants to tag (Sinse version 0.1.5)
 
-And from 0.1.5 you can initialize you instances, singel, providers, binding and constants in just one place:
+And from 0.1.5 you can initialize you instances, single, providers, binding and constants in just one place:
 `val kodi = initKODI { }`
 
 in every function you can pass params for injection and put a tag to get it later.
