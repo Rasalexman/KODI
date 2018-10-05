@@ -6,13 +6,22 @@ KOtlin Dependency Injection (KODI)
 This is simple and useful dependency injection tool for used in your regular projects. It's use a kotlin reflect library to create instances and inject parameters into constructor. 
 
 For start using this you need to implement `IKodi` interface to take all features of injection, like lazy property initialization or direct access to instances of given generic classe. 
-It contains three type of functionality: 
-1) single() - create a one and only one instace of given generic class and save it in instanceMap
-2) instance() - simple create an instance of given generic class
-3) instanceByTag() - create an instance of given generic class and save it to instanceMap
-4) provider() - it's create or give an holder class for your functions and save it into instanceMap to call later
-5) providerCall() - call the providing function with tag, function and params
-6) providerCallByTag() - call already saved provider by tag and params
+It contains some functionality like: 
+1) `single()` - create a one and only one instace of given generic class and save it in instanceMap
+
+2) `instance()` - simple create an instance of given generic class
+2.1) `instanceByTag()` - create an instance of given generic class and save it to instanceMap
+
+3) `provider()` - it's create or give an holder class for your functions and save it into instanceMap to call later
+3.1) `providerCall()` - call the providing function with tag, function and params
+3.2) `providerCallByTag()` - call already saved provider by tag and params
+
+Sinse version 0.1.5:
+4) `bind<Interface, Implementation>(... params)` - you can use binding function to map your interfaces to instance in just one line of code
+5) `constant(TAG, VALUE)` - map constants to tag
+
+And from 0.1.5 you can initialize you instances, singel, providers, binding and constants in just one place:
+`val kodi = initKODI { }`
 
 in every function you can pass params for injection and put a tag to get it later.
 You can use lazy instantiating by extension functions
@@ -24,15 +33,43 @@ data class UserData(val id:String, val name:String, val email:String)
 
 data class Post(val id:String = "", val user:UserData? = null, val title:String = "", val desc:String = "")
 
+interface IUserData {
+        fun getData():String
+    }
+    
+class UserDataInstance : IUserData {
+        override fun getData():String {
+            return "HELLO WORLD"
+        }
+    }
+
 class MainActivity : AppCompatActivity(), IKodi {
 
-    private val INSTANCE_TAG = "simple_tag"
-    
-    // LAZY instatiating a singleton object with given constructor params
-    private val singleInstance: UserData by singleLazy(UUID.randomUUID().toString(), "Aleksandr", "sphc@yandex.ru")
+ companion object {
+        const val TAG_FUN_WITH_PARAMS = "fun_with_params"
+        const val TAG_FUN_WITHOUT_PARAMS = "fun_without_params"
+        const val TAG_FUN_FOR_INIT = "fun_for_init"
 
-    // Lazy Provider function for call later with given params
+        private const val INSTANCE_TAG = "simple_tag"
+
+        const val MY_GLOBAL_CONST = "global_const"
+    }
+    
+    // now you can initialize Kodi and all the injected dependencies in one place
+    val kodi = initKODI {
+        single<UserData>(UUID.randomUUID().toString(), "Aleksandr", "sphc@yandex.ru")
+
+        bind<IUserData, UserDataInstance>()
+
+        constant(MY_GLOBAL_CONST, "hello world from KODI!!!")
+
+        provider(TAG_FUN_FOR_INIT, ::checkInstanceWithTag)
+    }
+    
+   ///-------- LAZY VAL SECTION ----////
+    private val singleInstance: UserData by singleLazy(UUID.randomUUID().toString(), "Aleksandr", "sphc@yandex.ru")
     private val providerWithReturnAndParams by providerLazy("", ::funcForProviderLazy, UUID.randomUUID().toString())
+    private val userDataInstance:IUserData by singleLazy()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +77,12 @@ class MainActivity : AppCompatActivity(), IKodi {
         println("-----> SINGLE INSTANCE '${singleInstance.name}'")
         val posts = mutableListOf<Post>()
         (0..25).forEach {
-            // Only instances with 'var' constructor params can be overriden by input params
+            // Only instances with 'var' constructor params can be ovveriden by input params if another case check
             posts.add(instance(UUID.randomUUID().toString(), single<UserData>(listOf("1", "2", "3", "4", "5", "6")), "Title $it", "Desc $it"))
         }
+
+        println("-----> INTERFACE BINDING TEST DATA ${userDataInstance.getData()}")
+        println("-----> CONSTANTS TEST  ${constant<String>(MY_GLOBAL_CONST)}")
 
         val providerData = providerWithReturnAndParams.call()
         println("-----> PROVIDER LAZY DATA '${providerData.name}' and email = '${providerData.email}'")
@@ -50,26 +90,28 @@ class MainActivity : AppCompatActivity(), IKodi {
        // val instanceWithTag = instanceByTag<Post>(INSTANCE_TAG, UUID.randomUUID().toString(), singleInstance, "Title with tag", "Desc with tag")
        // println("-----> INSTANCE WITH TAG TITLE '${instanceWithTag.title}'")
 
-        // take an singleton of given class
-        val singleUser = single<UserData>()
-        // immediatly call the function
-        providerCall("", ::funcWithoutParams)
-        // this is a tag for provider
-        val tagForParams = "fun_withParams"
-        providerCall(tagForParams, ::funcWithParams, posts)
+        // call the function without params
+        providerCall(TAG_FUN_WITHOUT_PARAMS, ::funcWithoutParams)
+        // call the function with params
+        providerCall(TAG_FUN_WITH_PARAMS, ::funcWithParams, posts)
 
         /**
          * If you do not set the incoming function parameters it throw with RuntimeException
          */
+        // check for singleInstance user
+        val singleUser = single<UserData>()
         val providerWithReturns = providerCall("fun_with_return", ::funcWithReturnAndParams, singleUser)
         println("-----> RETURN FROM FUNC '$providerWithReturns'")
 
-        checkInstanceWithTag()
+        /**
+         * Call the function that we bind early in initKODI section
+         */
+        providerCall<Unit>(TAG_FUN_FOR_INIT)
 
         /**
          * Call already bounded function with new params
          */
-        providerCallByTag<String>(tagForParams, single<UserData>())
+        providerCallByTag<String>(TAG_FUN_WITH_PARAMS, single<UserData>())
 
         //call provider with RuntimeException, cause there is no providing function gives
         //providerCallByTag<String>("provider_call_without nothing", "HEHE")
