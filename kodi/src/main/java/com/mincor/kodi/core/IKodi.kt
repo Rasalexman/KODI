@@ -32,8 +32,7 @@ data class ProviderHolder<T>(var function: KFunction<T>? = null, var params: Mut
 /**
  * Main Singleton object for manipulate instances
  */
-private object Kodi : IMapper<Any>, IKodi {
-    val instance = this
+object Kodi : IMapper<Any>, IKodi {
     override val instanceMap: MutableMap<String, Any> = mutableMapOf()
 }
 
@@ -42,8 +41,11 @@ private object Kodi : IMapper<Any>, IKodi {
  */
 interface IKodi
 
+/**
+ * Initialize KODI dependencies
+ */
 fun initKODI(block: (IKodi) -> Unit) {
-    block(Kodi.instance)
+    block(Kodi)
 }
 
 /**
