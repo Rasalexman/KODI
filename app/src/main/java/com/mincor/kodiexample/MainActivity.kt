@@ -34,9 +34,15 @@ class MainActivity : AppCompatActivity(), IKodi {
         fun getData():String
     }
 
-    class UserDataInstance : IUserData {
+    open class UserDataInstance(private val userData:UserData = Kodi.single()) : IUserData {
         override fun getData():String {
             return "HELLO WORLD"
+        }
+    }
+
+    class UserDataImplemented : UserDataInstance(Kodi.single()) {
+        override fun getData(): String {
+            return "HELLO FROM UserDataImplemented NICE TO MEET YOU"
         }
     }
 
@@ -44,6 +50,7 @@ class MainActivity : AppCompatActivity(), IKodi {
     private val singleInstance: UserData by singleLazy(UUID.randomUUID().toString(), "Aleksandr", "sphc@yandex.ru")
     private val providerWithReturnAndParams by providerLazy("", ::funcForProviderLazy, UUID.randomUUID().toString())
     private val userDataInstance:IUserData by singleLazy()
+    private val userDataImplemented:UserDataImplemented by instanceLazy()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +63,7 @@ class MainActivity : AppCompatActivity(), IKodi {
         }
 
         println("-----> INTERFACE BINDING TEST DATA ${userDataInstance.getData()}")
+        println("-----> INSTANCE BY LAZY ${userDataImplemented.getData()}")
         println("-----> CONSTANTS TEST  ${constant<String>(MY_GLOBAL_CONST)}")
 
         val providerData = providerWithReturnAndParams.call()
