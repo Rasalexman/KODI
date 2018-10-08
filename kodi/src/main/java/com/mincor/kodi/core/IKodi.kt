@@ -183,6 +183,20 @@ inline fun <reified T : Any> IKodi.singleLazy(vararg params: Any): Lazy<T> = laz
 }
 
 /**
+ * Lazy implementation of instance<T>()
+ */
+inline fun <reified T : Any> IKodi.instanceLazy(vararg params: Any): Lazy<T> = lazy {
+    this.instance<T>(params.asList())
+}
+
+/**
+ * Lazy implementation of instanceByTag<T>()
+ */
+inline fun <reified T : Any> IKodi.instanceLazyByTag(tag: String, vararg params: Any): Lazy<T> = lazy {
+    this.instanceByTag<T>(tag, params.asList())
+}
+
+/**
  * Lazy implementation of provider<T>()
  */
 inline fun <reified T : Any> IKodi.providerLazy(tag: String = "", function: KFunction<T>? = null, vararg params: Any): Lazy<ProviderHolder<T>> = lazy {
