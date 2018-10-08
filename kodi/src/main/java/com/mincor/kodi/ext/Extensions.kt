@@ -14,8 +14,6 @@
 
 package com.mincor.kodi.ext
 
-import com.mincor.kodi.core.Kodi
-import com.mincor.kodi.core.single
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
