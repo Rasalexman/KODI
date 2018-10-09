@@ -62,8 +62,8 @@ fun Any.injectInConstructor(consParams: List<Any>? = null): Any {
 /**
  * Helper extension function to convert list of params to valmap params of provider function
  */
-fun List<Any>.toValMap(params: List<KParameter>?): MutableMap<KParameter, Any> {
-    val valmap = mutableMapOf<KParameter, Any>()
+fun List<Any?>.toValMap(params: List<KParameter>?): MutableMap<KParameter, Any?> {
+    val valmap = mutableMapOf<KParameter, Any?>()
     if (this.isNotEmpty()) {
         params?.forEachIndexed { index, kParameter ->
             valmap[kParameter] = this[index]

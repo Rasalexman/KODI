@@ -14,21 +14,53 @@
 
 package com.mincor.kodi.core
 
+import com.mincor.kodi.ext.ProviderHolder
+
 /**
  * Helper interface for bind generic instances with name
  */
 interface IMapper<T : Any> {
+    /**
+     * Main entities(instances) holder map
+     */
     val instanceMap: MutableMap<String, T>
 }
 
+/**
+ * Create or get value from instance map
+ *
+ * @param key
+ * Key for retrieve value from map
+ *
+ * @param inst
+ * lambda func to create value instance for save
+ */
 inline fun <reified T : Any> IMapper<T>.createOrGet(key: String, inst: () -> T): T = this.instanceMap.getOrPut(key) { inst() }
-inline fun <reified T : Any> IMapper<T>.hasInstance(key: String):Boolean = this.instanceMap.containsKey(key)
+
+/**
+ * Is there any instance by given key
+ *
+ * @param key
+ * The instance key to retrieve
+ */
+inline fun <reified T : Any> IMapper<T>.hasInstance(key: String): Boolean = this.instanceMap.containsKey(key)
+
+/**
+ *  Remove all instances from map
+ */
 inline fun <reified T : Any> IMapper<T>.removeAll() {
     instanceMap.forEach { (_, instance) ->
-        (instance as? ProviderHolder<T>)?.clear()
+        (instance as? ProviderHolder<T?>)?.clear()
     }
     instanceMap.clear()
 }
+
+/**
+ * Remove instance from map by given key
+ *
+ * @param key
+ * Key to remove instance
+ */
 inline fun <reified T : Any> IMapper<T>.removeInstance(key: String) {
-    if(this.instanceMap.containsKey(key)) (this.instanceMap.remove(key) as? ProviderHolder<T>)?.clear()
+    if (this.instanceMap.containsKey(key)) (this.instanceMap.remove(key) as? ProviderHolder<T?>)?.clear()
 }

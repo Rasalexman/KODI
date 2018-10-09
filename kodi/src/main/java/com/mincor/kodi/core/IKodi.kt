@@ -14,34 +14,9 @@
 
 package com.mincor.kodi.core
 
-import com.mincor.kodi.ext.className
-import com.mincor.kodi.ext.createInstance
-import com.mincor.kodi.ext.injectInConstructor
-import com.mincor.kodi.ext.toValMap
+import com.mincor.kodi.ext.*
 import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 import kotlin.reflect.full.createInstance
-
-/**
- * Provider holder data class is a function holder with params for future or immediately call
- */
-data class ProviderHolder<T>(var function: KFunction<T>? = null, var params: MutableMap<KParameter, Any>? = null) {
-    /**
-     * Call the function with given params
-     */
-    fun call(newParams: List<Any>? = null): T {
-        params = newParams?.toValMap(function?.parameters) ?: params ?: mutableMapOf()
-        return function?.callBy(params!!)!!
-    }
-
-    /**
-     * Clear all references from object
-     */
-    fun clear() {
-        function = null
-        params = null
-    }
-}
 
 /**
  * Main Singleton object for manipulate instances
@@ -72,11 +47,9 @@ fun IKodi.removeAll() {
 /**
  * Bind Key to Value type and return an instance of Value
  */
-inline fun <reified T : Any> IKodi.constant(tag: String, value: T = T::class.createInstance()): Any {
-    return Kodi.createOrGet(tag) {
+inline fun <reified T : Any> IKodi.constant(tag: String, value: T = T::class.createInstance()): T = Kodi.createOrGet(tag) {
         value
-    }
-}
+    } as T
 
 /**
  * Bind Key to Value type and return an instance of Value
@@ -87,29 +60,29 @@ inline fun <reified K : Any, reified V : Any> IKodi.bind(vararg params: Any): V 
     }.injectInConstructor(params.toList()) as V
 }
 
+/**
+ * GET a single object reference, it garanted that you have only one instance of an given generic class
+ */
+inline fun <reified T : Any> IKodi.single(vararg params: Any): T = this.singleWithList(params.toList())
+
+/**
+ * It's provide a lambda to create single saved instance
+ */
+inline fun <reified T : Any> IKodi.singleProvider(block: () -> T): T = Kodi.createOrGet(T::class.className()) {
+        block()
+    } as T
 
 /**
  * GET a single object reference, it garanted that you have only one instance of an given generic class
  */
-inline fun <reified T : Any> IKodi.single(vararg params: Any): T {
-    return this.singleWithList(params.toList())
-}
-
-/**
- * GET a single object reference, it garanted that you have only one instance of an given generic class
- */
-inline fun <reified T : Any> IKodi.singleWithList(params: List<Any>? = null): T {
-    return Kodi.createOrGet(T::class.className()) {
+inline fun <reified T : Any> IKodi.singleWithList(params: List<Any>? = null): T = Kodi.createOrGet(T::class.className()) {
         T::class.createInstance(params)
     }.injectInConstructor(params) as T
-}
 
 /**
  * Create an instance of a given generic class without saving to instanceMap
  */
-inline fun <reified T : Any> IKodi.instance(vararg params: Any): T {
-    return T::class.createInstance(params.asList())
-}
+inline fun <reified T : Any> IKodi.instance(vararg params: Any): T = T::class.createInstance(params.asList())
 
 /**
  * Create an instance of a given generic class and save it to instanceMap by tag name
@@ -119,11 +92,9 @@ inline fun <reified T : Any> IKodi.instance(vararg params: Any): T {
  * @param params
  * Constructor params
  */
-inline fun <reified T : Any> IKodi.instanceByTag(tag: String, vararg params: Any): T {
-    return Kodi.createOrGet(tag) {
+inline fun <reified T : Any> IKodi.instanceByTag(tag: String, vararg params: Any): T = Kodi.createOrGet(tag) {
         T::class.createInstance(params.asList())
     }.injectInConstructor(params.asList()) as T
-}
 
 /**
  * Gives to us an instance of ProviderHolder class that store a reference to function and parameters for future calls
@@ -136,27 +107,27 @@ inline fun <reified T : Any> IKodi.instanceByTag(tag: String, vararg params: Any
  * @param params
  * function params as listOf<Any>(...)
  */
-inline fun <reified T : Any> IKodi.provider(tag: String = "", function: KFunction<T>? = null, params: List<Any>? = null): ProviderHolder<T> {
+inline fun <reified T : Any> IKodi.provider(tag: String = "", function: KFunction<T?>? = null, params: List<Any>? = null): ProviderHolder<T?> {
     if (!Kodi.hasInstance(tag) && function == null) throw RuntimeException("There is no provider for given tag '$tag'. You must set function for provider")
     val valmap = params?.toValMap(function?.parameters)
     val key = if (tag.isEmpty()) function?.name
             ?: throw RuntimeException("There is no provider for given tag '$tag'. You must set function for provider") else tag
     return Kodi.createOrGet(key) {
         ProviderHolder(function, valmap)
-    } as ProviderHolder<T>
+    } as ProviderHolder<T?>
 }
 
 /**
  * immediately calls the function with given params. If provider doesnt exist its create one and make call
  */
-inline fun <reified T : Any> IKodi.providerCall(tag: String = "", function: KFunction<T>? = null, vararg params: Any): T {
+inline fun <reified T : Any> IKodi.providerCall(tag: String = "", function: KFunction<T>? = null, vararg params: Any): T? {
     return provider(tag, function).call(params.asList())
 }
 
 /**
  * immediately calls the function with given params. If provider doesnt exist its create one and make call
  */
-inline fun <reified T : Any> IKodi.providerCallByTag(tag: String = "", vararg params: Any): T {
+inline fun <reified T : Any> IKodi.providerCallByTag(tag: String = "", vararg params: Any): T? {
     return provider<T>(tag).call(params.asList())
 }
 
@@ -186,7 +157,7 @@ inline fun <reified T : Any> IKodi.singleLazy(vararg params: Any): Lazy<T> = laz
  * Lazy implementation of instance<T>()
  */
 inline fun <reified T : Any> IKodi.instanceLazy(vararg params: Any): Lazy<T> = lazy {
-    this.instance<T>(params.asList())
+    T::class.createInstance(params.asList())
 }
 
 /**
@@ -199,6 +170,27 @@ inline fun <reified T : Any> IKodi.instanceLazyByTag(tag: String, vararg params:
 /**
  * Lazy implementation of provider<T>()
  */
-inline fun <reified T : Any> IKodi.providerLazy(tag: String = "", function: KFunction<T>? = null, vararg params: Any): Lazy<ProviderHolder<T>> = lazy {
+inline fun <reified T : Any> IKodi.providerLazy(tag: String = "", function: KFunction<T?>? = null, vararg params: Any): Lazy<ProviderHolder<T?>> = lazy {
+    this.provider(tag, function, params.asList())
+}
+
+/**
+ * Mutable Lazy implementation of single<T>()
+ */
+inline fun <reified T : Any> IKodi.singleMutableLazy(vararg params: Any): MutableLazy<T?> = MutableLazy {
+    this.singleWithList<T>(params.asList())
+}
+
+/**
+ * MutableLazy implementation of instance<T>()
+ */
+inline fun <reified T : Any> IKodi.instanceMutableLazy(vararg params: Any): MutableLazy<T?> = MutableLazy {
+    T::class.createInstance(params.asList())
+}
+
+/**
+ * MutableLazy implementation of provider<T>()
+ */
+inline fun <reified T : Any> IKodi.providerMutableLazy(tag: String = "", function: KFunction<T>? = null, vararg params: Any): MutableLazy<ProviderHolder<T?>> = MutableLazy {
     this.provider(tag, function, params.asList())
 }
