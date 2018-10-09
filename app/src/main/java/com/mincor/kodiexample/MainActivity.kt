@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), IKodi {
 
     open class UserDataInstance(private val userData:UserData = Kodi.single()) : IUserData {
         override fun getData():String {
-            return "HELLO WORLD"
+            return "HELLO WORLD from $userData"
         }
     }
 
@@ -45,6 +45,9 @@ class MainActivity : AppCompatActivity(), IKodi {
             return "HELLO FROM UserDataImplemented NICE TO MEET YOU"
         }
     }
+
+    ///-------- LAZY MUTABLE SECTION
+    private var testMutableLazyInstance:UserDataInstance? by instanceMutableLazy(instance<UserData>(UUID.randomUUID().toString(), "Alex", "id347435"))
 
     ///-------- LAZY VAL SECTION ----////
     private val singleInstance: UserData by singleLazy(UUID.randomUUID().toString(), "Aleksandr", "sphc@yandex.ru")
@@ -65,8 +68,10 @@ class MainActivity : AppCompatActivity(), IKodi {
         println("-----> INTERFACE BINDING TEST DATA ${userDataInstance.getData()}")
         println("-----> INSTANCE BY LAZY ${userDataImplemented.getData()}")
         println("-----> CONSTANTS TEST  ${constant<String>(MY_GLOBAL_CONST)}")
+        println("-----> MutableLazy TEST  ${testMutableLazyInstance?.getData()}")
+        testMutableLazyInstance = null
 
-        val providerData = providerWithReturnAndParams.call()
+        val providerData = providerWithReturnAndParams.call()!!
         println("-----> PROVIDER LAZY DATA '${providerData.name}' and email = '${providerData.email}'")
 
        // val instanceWithTag = instanceByTag<Post>(INSTANCE_TAG, UUID.randomUUID().toString(), singleInstance, "Title with tag", "Desc with tag")
