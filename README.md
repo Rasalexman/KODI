@@ -23,6 +23,9 @@ in every function you can pass params for injection and put a tag to get it late
 You can use lazy instantiating by extension functions
 - singleLazy
 - providerLazy
+From version 0.1.7 you can use: 
+- instanceLazy
+- instanceLazyByTag
 
 ```kotlin
 data class UserData(val id:String, val name:String, val email:String)
