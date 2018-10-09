@@ -15,6 +15,7 @@ It contains some functionality like:
 6) `providerCallByTag()` - call already saved provider by tag and params
 7) `bind<Interface, Implementation>(... params)` - you can use binding function to map your interfaces to instance in just one line of code (Sinse version 0.1.5)
 8) `constant(TAG, VALUE)` - map constants to tag (Sinse version 0.1.5)
+9) `singleProvider(block: () -> T): T` - to initilize instance by yourself (since version 0.1.9)
 
 And from 0.1.5 you can initialize you instances, single, providers, binding and constants in just one place:
 `val kodi = initKODI { }`
@@ -23,9 +24,16 @@ in every function you can pass params for injection and put a tag to get it late
 You can use lazy instantiating by extension functions
 - singleLazy
 - providerLazy
+
 From version 0.1.7 you can use: 
 - instanceLazy
 - instanceLazyByTag
+
+From version 0.1.9 you can use mutable lazy initialization:
+- singleMutableLazy
+- instanceMutableLazy
+- providerMutableLazy
+
 
 ```kotlin
 data class UserData(val id:String, val name:String, val email:String)
