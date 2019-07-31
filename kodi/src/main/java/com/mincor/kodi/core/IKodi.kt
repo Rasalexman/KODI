@@ -22,6 +22,9 @@ import kotlin.reflect.full.createInstance
  * Main Singleton object for manipulate instances
  */
 object Kodi : IMapper<Any>, IKodi {
+    /**
+     * Instance map for holding any type of dependencies
+     */
     override val instanceMap: MutableMap<String, Any> = mutableMapOf()
 }
 
@@ -33,8 +36,9 @@ interface IKodi
 /**
  * Initialize KODI dependencies
  */
-fun initKODI(block: (IKodi) -> Unit) {
+inline fun initKODI(block: IKodi.() -> Unit): IKodi {
     block(Kodi)
+    return Kodi
 }
 
 /**
@@ -183,6 +187,8 @@ inline fun <reified T : Any> IKodi.singleMutableLazy(vararg params: Any): Mutabl
 
 /**
  * MutableLazy implementation of instance<T>()
+ *
+ * @param params - vararg for inject into created instance constructor
  */
 inline fun <reified T : Any> IKodi.instanceMutableLazy(vararg params: Any): MutableLazy<T?> = MutableLazy {
     T::class.createInstance(params.asList())
@@ -190,7 +196,15 @@ inline fun <reified T : Any> IKodi.instanceMutableLazy(vararg params: Any): Muta
 
 /**
  * MutableLazy implementation of provider<T>()
+ *
+ * @param tag - tag for mapping
+ * @param function - function for initialization
+ * @param params - additional parameters to inject
  */
-inline fun <reified T : Any> IKodi.providerMutableLazy(tag: String = "", function: KFunction<T>? = null, vararg params: Any): MutableLazy<ProviderHolder<T?>> = MutableLazy {
+inline fun <reified T : Any> IKodi.providerMutableLazy(
+        tag: String = "",
+        function: KFunction<T>? = null,
+        vararg params: Any
+): MutableLazy<ProviderHolder<T?>> = MutableLazy {
     this.provider(tag, function, params.asList())
 }

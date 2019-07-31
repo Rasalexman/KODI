@@ -62,5 +62,5 @@ inline fun <reified T : Any> IMapper<T>.removeAll() {
  * Key to remove instance
  */
 inline fun <reified T : Any> IMapper<T>.removeInstance(key: String) {
-    if (this.instanceMap.containsKey(key)) (this.instanceMap.remove(key) as? ProviderHolder<T?>)?.clear()
+    if (hasInstance(key)) (this.instanceMap.remove(key) as? ProviderHolder<T?>)?.clear()
 }

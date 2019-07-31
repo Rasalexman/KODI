@@ -26,7 +26,10 @@ import kotlin.reflect.KParameter
  * @param params
  * Required params for function call
  */
-data class ProviderHolder<T>(var function: KFunction<T?>? = null, var params: MutableMap<KParameter, Any?>? = null) {
+data class ProviderHolder<T>(
+        var function: KFunction<T?>? = null,
+        var params: MutableMap<KParameter, Any?>? = null
+) {
     /**
      * Call the function with given params
      *
