@@ -1,7 +1,7 @@
 package com.mincor.kodiexample
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.mincor.kodi.core.*
 import com.mincor.kodiexample.instances.Post
 import com.mincor.kodiexample.single.UserData
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), IKodi {
         println("-----> SINGLE INSTANCE '${singleInstance.name}'")
         val posts = mutableListOf<Post>()
         (0..25).forEach {
-            // Only instances with 'var' constructor params can be ovveriden by input params if another case check
+            // Only instances with 'var' constructor params can be override by input params if another case check
             posts.add(instance(UUID.randomUUID().toString(), single<UserData>(listOf("1", "2", "3", "4", "5", "6")), "Title $it", "Desc $it"))
         }
 
