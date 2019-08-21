@@ -14,8 +14,6 @@
 
 package com.mincor.kodi.core
 
-import com.mincor.kodi.ext.ProviderHolder
-
 /**
  * Helper interface for bind generic instances with name
  */
@@ -44,23 +42,3 @@ inline fun <reified T : Any> IMapper<T>.createOrGet(key: String, inst: () -> T):
  * The instance key to retrieve
  */
 inline fun <reified T : Any> IMapper<T>.hasInstance(key: String): Boolean = this.instanceMap.containsKey(key)
-
-/**
- *  Remove all instances from map
- */
-inline fun <reified T : Any> IMapper<T>.removeAll() {
-    instanceMap.forEach { (_, instance) ->
-        (instance as? ProviderHolder<T?>)?.clear()
-    }
-    instanceMap.clear()
-}
-
-/**
- * Remove instance from map by given key
- *
- * @param key
- * Key to remove instance
- */
-inline fun <reified T : Any> IMapper<T>.removeInstance(key: String) {
-    if (hasInstance(key)) (this.instanceMap.remove(key) as? ProviderHolder<T?>)?.clear()
-}
