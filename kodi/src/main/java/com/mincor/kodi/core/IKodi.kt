@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Aleksandr Minkin (sphc@yandex.ru)
+// Copyright (c) 2019 Aleksandr Minkin (sphc@yandex.ru)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -45,7 +45,7 @@ inline class KodiTypeWrapper(private val type: String) : IKodi {
 
 sealed class KodiHolder {
     data class KodiSingle<T : Any>(val singleInstanceProvider: IKodi.() -> T) : KodiHolder() {
-        val singleInstance: T by lazy { singleInstanceProvider(Kodi) }
+        val singleInstance: T by lazy { Kodi.singleInstanceProvider() }
     }
     data class KodiProvider<T : Any>(val providerLiteral: IKodi.() -> T) : KodiHolder()
     data class KodiConstant<T : Any>(val constantValue: T) : KodiHolder()
