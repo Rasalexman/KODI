@@ -21,7 +21,24 @@ interface IMapper<T : Any> {
     /**
      * Main entities(instances) holder map
      */
-    val instanceMap: MutableMap<String, T>
+    val instanceStorage: IInstanceStorage<T>
+}
+
+interface IInstanceStorage<V> {
+    fun getOrPut(key: String, defaultValue: () -> V): V
+    fun containsKey(key: String): Boolean
+}
+
+class InstanceStorage<T : Any> : IInstanceStorage<T> {
+    private val instanceMap by immutableGetter { mutableMapOf<String, T>() }
+
+    override fun getOrPut(key: String, defaultValue: () -> T): T {
+        return instanceMap.getOrPut(key, defaultValue)
+    }
+
+    override fun containsKey(key: String): Boolean {
+        return instanceMap.containsKey(key)
+    }
 }
 
 /**
@@ -33,7 +50,7 @@ interface IMapper<T : Any> {
  * @param inst
  * lambda func to create value instance for save
  */
-inline fun <reified T : Any> IMapper<T>.createOrGet(key: String, inst: () -> T): T = this.instanceMap.getOrPut(key) { inst() }
+inline fun <reified T : Any> IMapper<T>.createOrGet(key: String, noinline inst: () -> T): T = this.instanceStorage.getOrPut(key, inst)
 
 /**
  * Is there any instance by given key
@@ -41,4 +58,4 @@ inline fun <reified T : Any> IMapper<T>.createOrGet(key: String, inst: () -> T):
  * @param key
  * The instance key to retrieve
  */
-inline fun <reified T : Any> IMapper<T>.hasInstance(key: String): Boolean = this.instanceMap.containsKey(key)
+inline fun <reified T : Any> IMapper<T>.hasInstance(key: String): Boolean = this.instanceStorage.containsKey(key)
