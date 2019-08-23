@@ -1,7 +1,5 @@
 package com.mincor.kodiexample
 
-import com.mincor.kodi.core.Kodi
-import com.mincor.kodi.core.initKODI
 import com.mincor.kodiexample.instances.Post
 import com.mincor.kodiexample.single.UserData
 import com.mincor.kodireflect.*
@@ -17,7 +15,7 @@ const val MY_GLOBAL_CONST = "global_const"
 
 fun main(args: Array<String>) {
 
-    val kodi = initKODI {
+    val kodi = initKODIReflect {
         single<UserData>(UUID.randomUUID().toString(), "Aleksandr", "sphc@yandex.ru")
 
         bind<IUserData, UserDataInstance>()
@@ -68,7 +66,7 @@ fun main(args: Array<String>) {
         println("-----> RETURN FROM FUNC '$providerWithReturns'")
 
         /**
-         * Call the function that we bind early in initKODI section
+         * Call the function that we bind early in initKODIReflect section
          */
         providerCall<Unit>(TAG_FUN_FOR_INIT)
 
@@ -84,11 +82,11 @@ fun main(args: Array<String>) {
 }
 
 fun checkInstanceWithTag() {
-    println("-----> HELLO instance with tag and desc = '${Kodi.instanceByTag<Post>(INSTANCE_TAG).desc}'")
+    println("-----> HELLO instance with tag and desc = '${KodiReflect.instanceByTag<Post>(INSTANCE_TAG).desc}'")
 }
 
 fun funcForProviderLazy(id:String): UserData {
-    return Kodi.instance(id, "Vasya", "vasiliy@gmail.ru")
+    return KodiReflect.instance(id, "Vasya", "vasiliy@gmail.ru")
 }
 
 fun funcWithoutParams() {
@@ -105,13 +103,13 @@ interface IUserData {
     fun getData():String
 }
 
-open class UserDataInstance(private val userData: UserData = Kodi.single()) : IUserData {
+open class UserDataInstance(private val userData: UserData = KodiReflect.single()) : IUserData {
     override fun getData():String {
         return "HELLO WORLD from $userData"
     }
 }
 
-class UserDataImplemented : UserDataInstance(Kodi.single()) {
+class UserDataImplemented : UserDataInstance(KodiReflect.single()) {
     override fun getData(): String {
         return "HELLO FROM UserDataImplemented NICE TO MEET YOU"
     }
