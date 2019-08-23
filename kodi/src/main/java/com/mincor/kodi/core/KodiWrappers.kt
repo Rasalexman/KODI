@@ -15,47 +15,31 @@
 package com.mincor.kodi.core
 
 /**
- * Helper interface for bind generic instances with name
+ * Inline instanceTag wrapper for storing injectable class
+ *
+ * @param instanceTag - String tag for instance `key` storage
  */
-interface IMapper<T : Any> {
+inline class KodiTagWrapper(private val instanceTag: String) : IKodi {
     /**
-     * Main entities(instances) holder map
+     * Bind instanceTag with available instance holders
      */
-    val instanceStorage: IInstanceStorage<T>
-}
-
-interface IInstanceStorage<V> {
-    fun getOrPut(key: String, defaultValue: () -> V): V
-    fun containsKey(key: String): Boolean
-}
-
-class InstanceStorage<T : Any> : IInstanceStorage<T> {
-    private val instanceMap by immutableGetter { mutableMapOf<String, T>() }
-
-    override fun getOrPut(key: String, defaultValue: () -> T): T {
-        return instanceMap.getOrPut(key, defaultValue)
+    infix fun with(instance: KodiHolder): KodiTagWrapper {
+        Kodi.createOrGet(this) { instance }
+        return this
     }
 
-    override fun containsKey(key: String): Boolean {
-        return instanceMap.containsKey(key)
+    /**
+     * Add Instance instanceTag to scope
+     */
+    infix fun at(scopeWrapper: KodiScopeWrapper): KodiTagWrapper {
+        Kodi.addToScope(scopeWrapper to this)
+        return this
     }
 }
 
 /**
- * Create or get value from instance map
+ * Scoper wrapper class
  *
- * @param key
- * Key for retrieve value from map
- *
- * @param inst
- * lambda func to create value instance for save
+ * @param scopeTag - String tag for scope `key` storage
  */
-inline fun <reified T : Any> IMapper<T>.createOrGet(key: String, noinline inst: () -> T): T = this.instanceStorage.getOrPut(key, inst)
-
-/**
- * Is there any instance by given key
- *
- * @param key
- * The instance key to retrieve
- */
-inline fun <reified T : Any> IMapper<T>.hasInstance(key: String): Boolean = this.instanceStorage.containsKey(key)
+inline class KodiScopeWrapper(private val scopeTag: String)

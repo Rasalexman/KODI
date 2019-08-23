@@ -14,15 +14,20 @@
 
 package com.mincor.kodi.core
 
+import com.mincor.kodi.delegates.IImmutableDelegate
+import com.mincor.kodi.delegates.IMutableDelegate
+import com.mincor.kodi.delegates.immutableGetter
+import com.mincor.kodi.delegates.mutableGetter
+
+@Target(AnnotationTarget.FUNCTION)
+annotation class CanThrowException(
+        val message: String = "Check that the tag is added to the dependency graph, otherwise it will fall with RuntimeException"
+)
+
 /**
  * Main Singleton object for manipulate instances
  */
-object Kodi : IMapper<KodiHolder>, IKodi {
-    /**
-     * Instance map for holding any type of dependencies
-     */
-    override val instanceStorage by immutableGetter { InstanceStorage<KodiHolder>() }
-}
+object Kodi : InstanceStorage<KodiHolder>(), IKodi
 
 /**
  * Simple implementing interface for di functionality
@@ -31,6 +36,8 @@ interface IKodi
 
 /**
  * Initialize KODI dependencies
+ *
+ * @param block - main initialization block for binding instances
  */
 inline fun initKODI(block: IKodi.() -> Unit): IKodi {
     Kodi.block()
@@ -38,77 +45,66 @@ inline fun initKODI(block: IKodi.() -> Unit): IKodi {
 }
 
 /**
- * Inline type wrapper for storing injectable class type
- */
-inline class KodiTypeWrapper(private val type: String) : IKodi {
-    /**
-     * Bind type with available instance holders
-     */
-    infix fun with(instance: KodiHolder) {
-        Kodi.createOrGet(type) { instance }
-    }
-}
-
-/**
- * Typealias for simplification
- */
-typealias InstanceInitializer<T> = IKodi.() -> T
-
-/**
- * Available classes for binding
- */
-sealed class KodiHolder {
-    data class KodiSingle<T : Any>(private var singleInstanceProvider: InstanceInitializer<T>) : KodiHolder() {
-        val singleInstance: T by immutableGetter { Kodi.singleInstanceProvider() }
-    }
-    data class KodiProvider<T : Any>(val providerLiteral: InstanceInitializer<T>) : KodiHolder()
-    data class KodiConstant<T : Any>(val constantValue: T) : KodiHolder()
-}
-
-/**
  * Bind Any Generic type with some instance or KodiHolder types
+ *
+ * @param tag - optional parameter for custom manipulating with instance tag
+ * if there is no tag provided the generic class name will be used as `T::class.toString()`
  */
-inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTypeWrapper {
-    return KodiTypeWrapper(tag ?: T::class.toString())
+inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
+    return KodiTagWrapper(tag ?: T::class.toString())
 }
 
 /**
- * Bind singleton, only one instance will be stored and injected
+ * Unbind instance by given tag or generic type
+ *
+ * @param tag - optional parameter for custom manipulating with instance tag
+ * if there is no tag provided the generic class name will be used as `T::class.toString()`
  */
-inline fun <reified T : Any> IKodi.single(noinline init: IKodi.() -> T): KodiHolder {
-    return KodiHolder.KodiSingle(init)
-}
-
-/**
- * Bind the provider function
- */
-inline fun <reified T : Any> IKodi.provider(noinline init: IKodi.() -> T): KodiHolder {
-    return KodiHolder.KodiProvider(init)
-}
-
-/**
- * immediately initialized constant value like String, Int, etc... or Any
- */
-inline fun <reified T : Any> IKodi.constant(noinline init: IKodi.() -> T): KodiHolder {
-    return KodiHolder.KodiConstant(init())
+inline fun <reified T : Any> IKodi.unbind(tag: String? = null): Boolean {
+    val tagToWrapper = tag ?: T::class.toString()
+    return Kodi.removeInstance(tagToWrapper.toTag())
 }
 
 /**
  * Take current instance for injection
  */
+@CanThrowException
 inline fun <reified T : Any> IKodi.instance(tag: String? = null): T {
     val type = tag ?: T::class.toString()
-    return when (val holder = Kodi.createOrGet(type) { throw RuntimeException("There is no type $type in dependency map") } as KodiHolder) {
+    return when (val holder = Kodi.createOrGet(type.toTag()) { throwException<RuntimeException>("There is no type $type in dependency map") }) {
         is KodiHolder.KodiSingle<*> -> holder.singleInstance as T
         is KodiHolder.KodiProvider<*> -> this.(holder.providerLiteral)() as T
         is KodiHolder.KodiConstant<*> -> holder.constantValue as T
     }
 }
 
+/**
+ * Lazy immutable property initializer wrapper for injection
+ * Example: `val someValue by immutableInstance<ISomeValueClass>()`
+ * It cannot be change
+ */
 inline fun <reified T : Any> IKodi.immutableInstance(): IImmutableDelegate<T> = immutableGetter {
     instance<T>()
 }
 
+/**
+ * Lazy mutable property initializer wrapper for injection
+ * Example: `var someValue by mutableInstance<ISomeValueClass>()`
+ * It can be change `someValue = object : ISomeValueClass {}`
+ */
 inline fun <reified T : Any> IKodi.mutableInstance(): IMutableDelegate<T> = mutableGetter {
     instance<T>()
+}
+
+/**
+ * Helper throwable method
+ *
+ * @param message - Message for notify user in log
+ */
+inline fun<reified T : Exception> throwException(message: String): Nothing {
+    val exception = when(T::class) {
+        RuntimeException::class -> RuntimeException(message)
+        else -> NoSuchElementException(message)
+    }
+    throw exception
 }
