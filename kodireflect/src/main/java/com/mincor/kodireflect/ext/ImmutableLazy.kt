@@ -14,36 +14,17 @@
 
 package com.mincor.kodireflect.ext
 
-import kotlin.properties.ReadWriteProperty
+import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-/**
- * Property delegate to allow lazy initialization of a mutable variable.
- *
- * @param init
- * initialized function
- */
-class MutableLazy<T>(val init: () -> T) : ReadWriteProperty<Any?, T> {
+class ImmutableLazy<T>(val init: () -> T) : ReadOnlyProperty<Any?, T> {
 
     /**
      * Optional value holder
      */
-    private var value: Optional<T> = Optional.None()
+    private var value: Optional<T> = Optional.Some(init())
 
-    /**
-     * Standard delegation function overriding
-     */
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        if (value is Optional.None) {
-            value = Optional.Some(init())
-        }
         return value.get()
-    }
-
-    /**
-     * Standard delegation function overriding
-     */
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        this.value = Optional.Some(value)
     }
 }

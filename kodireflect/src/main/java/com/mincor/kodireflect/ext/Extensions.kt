@@ -14,6 +14,7 @@
 
 package com.mincor.kodireflect.ext
 
+import com.mincor.kodireflect.IMapper
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KParameter
@@ -84,3 +85,22 @@ fun Any.className(): String {
     val clazz = this as? KClass<*> ?: this.javaClass.kotlin
     return clazz.qualifiedName ?: clazz.java.name
 }
+
+/**
+ * Create or get value from instance map
+ *
+ * @param key
+ * Key for retrieve value from map
+ *
+ * @param inst
+ * lambda func to create value instance for save
+ */
+inline fun <reified T : Any> IMapper<T>.createOrGet(key: String, noinline inst: () -> T): T = this.instanceStorage.getOrPut(key, inst)
+
+/**
+ * Is there any instance by given key
+ *
+ * @param key
+ * The instance key to retrieve
+ */
+inline fun <reified T : Any> IMapper<T>.hasInstance(key: String): Boolean = this.instanceStorage.containsKey(key)
