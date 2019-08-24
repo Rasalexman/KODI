@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
 
     val kodiModule = kodiModule {
         bind<ISingleInterface>() with single { SingleClass(UUID.randomUUID().toString()) }
-        bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) } at scope { MY_PROVIDER_SCOPE_NAME }
+        bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) } at scope(MY_PROVIDER_SCOPE_NAME)
     } withScope MY_SINGLE_SCOPE_NAME.asScope()
 
     val isns = kodi {
