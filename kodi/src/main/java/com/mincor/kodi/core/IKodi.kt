@@ -19,15 +19,20 @@ import com.mincor.kodi.delegates.IMutableDelegate
 import com.mincor.kodi.delegates.immutableGetter
 import com.mincor.kodi.delegates.mutableGetter
 
+/**
+ * Annotation for mark some throwable functions
+ *
+ * @param message - string for user log output
+ */
 @Target(AnnotationTarget.FUNCTION)
 annotation class CanThrowException(
-        val message: String = "Check that the tag is added to the dependency graph, otherwise it will fall with RuntimeException"
+        val message: String = "Check that the tag is added to the dependency graph, otherwise it will fall withScope RuntimeException"
 )
 
 /**
  * Main Singleton object for manipulate instances
  */
-object Kodi : InstanceStorage<KodiHolder>(), IKodi
+object Kodi : KodiStorage(), IKodi
 
 /**
  * Simple implementing interface for di functionality
@@ -39,16 +44,18 @@ interface IKodi
  *
  * @param block - main initialization block for binding instances
  */
-inline fun initKODI(block: IKodi.() -> Unit): IKodi {
-    Kodi.block()
-    return Kodi
+inline fun <reified T : Any> kodi(block: IKodi.() -> T): T {
+    return Kodi.block()
 }
 
 /**
- * Bind Any Generic type with some instance or KodiHolder types
+ * Bind Any Generic type withScope some instance or KodiHolder types
  *
- * @param tag - optional parameter for custom manipulating with instance tag
+ * @param tag - optional parameter for custom manipulating withScope instance tag
  * if there is no tag provided the generic class name will be used as `T::class.toString()`
+ *
+ * @receiver [IKodi]
+ * @return [KodiTagWrapper]
  */
 inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
     return KodiTagWrapper(tag ?: T::class.toString())
@@ -57,24 +64,49 @@ inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
 /**
  * Unbind instance by given tag or generic type
  *
- * @param tag - optional parameter for custom manipulating with instance tag
+ * @param tag - optional parameter for custom manipulating withScope instance tag
  * if there is no tag provided the generic class name will be used as `T::class.toString()`
  */
 inline fun <reified T : Any> IKodi.unbind(tag: String? = null): Boolean {
-    val tagToWrapper = tag ?: T::class.toString()
-    return Kodi.removeInstance(tagToWrapper.toTag())
+    val tagToWrapper = (tag ?: T::class.toString()).asTag()
+    return Kodi.removeInstance(tagToWrapper)?.apply { at(emptyScope()) } != null
+}
+
+/**
+ * Unbind moduleScope and all instances from dependency graph
+ *
+ * @param scopeTagWrapper - [KodiScopeWrapper] to remove
+ */
+fun IKodi.unbindScope(scopeTagWrapper: KodiScopeWrapper): Boolean {
+    return Kodi.removeAllScope(scopeTagWrapper)
 }
 
 /**
  * Take current instance for injection
+ *
+ * @param tag - String instance tag (Optional)
+ * @throws IllegalAccessException - if there is no tag in dependency graph
  */
-@CanThrowException
+@CanThrowException("There is no KodiHolder instance in dependency graph")
 inline fun <reified T : Any> IKodi.instance(tag: String? = null): T {
-    val type = tag ?: T::class.toString()
-    return when (val holder = Kodi.createOrGet(type.toTag()) { throwException<RuntimeException>("There is no type $type in dependency map") }) {
-        is KodiHolder.KodiSingle<*> -> holder.singleInstance as T
+    return when (val holder = holder<T>(tag)) {
+        is KodiHolder.KodiSingle<*> -> holder.get() as T
         is KodiHolder.KodiProvider<*> -> this.(holder.providerLiteral)() as T
         is KodiHolder.KodiConstant<*> -> holder.constantValue as T
+    }
+}
+
+/**
+ * Take current [KodiHolder] instance for injection or throw an Exception if it's does't exist
+ *
+ * @param tag - String instance tag (Optional)
+ * @throws IllegalAccessException - if there is no tag in dependency graph it's crash
+ */
+@CanThrowException("There is no KodiHolder instance in dependency graph")
+inline fun <reified T : Any> IKodi.holder(tag: String? = null): KodiHolder {
+    val tagToWrap = tag ?: T::class.toString()
+    return Kodi.createOrGet(tagToWrap.asTag()) {
+        throwException<IllegalAccessException>("There is no tag $tagToWrap in dependency graph")
     }
 }
 
@@ -101,9 +133,10 @@ inline fun <reified T : Any> IKodi.mutableInstance(): IMutableDelegate<T> = muta
  *
  * @param message - Message for notify user in log
  */
-inline fun<reified T : Exception> throwException(message: String): Nothing {
-    val exception = when(T::class) {
+inline fun <reified T : Exception> throwException(message: String): Nothing {
+    val exception = when (T::class) {
         RuntimeException::class -> RuntimeException(message)
+        IllegalStateException::class -> IllegalStateException(message)
         else -> NoSuchElementException(message)
     }
     throw exception

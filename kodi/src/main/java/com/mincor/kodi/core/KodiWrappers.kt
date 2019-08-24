@@ -19,27 +19,30 @@ package com.mincor.kodi.core
  *
  * @param instanceTag - String tag for instance `key` storage
  */
-inline class KodiTagWrapper(private val instanceTag: String) : IKodi {
+inline class KodiTagWrapper(private val instanceTag: String) {
+
     /**
-     * Bind instanceTag with available instance holders
+     * Bind instanceTag withScope available instance holders
+     *
+     * @param instance - [KodiHolder] instance for store
      */
-    infix fun with(instance: KodiHolder): KodiTagWrapper {
-        Kodi.createOrGet(this) { instance }
-        return this
+    infix fun with(instance: KodiHolder): KodiHolder {
+        return instance tag this
     }
 
     /**
-     * Add Instance instanceTag to scope
+     * Check instanceTag is not empty
      */
-    infix fun at(scopeWrapper: KodiScopeWrapper): KodiTagWrapper {
-        Kodi.addToScope(scopeWrapper to this)
-        return this
+    fun isNotEmpty(): Boolean {
+        return instanceTag.isNotEmpty()
     }
 }
 
 /**
- * Scoper wrapper class
+ * Scope wrapper class
  *
- * @param scopeTag - String tag for scope `key` storage
+ * @param scopeTag - String tag for moduleScope `key` storage
  */
-inline class KodiScopeWrapper(private val scopeTag: String)
+inline class KodiScopeWrapper(private val scopeTag: String) {
+    fun isNotEmpty(): Boolean = this.scopeTag.isNotEmpty()
+}

@@ -38,7 +38,7 @@ interface IMutableDelegate<T> : IImmutableDelegate<T> {
 }
 
 /**
- * Lazy Immutable Delegate initializer wrapper to use with `val` with keyword `by`. It cannot change his value
+ * Lazy Immutable Delegate initializer wrapper to use withScope `val` withScope keyword `by`. It cannot change his value
  * Example: val someValue by ImmutableDelegate { "Some String" }
  *
  * @param init - func to hold at immutable instance
@@ -62,7 +62,7 @@ open class ImmutableDelegate<T>(private val init: () -> T) : IImmutableDelegate<
 }
 
 /**
- * Lazy Mutable Delegate initializer wrapper to use with `var` with keyword `by`. It can change his value
+ * Lazy Mutable Delegate initializer wrapper to use withScope `var` withScope keyword `by`. It can change his value
  * Example: var someValue by ImmutableDelegate { "Some String" }
  *  someValue = "New string to hold"
  *

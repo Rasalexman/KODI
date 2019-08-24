@@ -15,25 +15,58 @@
 package com.mincor.kodi.core
 
 /**
- * Support Kodi Module
+ * Module Initializer
  */
-interface IKodiModule {
-    val instanceInitializer: InstanceInitializer<Unit>
-}
+typealias ModuleInitializer = InstanceInitializer<Unit>
 
 /**
- * Kodi module implementation
+ * Support Kodi Module
  */
-fun kodiModule(init: InstanceInitializer<Unit>): IKodiModule {
-    return object : IKodiModule {
-        override val instanceInitializer: InstanceInitializer<Unit> = init
+interface IKodiModule : IKodi {
+    /**
+     * Initialization literal function withScope reciever
+     */
+    val instanceInitializer: ModuleInitializer
+    /**
+     * Module Scope for all elements
+     */
+    var scope: KodiScopeWrapper
+
+    /**
+     * Set scope for all bindings in module
+     *
+     * @param scopeWrapper - [KodiScopeWrapper] for module
+     */
+    infix fun withScope(scopeWrapper: KodiScopeWrapper): IKodiModule {
+        scope = scopeWrapper
+        return this
     }
 }
 
 /**
- * Import IKodiModule into dependency graph
+ * Module implementation
+ *
+ * @param instanceInitializer - initializer [ModuleInitializer]
+ * @param scope - current [emptyScope]
+ */
+data class KodiModule(
+        override val instanceInitializer: ModuleInitializer,
+        override var scope: KodiScopeWrapper = emptyScope()
+        ) : IKodiModule
+
+/**
+ * Kodi module implementation
+ *
+ * @param - [ModuleInitializer]
+ */
+fun kodiModule(init: ModuleInitializer): IKodiModule = KodiModule(init)
+
+/**
+ * Import [IKodiModule] into dependency graph or another module
+ *
+ * @param module - [IKodiModule]
  */
 fun IKodi.import(module: IKodiModule) {
     val initializer = module.instanceInitializer
-    Kodi.initializer()
+    module.initializer()
 }

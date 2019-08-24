@@ -20,11 +20,34 @@ package com.mincor.kodi.core
 fun IKodi.scope(scopeInitTag: () -> String) = KodiScopeWrapper(scopeInitTag())
 
 /**
- * String scope name to Scope Wrapper
+ * Empty moduleScope.
+ * This is means that tag has no scope
  */
-fun String.toScope() = KodiScopeWrapper(this)
+fun emptyScope() = KodiScopeWrapper("")
+
+/**
+ * Empty instance tag holder.
+ * This means that [KodiHolder] instance is no in dependency graph
+ */
+fun emptyTag() = KodiTagWrapper("")
+
+/**
+ * String moduleScope name to Scope Wrapper
+ */
+fun String.asScope() = KodiScopeWrapper(this)
 
 /**
  * String tag name to Tag Wrapper
  */
-fun String.toTag() = KodiTagWrapper(this)
+fun String.asTag() = KodiTagWrapper(this)
+
+/**
+ * Apply actions to <T> if prediction is true
+ *
+ * @param prediction true prediction
+ * @param action action to do
+ */
+fun <T> T.applyIf(prediction: Boolean, action: (T)->Unit): T {
+    if(prediction) action(this)
+    return this
+}
