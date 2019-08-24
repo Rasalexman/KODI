@@ -16,8 +16,14 @@ package com.mincor.kodi.core
 
 /**
  * Scope name wrapper
+ *
+ * @param scopeTag - string name of scope tag
+ * @param scopeInit - initializing lambda of scope tag
  */
-fun IKodi.scope(scopeInitTag: () -> String) = KodiScopeWrapper(scopeInitTag())
+fun IKodi.scope(
+        scopeTag: String? = null,
+        scopeInit: (() -> String)? = null
+) = KodiScopeWrapper(scopeTag ?: scopeInit?.invoke() ?: "")
 
 /**
  * Empty moduleScope.
@@ -47,7 +53,7 @@ fun String.asTag() = KodiTagWrapper(this)
  * @param prediction true prediction
  * @param action action to do
  */
-fun <T> T.applyIf(prediction: Boolean, action: (T)->Unit): T {
-    if(prediction) action(this)
+fun <T> T.applyIf(prediction: Boolean, action: (T) -> Unit): T {
+    if (prediction) action(this)
     return this
 }
