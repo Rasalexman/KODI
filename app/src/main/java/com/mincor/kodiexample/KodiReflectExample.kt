@@ -37,7 +37,7 @@ fun main(args: Array<String>) {
         println("-----> SINGLE INSTANCE '${singleInstance.name}'")
         val posts = mutableListOf<Post>()
         (0..25).forEach {
-            // Only instances with 'var' constructor params can be override by input params if another case check
+            // Only instances withScope 'var' constructor params can be override by input params if another case check
             posts.add(instance(UUID.randomUUID().toString(), single<UserData>(listOf("1", "2", "3", "4", "5", "6")), "Title $it", "Desc $it"))
         }
 
@@ -49,16 +49,16 @@ fun main(args: Array<String>) {
         val providerData = providerWithReturnAndParams.call()!!
         println("-----> PROVIDER LAZY DATA '${providerData.name}' and email = '${providerData.email}'")
 
-        // val instanceWithTag = instanceByTag<Post>(INSTANCE_TAG, UUID.randomUUID().toString(), singleInstance, "Title with tag", "Desc with tag")
+        // val instanceWithTag = instanceByTag<Post>(INSTANCE_TAG, UUID.randomUUID().toString(), singleInstance, "Title withScope tag", "Desc withScope tag")
         // println("-----> INSTANCE WITH TAG TITLE '${instanceWithTag.title}'")
 
         // call the function without params
         providerCall(TAG_FUN_WITHOUT_PARAMS, ::funcWithoutParams)
-        // call the function with params
+        // call the function withScope params
         providerCall(TAG_FUN_WITH_PARAMS, ::funcWithParams, posts)
 
         /**
-         * If you do not set the incoming function parameters it throw with RuntimeException
+         * If you do not set the incoming function parameters it throw withScope RuntimeException
          */
         // check for singleInstance user
         val singleUser = single<UserData>()
@@ -71,18 +71,18 @@ fun main(args: Array<String>) {
         providerCall<Unit>(TAG_FUN_FOR_INIT)
 
         /**
-         * Call already bounded function with new params
+         * Call already bounded function withScope new params
          */
         providerCallByTag<String>(TAG_FUN_WITH_PARAMS, single<UserData>())
 
-        //call provider with RuntimeException, cause there is no providing function gives
+        //call provider withScope RuntimeException, cause there is no providing function gives
         //providerCallByTag<String>("provider_call_without nothing", "HEHE")
         println("-----> END OF PRINTING")
     }
 }
 
 fun checkInstanceWithTag() {
-    println("-----> HELLO instance with tag and desc = '${KodiReflect.instanceByTag<Post>(INSTANCE_TAG).desc}'")
+    println("-----> HELLO instance withScope tag and desc = '${KodiReflect.instanceByTag<Post>(INSTANCE_TAG).desc}'")
 }
 
 fun funcForProviderLazy(id:String): UserData {
