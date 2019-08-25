@@ -1,10 +1,105 @@
 # KODI
 KOtlin Dependency Injection (KODI) 
 
-[ ![Kotlin 1.3.41](https://img.shields.io/badge/Kotlin-1.3.41-blue.svg)](http://kotlinlang.org) [ ![Download](https://api.bintray.com/packages/sphc/Kodi/kodi/images/download.svg) ](https://bintray.com/sphc/Kodi/kodi/_latestVersion)
+[ ![Kotlin 1.3.50](https://img.shields.io/badge/Kotlin-1.3.50-blue.svg)](http://kotlinlang.org) [ ![Download](https://api.bintray.com/packages/sphc/Kodi/kodi/images/download.svg) ](https://bintray.com/sphc/Kodi/kodi/_latestVersion)
 
-This is simple and useful dependency injection tool for used in your regular projects. It's use a kotlin reflect library to create instances and inject parameters into constructor. 
+This is simple and useful dependency injection framework for work with your regular projects. It use standart Kotlin language construction like `literal function with recieve`, `infix function`, `hight-order function`, ets. to bind and inject dependencies into your objects. It has two packages:
 
+1) Kodi library
+
+It's a dependency injection library writen in pure Kotlin. This library has intuitive sintax like:
+`bind<SomeClassInterface>() with singleton { SomeClassImplementation() } at scope("My Scope")`. No annotation processing, and reflection in core module. 
+
+You can `bind` three type of instances:
+- `singleton`: only one instance  will be used. It's lazy instantiating
+- `provider`: it's create instance every time it's called. Lazy also!
+- `constant`: constant value by tag. It's create when it binded
+
+In order to get a value or add a new one to the dependency graph, you need to call the `kodi {}` function from any part of your program. Recomendation to call it for binding at `MainApplication.kt` class. 
+You can use `val myModule = kodiModule { bind<ISomeInstance> with ...}` for separate and organize independent component of your programm. Just call `kodi {import(myModule) }` to bind all dependencies from it.
+Keywords:
+- `bind`: bind string tag or generic type `with` given provided instance
+- `at`: add instance at scope
+- `kodiModule { }`: instantiate module for dependency separation
+- `withScope`: can used only with `kodiModule` for bind all instances at selected scope. If there is any scope binding inside this module, it will be used as main scope for this bindings
+
+```kotlin
+fun main(args: Array<String>) {
+    // module with custom scope
+    val kodiModule = kodiModule {
+        bind<ISingleInterface>() with single { SingleClass(UUID.randomUUID().toString()) }
+        // this will be use a `MY_PROVIDER_SCOPE_NAME` scope
+        bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) } at scope(MY_PROVIDER_SCOPE_NAME)
+    } withScope MY_SINGLE_SCOPE_NAME.asScope()
+
+    kodi {
+        // Import module
+        import(kodiModule)
+        // bind constant value
+        bind<String>(SOME_CONSTANT_TAG) with constant { "Hello" } at scope(CONSTANTS_SCOPE)
+        // bind singleton value with lazy reciever properties
+        bind<IInjectable>() with single { InjectableClass(instance(), instance()) } at MY_SINGLE_SCOPE_NAME.asScope()
+        // get value
+        val singleInstance = instance<ISingleInterface>()
+        singleInstance.printName()
+        // immutable variable
+        val providerImmutableLazyInstance by immutableInstance<IProviderInterface>()
+        // mutable variable
+        var providerMutableLazyInstance by mutableInstance<IProviderInterface>()
+        val injectableSinge = instance<IInjectable>()
+        // another instance call
+        instance<IProviderInterface>().printName()
+        // call immutable variable
+        providerImmutableLazyInstance.printName()
+        // call mutable variable
+        providerMutableLazyInstance.className()
+        providerMutableLazyInstance = ProviderClass("Another_id", "another name")
+        //call singleton class as lazy 
+        injectableSinge.providerInstance.printName()
+        injectableSinge.singleInstance.printName()
+        // call of mutable instance
+        providerMutableLazyInstance.printName()
+
+        // unbind instance
+        unbind<IProviderInterface>()
+
+        //change instance scope
+        holder<IInjectable>() at MY_PROVIDER_SCOPE_NAME.asScope()
+
+        // unbind all scope of instances and removed it from dependency graph
+        unbindScope(MY_SINGLE_SCOPE_NAME.asScope())
+    }
+}
+
+interface IPrintable {
+    val id: String
+    val name: String
+    fun printName() {
+        println("-----> Class name: ${this.name} withScope id: $id")
+    }
+}
+
+interface ISingleInterface : IPrintable
+data class SingleClass(override val id: String, override val name: String = "Single") : ISingleInterface
+
+interface IProviderInterface : IPrintable, Cloneable
+data class ProviderClass(override val id: String, override val name: String = "Provider") : IProviderInterface
+
+interface IInjectable {
+    val singleInstance: ISingleInterface
+    val providerInstance: IProviderInterface
+}
+
+data class InjectableClass(
+        override val providerInstance: IProviderInterface,
+        override val singleInstance: ISingleInterface
+) : IInjectable
+```
+See `com.mincor.kodiexample.KodiTest.kt` for full example. 
+
+2) KodiReflect library 
+
+It's use a kotlin reflect library to create instances and inject parameters into constructor. 
 For start using this you need to implement `IKodi` interface to take all features of injection, like lazy property initialization or direct access to instances of given generic classe. 
 It contains some functionality like: 
 1) `single()` - create the one and only one instace of given generic class and save it in instanceMap
@@ -17,7 +112,7 @@ It contains some functionality like:
 8) `constant(TAG, VALUE)` - map constants to tag (Sinse version 0.1.5)
 9) `singleProvider(block: () -> T): T` - to initilize instance by yourself (since version 0.1.9)
 
-And from 0.1.5 you can initialize you instances, single, providers, binding and constants in just one place:
+You can initialize you instances, single, providers, binding and constants in just one place:
 `val kodi = initKODI { }`
 
 in every function you can pass params for injection and put a tag to get it later.
@@ -153,16 +248,29 @@ class MainActivity : AppCompatActivity(), IKodi {
 
 Gradle:
 ```
+// Standart Library
 implementation 'com.rasalexman.kodi:kodi:x.y.z'
+
+// Old Reflection Library. It's a final version and don't have any plans to support it in the future.
+implementation 'com.rasalexman.kodireflect:kodireflect:1.1.0'
 ```
 
 Maven:
 ```
+// Main Library
 <dependency>
   <groupId>com.rasalexman.kodi</groupId>
   <artifactId>kodi</artifactId>
   <version>x.y.z</version>
   <type>pom</type>
+</dependency>
+
+// Reflection Library
+<dependency>
+	<groupId>com.rasalexman.kodireflect</groupId>
+	<artifactId>kodireflect</artifactId>
+	<version>1.1.0</version>
+	<type>pom</type>
 </dependency>
 ```
 
