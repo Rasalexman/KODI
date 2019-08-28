@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion COMPILE_VERSION
@@ -11,6 +12,11 @@ android {
         versionCode 10001
         versionName "1.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "ApiKey", "026a257e7842ac9cac1fa627496b1468"
+        buildConfigField "String", "IMAGES_URL", "https://image.tmdb.org/t/p/w500"
+        buildConfigField "String", "SERVER_URL", "https://api.themoviedb.org/3/"
+        buildConfigField "String", "IMAGES_BACKDROP_URL", "https://image.tmdb.org/t/p/original"
     }
     buildTypes {
         release {
@@ -18,17 +24,55 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation "androidx.appcompat:appcompat:$appCompatXVersion"
+    implementation "androidx.core:core-ktx:$appCoreXVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation.fragment"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation.ui"
+
+    ///------ RECYCLER VIEW ADAPTER
+    implementation("com.mikepenz:fastadapter:$fastAdapterLib@aar") { transitive = true }
+    implementation "com.mikepenz:fastadapter-extensions-ui:${fastAdapterLib}"
+    implementation "com.mikepenz:fastadapter-extensions-diff:${fastAdapterLib}"
+
+    //--- ROOM DB
+    implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+
+    //------ HTTP
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
+    implementation "ru.gildor.coroutines:kotlin-coroutines-retrofit:$retrofitCoroutinesVersion"
+    implementation("com.github.ihsanbal:LoggingInterceptor:$retrofitLogginVersion") {
+        exclude group: 'org.json', module: 'json'
+    }
+
+    ///------ VIEWS
+    implementation "io.coil-kt:coil:$coilVersion"
+
+    // COROUTINES MANAGER
+    implementation "com.rasalexman.coroutinesmanager:coroutinesmanager:$coroutinesManagerVersion"
+
     testImplementation 'junit:junit:4.13-beta-3'
     androidTestImplementation 'androidx.test:runner:1.3.0-alpha02'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-alpha02'
 
     implementation project(":kodi")
     implementation project(":kodireflect")
-    //implementation 'com.rasalexman.kodi:kodi:0.1.6'
+
+    kapt "androidx.room:room-compiler:$roomVersion"
 }

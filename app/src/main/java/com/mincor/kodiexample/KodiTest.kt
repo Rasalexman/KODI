@@ -1,6 +1,7 @@
 package com.mincor.kodiexample
 
 import com.mincor.kodi.core.*
+import com.mincor.kodireflect.ext.className
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
 
@@ -9,7 +10,6 @@ const val SOME_CONSTANT_TAG = "SOME_CONSTANT_TAG"
 const val MY_PROVIDER_SCOPE_NAME = "MY_PROVIDER_SCOPE_NAME"
 const val MY_SINGLE_SCOPE_NAME = "MY_SINGLE_SCOPE_NAME"
 
-@ExperimentalContracts
 fun main(args: Array<String>) {
 
     val kodiModule = kodiModule {
@@ -17,36 +17,42 @@ fun main(args: Array<String>) {
         bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) } at scope(MY_PROVIDER_SCOPE_NAME)
     } withScope MY_SINGLE_SCOPE_NAME.asScope()
 
-    val isns = kodi {
-
+    kodi {
+        // Import module
         import(kodiModule)
-
+        // bind constant value
         bind<String>(SOME_CONSTANT_TAG) with constant { "Hello" }
+        // bind singleton value with lazy reciever properties
         bind<IInjectable>() with single { InjectableClass(instance(), instance()) } at MY_SINGLE_SCOPE_NAME.asScope()
-
+        // get value
         val singleInstance = instance<ISingleInterface>()
         singleInstance.printName()
-
-        val providerLazyInstance by immutableInstance<IProviderInterface>()
-        val injectableSinge by immutableInstance<IInjectable>()
+        // immutable variable
+        val providerImmutableLazyInstance by immutableInstance<IProviderInterface>()
+        // mutable variable
+        var providerMutableLazyInstance by mutableInstance<IProviderInterface>()
+        val injectableSinge = instance<IInjectable>()
+        // another instance call
         instance<IProviderInterface>().printName()
-        instance<IProviderInterface>().printName()
-        //instance<ISingleInterface>().printName()
-        providerLazyInstance.printName()
-
-        //println("-------> ${instance<String>("sre")}")
-
-        val anotherSingleInstance = instance<ISingleInterface>()
-        anotherSingleInstance.printName()
-
+        // call immutable variable
+        providerImmutableLazyInstance.printName()
+        // call mutable variable
+        providerMutableLazyInstance.className()
+        providerMutableLazyInstance = ProviderClass("Another_id", "another name")
+        //call singleton class as lazy
         injectableSinge.providerInstance.printName()
         injectableSinge.singleInstance.printName()
+        // call of mutable instance
+        providerMutableLazyInstance.printName()
 
-        //unbind<IProviderInterface>() from MY_PROVIDER_SCOPE_NAME.asScope()
+        // unbind instance
+        unbind<IProviderInterface>()
 
-        //holder<IInjectable>() at MY_PROVIDER_SCOPE_NAME.asScope()
+        //change instance scope
+        holder<IInjectable>() at MY_PROVIDER_SCOPE_NAME.asScope()
 
-        //unbindScope(MY_SINGLE_SCOPE_NAME.asScope())
+        // unbind all scope of instances and removed it from dependency graph
+        unbindScope(MY_SINGLE_SCOPE_NAME.asScope())
     }
 }
 

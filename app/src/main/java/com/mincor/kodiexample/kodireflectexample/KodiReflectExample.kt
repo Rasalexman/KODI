@@ -1,7 +1,7 @@
-package com.mincor.kodiexample
+package com.mincor.kodiexample.kodireflectexample
 
-import com.mincor.kodiexample.instances.Post
-import com.mincor.kodiexample.single.UserData
+import com.mincor.kodiexample.kodireflectexample.instances.Post
+import com.mincor.kodiexample.kodireflectexample.single.UserData
 import com.mincor.kodireflect.*
 import java.util.*
 
@@ -25,13 +25,13 @@ fun main(args: Array<String>) {
         provider(TAG_FUN_FOR_INIT, ::checkInstanceWithTag)
 
         ///-------- LAZY MUTABLE SECTION
-        val testMutableLazyInstance:UserDataInstance? by instanceMutableLazy(instance<UserData>(UUID.randomUUID().toString(), "Alex", "id347435"))
+        val testMutableLazyInstance: UserDataInstance? by instanceMutableLazy(instance<UserData>(UUID.randomUUID().toString(), "Alex", "id347435"))
 
         ///-------- LAZY VAL SECTION ----////
         val singleInstance: UserData by singleLazy(UUID.randomUUID().toString(), "Aleksandr", "sphc@yandex.ru")
         val providerWithReturnAndParams by providerLazy("", ::funcForProviderLazy, UUID.randomUUID().toString())
-        val userDataInstance:IUserData by singleLazy()
-        val userDataImplemented:UserDataImplemented by instanceLazy()
+        val userDataInstance: IUserData by singleLazy()
+        val userDataImplemented: UserDataImplemented by instanceLazy()
 
 
         println("-----> SINGLE INSTANCE '${singleInstance.name}'")
