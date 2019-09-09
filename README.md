@@ -251,6 +251,9 @@ Gradle:
 // Standart Library
 implementation 'com.rasalexman.kodi:kodi:x.y.z'
 
+// AndroidX Module
+implementation 'com.rasalexman.kodiandroidx:kodiandroidx:1.0.0'
+
 // Old Reflection Library. It's a final version and don't have any plans to support it in the future.
 implementation 'com.rasalexman.kodireflect:kodireflect:1.1.0'
 ```
