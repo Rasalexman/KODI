@@ -265,6 +265,14 @@ Maven:
   <type>pom</type>
 </dependency>
 
+// AndroidX Module
+<dependency>
+	<groupId>com.rasalexman.kodiandroidx</groupId>
+	<artifactId>kodiandroidx</artifactId>
+	<version>1.0.0</version>
+	<type>pom</type>
+</dependency>
+
 // Reflection Library
 <dependency>
 	<groupId>com.rasalexman.kodireflect</groupId>
