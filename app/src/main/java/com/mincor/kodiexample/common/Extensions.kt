@@ -1,5 +1,6 @@
 package com.mincor.kodiexample.common
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -27,4 +28,12 @@ fun ImageView.clear(isOnlyImage: Boolean = false) {
     this.setImageBitmap(null)
     this.setImageDrawable(null)
     if (isOnlyImage) this.setOnClickListener(null)
+}
+
+fun View.hide(gone: Boolean = true) {
+    visibility = if (gone) View.GONE else View.INVISIBLE
+}
+
+fun View.show() {
+    visibility = View.VISIBLE
 }
