@@ -17,6 +17,9 @@ package com.mincor.kodireflect.ext
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
+/**
+ * Immutable Lazy Delegate with some optional Value
+ */
 class ImmutableLazy<T>(val init: () -> T) : ReadOnlyProperty<Any?, T> {
 
     /**
