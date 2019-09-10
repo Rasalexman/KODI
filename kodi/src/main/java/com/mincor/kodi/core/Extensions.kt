@@ -20,7 +20,7 @@ package com.mincor.kodi.core
  * @param scopeTag - string name of scope tag
  * @param scopeInit - initializing lambda of scope tag
  */
-fun IKodi.scope(
+fun scope(
         scopeTag: String? = null,
         scopeInit: (() -> String)? = null
 ) = KodiScopeWrapper(scopeTag ?: scopeInit?.invoke() ?: "")

@@ -59,7 +59,7 @@ sealed class KodiHolder {
             this.tag = instanceTag
             addToGraph()
             addToScope()
-        } else if(!instanceTag.isNotEmpty()) {
+        } else if (!instanceTag.isNotEmpty()) {
             removeFromGraph()
             removeFromScope()
         } else {
@@ -125,11 +125,15 @@ sealed class KodiHolder {
 
     /**
      * Provider Instance Holder withScope many execution
+     *
+     * @param providerLiteral - [InstanceInitializer] function
      */
     data class KodiProvider<T : Any>(val providerLiteral: InstanceInitializer<T>) : KodiHolder()
 
     /**
      * Constant value instance holder
+     *
+     * @param constantValue - value for initialization
      */
     data class KodiConstant<T : Any>(val constantValue: T) : KodiHolder()
 }

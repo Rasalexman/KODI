@@ -117,9 +117,9 @@ sealed class Optional<out T> {
 /**
  * high order immutable delegate wrapper
  */
-fun <T> immutableGetter(init: () -> T): IImmutableDelegate<T> = ImmutableDelegate(init)
+inline fun <reified T, reified R> R.immutableGetter(noinline init: () -> T): IImmutableDelegate<T> = ImmutableDelegate(init)
 
 /**
  * high order mutable delegate wrapper
  */
-fun <T> mutableGetter(init: () -> T): IMutableDelegate<T> = MutableDelegate(init)
+inline fun <reified T, reified R> R.mutableGetter(noinline init: () -> T): IMutableDelegate<T> = MutableDelegate(init)

@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'org.jetbrains.dokka-android'
 apply plugin: 'maven-publish'
@@ -11,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion MIN_VERSION
         targetSdkVersion TARGET_VERSION
-        versionCode 10202
-        versionName "1.2.2"
+        versionCode 10203
+        versionName "1.2.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

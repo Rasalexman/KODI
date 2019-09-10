@@ -33,6 +33,11 @@ interface IKodiModule : IKodi {
     var scope: KodiScopeWrapper
 
     /**
+     * Set of current module [KodiHolder]'s
+     */
+    val moduleHolders: MutableSet<String>
+
+    /**
      * Set scope for all bindings in module
      *
      * @param scopeWrapper - [KodiScopeWrapper] for module
@@ -51,8 +56,9 @@ interface IKodiModule : IKodi {
  */
 data class KodiModule(
         override val instanceInitializer: ModuleInitializer,
-        override var scope: KodiScopeWrapper = emptyScope()
-        ) : IKodiModule
+        override var scope: KodiScopeWrapper = emptyScope(),
+        override val moduleHolders: MutableSet<String> = mutableSetOf()
+) : IKodiModule
 
 /**
  * Kodi module implementation
