@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">KodiExample</string>
+    <string name="genres_title">Movie Genres</string>
 </resources>

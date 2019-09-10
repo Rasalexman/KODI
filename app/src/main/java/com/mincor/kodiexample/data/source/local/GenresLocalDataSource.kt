@@ -8,6 +8,6 @@ import com.mincor.kodiexample.providers.database.dao.IGenresDao
 class GenresLocalDataSource(
     private val genresDao: IGenresDao
 ) : IGenresLocalDataSource {
-    override suspend fun getGenresList(): SResult<List<GenreEntity>> = successResult(genresDao.getAll())
+    override suspend fun getGenresList(): SResult.Success<List<GenreEntity>> = successResult(genresDao.getAll())
     override suspend fun insertGenres(data: List<GenreEntity>) = genresDao.insertAll(data)
 }

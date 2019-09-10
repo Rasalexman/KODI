@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.mincor.kodiexample.BuildConfig
 import com.mincor.kodiexample.common.Consts
 import com.mincor.kodiexample.data.dto.IConvertableTo
-import com.mincor.kodiexample.data.model.ui.movies.MovieUI
+import com.mincor.kodiexample.presentation.movies.MovieUI
 
 @Entity
 data class MovieEntity(
@@ -33,19 +33,20 @@ data class MovieEntity(
 ) : IConvertableTo<MovieUI> {
     override fun convertTo(): MovieUI {
         return MovieUI(
-            id = id,
-            voteCount = voteCount,
-            isVideo = isVideo,
-            title = title,
-            popularity = popularity,
-            posterPath = posterPath,
-            originalLanguage = originalLanguage,
-            originalTitle = originalTitle,
-            genreIds = genreIds,
-            backdropPath = backdropPath,
-            releaseDate = Consts.UI_DATE_FORMATTER.format(releaseDate),
-            adult = adult,
-            overview = overview
+                id = id,
+                voteCount = voteCount,
+                voteAverage = voteAverage,
+                isVideo = isVideo,
+                title = title,
+                popularity = popularity,
+                posterPath = posterPath,
+                originalLanguage = originalLanguage,
+                originalTitle = originalTitle,
+                genreIds = genreIds,
+                backdropPath = backdropPath,
+                releaseDate = Consts.UI_DATE_FORMATTER.format(releaseDate),
+                adult = adult,
+                overview = overview
         )
     }
 

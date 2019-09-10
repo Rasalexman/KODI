@@ -2,20 +2,20 @@ package com.mincor.kodiexample.mvp.base.lifecycle
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.OnLifecycleEvent
-import com.mincor.kodiexample.mvp.base.BasePresenter
-import com.mincor.kodiexample.mvp.base.IBaseView
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-abstract class BaseLifecyclePresenter<V : IBaseView> : BasePresenter<V>(), IBaseLifecyclePresenter<V> {
+typealias StickyBlock<V, R> = V.(StickyContinuation<R>) -> Unit
+
+abstract class BasePresenter<V : IBaseView> : IBasePresenter<V> {
     override var view: V? = null
 
     private var viewLifecycle: Lifecycle? = null
     private val isViewResumed = AtomicBoolean(true)
     private val viewContinuations: MutableList<Continuation<V>> = mutableListOf()
-    private val stickyContinuations: MutableMap<StickyContinuation<*>, V.(StickyContinuation<*>) -> Unit> =
+    private val stickyContinuations: MutableMap<StickyContinuation<*>, StickyBlock<V, *>> =
         mutableMapOf()
     private var mustRestoreStickyContinuations: Boolean = false
 
@@ -31,20 +31,25 @@ abstract class BaseLifecyclePresenter<V : IBaseView> : BasePresenter<V>(), IBase
 
     @Synchronized
     override fun attachView(view: V, viewLifecycle: Lifecycle) {
-        this.attachView(view)
+        this.view = view
         this.viewLifecycle = viewLifecycle
         viewLifecycle.addObserver(this)
+        onViewAttached(view)
+    }
+
+    protected open fun onViewAttached(view: V) {
+        // Nothing to do here. This is an event handled by the subclasses.
     }
 
     @Synchronized
     @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
-    fun onViewStateChanged() {
+    protected fun onViewStateChanged() {
         isViewResumed.set(viewLifecycle?.currentState?.isAtLeast(Lifecycle.State.RESUMED) ?: false)
     }
 
     @Synchronized
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onViewReadyForContinuations() {
+    protected fun onViewReadyForContinuations() {
         val viewInstance = this.view
         if (viewInstance != null) {
             val viewContinuationsIterator = viewContinuations.listIterator()
@@ -63,7 +68,7 @@ abstract class BaseLifecyclePresenter<V : IBaseView> : BasePresenter<V>(), IBase
 
     @Synchronized
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onViewReadyForStickyContinuations() {
+    protected fun onViewReadyForStickyContinuations() {
         val viewInstance = this.view
         if (viewInstance != null) {
             if (mustRestoreStickyContinuations) {
@@ -84,8 +89,9 @@ abstract class BaseLifecyclePresenter<V : IBaseView> : BasePresenter<V>(), IBase
 
     @Synchronized
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onViewDestroyed() {
+    protected open fun onViewDestroyed() {
         view = null
+        this.viewLifecycle?.removeObserver(this)
         viewLifecycle = null
         mustRestoreStickyContinuations = true
     }
@@ -95,9 +101,9 @@ abstract class BaseLifecyclePresenter<V : IBaseView> : BasePresenter<V>(), IBase
     }
 
     @Synchronized
-    override fun addStickyContinuation(
+    private fun addStickyContinuation(
             continuation: StickyContinuation<*>,
-            block: V.(StickyContinuation<*>) -> Unit
+            block: StickyBlock<V, *>
     ) {
         stickyContinuations[continuation] = block
     }
@@ -121,11 +127,11 @@ abstract class BaseLifecyclePresenter<V : IBaseView> : BasePresenter<V>(), IBase
     @Suppress("UNCHECKED_CAST")
     suspend fun <ReturnType> V.stickySuspension(
             strategy: StickyStrategy = StickyStrategy.Many,
-            block: V.(StickyContinuation<ReturnType>) -> Unit
+            block: StickyBlock<V, ReturnType>
     ): ReturnType {
         return suspendCoroutine { continuation ->
             val stickyContinuation: StickyContinuation<ReturnType> =
-                StickyContinuation(continuation, this@BaseLifecyclePresenter, strategy)
+                StickyContinuation(continuation, this@BasePresenter, strategy)
             addStickyContinuation(stickyContinuation, block as V.(StickyContinuation<*>) -> Unit)
             block(stickyContinuation).also {
                 stickyContinuation.checkStickyState()

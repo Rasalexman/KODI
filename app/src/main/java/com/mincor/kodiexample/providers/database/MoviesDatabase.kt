@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import com.mincor.kodiexample.data.model.local.GenreEntity
 import com.mincor.kodiexample.data.model.local.MovieEntity
 import com.mincor.kodiexample.providers.database.converters.FromListOfIntToStringConverter
+import com.mincor.kodiexample.providers.database.converters.FromListOfStringsToStringConverter
 import com.mincor.kodiexample.providers.database.dao.IGenresDao
 import com.mincor.kodiexample.providers.database.dao.IMoviesDao
 
@@ -13,7 +14,7 @@ import com.mincor.kodiexample.providers.database.dao.IMoviesDao
     GenreEntity::class,
     MovieEntity::class
 ], version = 1)
-@TypeConverters(FromListOfIntToStringConverter::class)
+@TypeConverters(FromListOfIntToStringConverter::class, FromListOfStringsToStringConverter::class)
 abstract class MoviesDatabase : RoomDatabase() {
     abstract fun getGenresDao(): IGenresDao
     abstract fun getMoviesDao(): IMoviesDao

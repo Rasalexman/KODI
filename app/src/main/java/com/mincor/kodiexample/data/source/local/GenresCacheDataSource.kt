@@ -9,7 +9,9 @@ class GenresCacheDataSource : IGenresCacheDataSource {
     private val memoryGenresList = mutableListOf<GenreEntity>()
 
     override suspend fun putGenresInCache(genresList: List<GenreEntity>) {
-        if(memoryGenresList.isEmpty()) memoryGenresList.addAll(genresList)
+        if (memoryGenresList.isEmpty()) {
+            memoryGenresList.addAll(genresList)
+        }
     }
 
     override suspend fun getGenresFromCache(): SResult.Success<List<GenreEntity>> {

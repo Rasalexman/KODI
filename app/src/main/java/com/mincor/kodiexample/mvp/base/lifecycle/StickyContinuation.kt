@@ -7,7 +7,7 @@ import kotlin.coroutines.Continuation
  */
 data class StickyContinuation<ReturnType> constructor(
         private val continuation: Continuation<ReturnType>,
-        private var presenter: IBaseLifecyclePresenter<*>?,
+        private var presenter: IBasePresenter<*>?,
         val strategy: StickyStrategy = StickyStrategy.Many
 ) : Continuation<ReturnType> by continuation {
 

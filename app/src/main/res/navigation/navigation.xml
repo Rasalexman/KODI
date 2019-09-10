@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation"
+    app:startDestination="@id/genresFragment">
+
+    <fragment
+        android:id="@+id/genresFragment"
+        android:name="com.mincor.kodiexample.presentation.genres.GenresFragment"
+        android:label="fragment_genres"
+        tools:layout="@layout/fragment_appbar_recycler" >
+        <action
+            android:id="@+id/action_genresFragment_to_moviesFragment"
+            app:destination="@id/moviesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/moviesFragment"
+        android:name="com.mincor.kodiexample.presentation.movies.MoviesFragment"
+        android:label="fragment_movies"
+        tools:layout="@layout/fragment_movies" >
+        <argument
+            android:name="genre_id"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="genre_name"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_moviesFragment_to_genresFragment"
+            app:destination="@id/genresFragment"
+            app:popUpTo="@id/genresFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+</navigation>

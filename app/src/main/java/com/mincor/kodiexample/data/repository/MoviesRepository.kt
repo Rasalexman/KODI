@@ -1,11 +1,12 @@
 package com.mincor.kodiexample.data.repository
 
-import com.mincor.kodiexample.data.source.local.IMoviesLocalDataSource
-import com.mincor.kodiexample.data.source.remote.IMoviesRemoteDataSource
+import com.mincor.kodi.core.applyIf
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.mapListTo
 import com.mincor.kodiexample.data.dto.mapTo
 import com.mincor.kodiexample.data.model.local.MovieEntity
+import com.mincor.kodiexample.data.source.local.IMoviesLocalDataSource
+import com.mincor.kodiexample.data.source.remote.IMoviesRemoteDataSource
 
 class MoviesRepository(
         private val localDataSource: IMoviesLocalDataSource,
@@ -16,22 +17,24 @@ class MoviesRepository(
         private set
 
     suspend fun getLocalMovies(genreId: Int): SResult<List<MovieEntity>> =
-        localDataSource
-            .getAll(genreId)
-            .apply {
-                hasLocalResults = this.data.isNotEmpty()
-            }
+            localDataSource
+                    .getAll(genreId)
+                    .apply {
+                        hasLocalResults = this.data.isNotEmpty()
+                    }.applyIf(hasLocalResults) {
+                        remoteDataSource.upPage()
+                    }
 
     suspend fun getRemoteMovies(genreId: Int): SResult<List<MovieEntity>> {
         return remoteDataSource
-            .getByGenreId(genreId)
-            .mapListTo()
+                .getByGenreId(genreId)
+                .mapListTo()
     }
 
     suspend fun getNewRemoteMovies(genreId: Int): SResult<List<MovieEntity>> {
         return remoteDataSource
-            .getNewMoviesByGenreId(genreId)
-            .mapListTo()
+                .getNewMoviesByGenreId(genreId)
+                .mapListTo()
     }
 
     suspend fun saveMovies(data: List<MovieEntity>) {
@@ -42,10 +45,10 @@ class MoviesRepository(
     suspend fun saveMovie(data: MovieEntity) = localDataSource.insert(data)
 
     suspend fun getLocalMovieById(movieId: Int): SResult<MovieEntity> =
-        localDataSource.getById(movieId)
+            localDataSource.getById(movieId)
 
     suspend fun getRemoteMovieById(movieId: Int): SResult<MovieEntity> =
-        remoteDataSource.getMovieDetails(movieId).mapTo()
+            remoteDataSource.getMovieDetails(movieId).mapTo()
 
     fun clear() {
         hasLocalResults = false

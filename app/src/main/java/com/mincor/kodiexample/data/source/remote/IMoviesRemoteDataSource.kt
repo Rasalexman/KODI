@@ -12,4 +12,5 @@ interface IMoviesRemoteDataSource {
     suspend fun getNewMoviesByGenreId(genreId: Int): SResult<List<MovieModel>>
 
     fun clearPage()
+    fun upPage()
 }

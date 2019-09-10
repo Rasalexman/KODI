@@ -31,21 +31,13 @@ class MoviesRemoteDataSource(
         } else emptyResult()
 
     private suspend fun requestHandler(genreId: Int, page: Int, needChangePage: Boolean = true) = mutex.withLock {
-        when (val result = moviesApi.getMoviesListByGenreId(genreId, page).awaitResult()) {
-            is Result.Ok -> {
-                log { "HERE IS A RESULT OK ${result.value}" }
-                val resultValue = result.value
+        moviesApi.getMoviesListByGenreId(genreId, page).run {
+            this.body()?.let { resultValue ->
                 if(needChangePage) changePage(resultValue)
                 successResult(resultValue.results)
-            }
-            is Result.Error -> {
-                log { "THERE IS AN ERROR" }
-                errorResult(result.response.code(), result.exception.message())
-            }
-            is Result.Exception -> {
-                log { "THERE IS AN EXCEPTION" }
-                emptyResult()
-            }
+            } ?: this.errorBody()?.let {
+                errorResult(this.code(), this.message())
+            } ?: emptyResult()
         }
     }
 
@@ -68,6 +60,10 @@ class MoviesRemoteDataSource(
                 emptyResult()
             }
         }
+    }
+
+    override fun upPage() {
+        currentPage = 2
     }
 
     /**

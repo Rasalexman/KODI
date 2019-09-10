@@ -1,4 +1,4 @@
-package com.mincor.kodiexample.data.model.ui.base
+package com.mincor.kodiexample.presentation.base
 
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem

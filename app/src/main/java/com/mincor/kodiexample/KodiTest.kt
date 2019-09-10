@@ -1,9 +1,7 @@
 package com.mincor.kodiexample
 
 import com.mincor.kodi.core.*
-import com.mincor.kodireflect.ext.className
 import java.util.*
-import kotlin.contracts.ExperimentalContracts
 
 const val SOME_CONSTANT_TAG = "SOME_CONSTANT_TAG"
 
@@ -37,7 +35,7 @@ fun main(args: Array<String>) {
         // call immutable variable
         providerImmutableLazyInstance.printName()
         // call mutable variable
-        providerMutableLazyInstance.className()
+        providerMutableLazyInstance.printName()
         providerMutableLazyInstance = ProviderClass("Another_id", "another name")
         //call singleton class as lazy
         injectableSinge.providerInstance.printName()

@@ -4,7 +4,7 @@ import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.emptyResult
 import com.mincor.kodiexample.data.dto.mapListTo
 import com.mincor.kodiexample.data.model.local.MovieEntity
-import com.mincor.kodiexample.data.model.ui.movies.MovieUI
+import com.mincor.kodiexample.presentation.movies.MovieUI
 import com.mincor.kodiexample.data.repository.MoviesRepository
 
 class GetNewMoviesUseCase (

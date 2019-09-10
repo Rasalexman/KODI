@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.mincor.kodiexample.mvp.base.IBasePresenter
-import com.mincor.kodiexample.mvp.base.IBaseView
+import com.mincor.kodiexample.mvp.base.lifecycle.IBasePresenter
+import com.mincor.kodiexample.mvp.base.lifecycle.IBaseView
 
 abstract class BaseDelegationFragment<D> : Fragment(), IBaseView
         where D : IBaseDelegate<IBasePresenter<out IBaseView>> {
@@ -32,7 +32,7 @@ abstract class BaseDelegationFragment<D> : Fragment(), IBaseView
     }
 
     override fun onDestroyView() {
-        delegate.onViewDestroyed()
+        delegate.onViewDestroy()
         super.onDestroyView()
     }
 }
