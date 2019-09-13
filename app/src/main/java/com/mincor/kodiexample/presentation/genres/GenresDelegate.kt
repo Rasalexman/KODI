@@ -40,6 +40,6 @@ class GenresDelegate(presenter: GenresContract.IPresenter) :
     }
 
     override val fragment: GenresFragment?
-            get() = view as? GenresFragment
+            get() = unsafeView as? GenresFragment
 
 }

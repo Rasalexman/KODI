@@ -11,7 +11,7 @@ class MoviesDelegate(presenter: MoviesContract.IPresenter) :
     override val recyclerViewId: Int = R.id.recyclerView
 
     override val fragment: MoviesFragment?
-        get() = view as? MoviesFragment
+        get() = unsafeView as? MoviesFragment
 
     private var genreId: Int? = null
 

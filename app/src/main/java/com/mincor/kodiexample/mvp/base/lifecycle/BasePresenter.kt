@@ -8,30 +8,31 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 typealias StickyBlock<V, R> = V.(StickyContinuation<R>) -> Unit
+typealias ViewContinuations<V> = MutableList<Continuation<V>>
+typealias StickyContinuations<V> = MutableMap<StickyContinuation<*>, StickyBlock<V, *>>
 
 abstract class BasePresenter<V : IBaseView> : IBasePresenter<V> {
-    override var view: V? = null
+    override var unsafeView: V? = null
 
     private var viewLifecycle: Lifecycle? = null
     private val isViewResumed = AtomicBoolean(true)
-    private val viewContinuations: MutableList<Continuation<V>> = mutableListOf()
-    private val stickyContinuations: MutableMap<StickyContinuation<*>, StickyBlock<V, *>> =
-        mutableMapOf()
+    private val viewContinuations: ViewContinuations<V> = mutableListOf()
+    private val stickyContinuations: StickyContinuations<V> = mutableMapOf()
     private var mustRestoreStickyContinuations: Boolean = false
 
     @Synchronized
     suspend fun view(): V {
         if (isViewResumed.get()) {
-            view?.let { return it }
+            unsafeView?.let { return it }
         }
 
-        // We wait until the view is ready to be used again
+        // We wait until the unsafeView is ready to be used again
         return suspendCoroutine { continuation -> viewContinuations.add(continuation) }
     }
 
     @Synchronized
     override fun attachView(view: V, viewLifecycle: Lifecycle) {
-        this.view = view
+        this.unsafeView = view
         this.viewLifecycle = viewLifecycle
         viewLifecycle.addObserver(this)
         onViewAttached(view)
@@ -50,14 +51,14 @@ abstract class BasePresenter<V : IBaseView> : IBasePresenter<V> {
     @Synchronized
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     protected fun onViewReadyForContinuations() {
-        val viewInstance = this.view
+        val viewInstance = this.unsafeView
         if (viewInstance != null) {
             val viewContinuationsIterator = viewContinuations.listIterator()
 
             while (viewContinuationsIterator.hasNext()) {
                 val continuation = viewContinuationsIterator.next()
 
-                // The view was not ready when the presenter needed it earlier,
+                // The unsafeView was not ready when the presenter needed it earlier,
                 // but now it's ready again so the presenter can continue
                 // interacting with it.
                 viewContinuationsIterator.remove()
@@ -69,7 +70,7 @@ abstract class BasePresenter<V : IBaseView> : IBasePresenter<V> {
     @Synchronized
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     protected fun onViewReadyForStickyContinuations() {
-        val viewInstance = this.view
+        val viewInstance = this.unsafeView
         if (viewInstance != null) {
             if (mustRestoreStickyContinuations) {
                 mustRestoreStickyContinuations = false
@@ -90,7 +91,7 @@ abstract class BasePresenter<V : IBaseView> : IBasePresenter<V> {
     @Synchronized
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     protected open fun onViewDestroyed() {
-        view = null
+        unsafeView = null
         this.viewLifecycle?.removeObserver(this)
         viewLifecycle = null
         mustRestoreStickyContinuations = true
@@ -117,12 +118,12 @@ abstract class BasePresenter<V : IBaseView> : IBasePresenter<V> {
     }
 
     /**
-     * Executes the given block on the view. The block is executed again
-     * every time the view instance changes and the new view is resumed.
+     * Executes the given block on the unsafeView. The block is executed again
+     * every time the unsafeView instance changes and the new unsafeView is resumed.
      * This, for example, is useful for dialogs that need to be persisted
      * across orientation changes.
      *
-     * @param block code that has to be executed on the view
+     * @param block code that has to be executed on the unsafeView
      */
     @Suppress("UNCHECKED_CAST")
     suspend fun <ReturnType> V.stickySuspension(
@@ -131,7 +132,7 @@ abstract class BasePresenter<V : IBaseView> : IBasePresenter<V> {
     ): ReturnType {
         return suspendCoroutine { continuation ->
             val stickyContinuation: StickyContinuation<ReturnType> =
-                StickyContinuation(continuation, this@BasePresenter, strategy)
+                    StickyContinuation(continuation, this@BasePresenter, strategy)
             addStickyContinuation(stickyContinuation, block as V.(StickyContinuation<*>) -> Unit)
             block(stickyContinuation).also {
                 stickyContinuation.checkStickyState()

@@ -114,18 +114,22 @@ inline fun <reified T : Any> IKodi.holder(tag: String? = null): KodiHolder {
  * Lazy immutable property initializer wrapper for injection
  * Example: `val someValue by immutableInstance<ISomeValueClass>()`
  * It cannot be change
+ *
+ * @param tag - there is an optional tag that we pass to key into dependency graph
  */
-inline fun <reified T : Any> IKodi.immutableInstance(): IImmutableDelegate<T> = immutableGetter {
-    instance<T>()
+inline fun <reified T : Any> IKodi.immutableInstance(tag: String? = null): IImmutableDelegate<T> = immutableGetter {
+    instance<T>(tag)
 }
 
 /**
  * Lazy mutable property initializer wrapper for injection
  * Example: `var someValue by mutableInstance<ISomeValueClass>()`
  * It can be change `someValue = object : ISomeValueClass {}`
+ *
+ * @param tag - there is an optional tag that we pass to key into dependency graph
  */
-inline fun <reified T : Any> IKodi.mutableInstance(): IMutableDelegate<T> = mutableGetter {
-    instance<T>()
+inline fun <reified T : Any> IKodi.mutableInstance(tag: String? = null): IMutableDelegate<T> = mutableGetter {
+    instance<T>(tag)
 }
 
 /**
