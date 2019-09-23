@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.mincor.kodiexample.presentation.details.DetailsFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolBarView"
+            app:title="@string/title_details"
+            app:titleTextColor="@color/text_white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ProgressBar
+        android:id="@+id/contentProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:indeterminateDrawable="@drawable/spinner_ring"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"/>
+
+    <ScrollView
+        android:id="@+id/detailsContentLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent">
+
+            <ImageView
+                android:id="@+id/backdropImageView"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/image_backdrop_height"
+                android:scaleType="centerCrop"
+                android:background="@color/gray_alpha_20"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <com.mincor.kodiexample.presentation.layouts.MovieImageView
+                android:id="@+id/posterImageView"
+                android:layout_width="@dimen/image_poster_width"
+                android:layout_height="@dimen/image_poster_height"
+                android:layout_marginStart="@dimen/size_32dp"
+                android:layout_marginTop="@dimen/size_16dp"
+                android:scaleType="centerCrop"
+                android:background="@color/gray_alpha_60"
+                app:widthProc="0.25"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/backdropImageView" />
+
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/gray_alpha_60"
+                android:paddingTop="@dimen/size_6dp"
+                android:paddingStart="@dimen/size_8dp"
+                android:paddingEnd="@dimen/size_8dp"
+                android:paddingBottom="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:layout_marginEnd="@dimen/size_16dp"
+                android:textSize="@dimen/text_size_18sp"
+                android:textColor="@color/text_white"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/posterImageView"
+                app:layout_constraintTop_toTopOf="@+id/posterImageView"
+                tools:text="MovieImageView Title"/>
+
+            <TextView
+                android:id="@+id/releaseTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/gray_alpha_60"
+                android:paddingStart="@dimen/size_8dp"
+                android:paddingEnd="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:layout_marginEnd="@dimen/size_16dp"
+                android:textSize="@dimen/text_size_14sp"
+                android:textColor="@color/text_white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/posterImageView"
+                app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+                tools:text="Release Date: 22.09.2019"/>
+
+            <TextView
+                android:id="@+id/ratingTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/gray_alpha_60"
+                android:paddingStart="@dimen/size_8dp"
+                android:paddingEnd="@dimen/size_8dp"
+                android:paddingBottom="@dimen/size_8dp"
+                android:layout_marginStart="@dimen/size_16dp"
+                android:layout_marginEnd="@dimen/size_16dp"
+                android:textSize="@dimen/text_size_14sp"
+                android:textColor="@color/text_white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/posterImageView"
+                app:layout_constraintTop_toBottomOf="@+id/releaseTextView"
+                tools:text="rating: 7.7"/>
+
+
+            <TextView
+                android:id="@+id/overviewTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/gray_alpha_60"
+                android:padding="@dimen/size_8dp"
+                android:layout_margin="@dimen/size_16dp"
+                android:textSize="@dimen/text_size_16sp"
+                android:textColor="@color/text_white"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/posterImageView"
+                tools:text="MovieImageView Title"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </ScrollView>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

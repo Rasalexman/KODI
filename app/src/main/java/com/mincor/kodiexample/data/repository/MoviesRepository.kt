@@ -48,7 +48,9 @@ class MoviesRepository(
             localDataSource.getById(movieId)
 
     suspend fun getRemoteMovieById(movieId: Int): SResult<MovieEntity> =
-            remoteDataSource.getMovieDetails(movieId).mapTo()
+            remoteDataSource
+                    .getMovieDetails(movieId)
+                    .mapTo()
 
     fun clear() {
         hasLocalResults = false

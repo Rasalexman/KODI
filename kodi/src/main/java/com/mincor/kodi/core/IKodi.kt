@@ -89,11 +89,7 @@ fun IKodi.unbindScope(scopeTagWrapper: KodiScopeWrapper): Boolean {
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 inline fun <reified T : Any> IKodi.instance(tag: String? = null): T {
-    return when (val holder = holder<T>(tag)) {
-        is KodiHolder.KodiSingle<*> -> holder.get() as T
-        is KodiHolder.KodiProvider<*> -> this.(holder.providerLiteral)() as T
-        is KodiHolder.KodiConstant<*> -> holder.constantValue as T
-    }
+    return holder<T>(tag).collect(this)
 }
 
 /**
@@ -144,4 +140,43 @@ inline fun <reified T : Exception> throwException(message: String): Nothing {
         else -> NoSuchElementException(message)
     }
     throw exception
+}
+
+/**
+ * Extension function to IKodi implementation to get reference to Generic<T>
+ * @param clazz - [Class]::class.java
+ */
+@CanThrowException("There is no KodiHolder instance in dependency graph")
+fun<T : Any> IKodi.instanceWith(clazz: Class<T>): T {
+    val tagToWrap = clazz.toString()
+    return Kodi.createOrGet(tagToWrap.asTag()) {
+        throwException<IllegalAccessException>("There is no tag $tagToWrap in dependency graph")
+    }.collect(this)
+}
+
+/**
+ * Extension function to IKodi implementation to get reference to Generic<T>
+ * @param tag - String tag
+ */
+@CanThrowException("There is no KodiHolder instance in dependency graph")
+fun<T : Any> IKodi.instanceWith(tag: String): T {
+    return Kodi.createOrGet(tag.asTag()) {
+        throwException<IllegalAccessException>("There is no tag $tag in dependency graph")
+    }.collect(this)
+}
+
+/**
+ * Collect instance from [KodiHolder]
+ * @param kodiImpl - implemented instance of [IKodi]
+ */
+@Suppress("UNCHECKED_CAST")
+@CanThrowException("Cannot cast instance from KodiHolder to T")
+fun<T : Any> KodiHolder.collect(kodiImpl: IKodi): T {
+    return when (this) {
+        is KodiHolder.KodiSingle<*> -> get()
+        is KodiHolder.KodiProvider<*> -> providerLiteral(kodiImpl)
+        is KodiHolder.KodiConstant<*> -> constantValue
+    }.run {
+        (this as? T) ?: throwException<ClassCastException>("Cannot cast instance $this to T")
+    }
 }

@@ -5,16 +5,16 @@ import com.mincor.kodi.core.immutableInstance
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.movies.GetMoviesUseCase
 import com.mincor.kodiexample.domain.usecases.movies.GetNextMoviesUseCase
-import com.mincor.kodiexample.mvp.base.lifecycle.BasePresenter
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
 import com.rasalexman.coroutinesmanager.SuspendCatch
 import com.rasalexman.coroutinesmanager.launchOnUITryCatch
 
 class MoviesPresenter(
         coroutinesManager: ICoroutinesManager
-) : BasePresenter<MoviesContract.IView>(),
-        MoviesContract.IPresenter, IKodi, ICoroutinesManager by coroutinesManager {
+) : MoviesContract.IPresenter, IKodi, ICoroutinesManager by coroutinesManager {
 
+    override val mustRestoreSticky: Boolean
+        get() = true
     private val getMoviesUseCase: GetMoviesUseCase by immutableInstance()
     private val getNextMoviesUseCase: GetNextMoviesUseCase by immutableInstance()
 
@@ -23,24 +23,37 @@ class MoviesPresenter(
         view().hideLoading()
     }
 
-    override fun getMoviesByGenreId(genreId: Int?) = launchOnUITryCatch(
+    override var genreId: Int = 0
+
+    override fun onViewCreated(view: MoviesContract.IView) = launchOnUITryCatch(
             tryBlock = {
                 view().showLoading()
-                when(val result = getMoviesUseCase.execute(genreId)) {
-                    is SResult.Success -> view().showItems(result.data)
-                    is SResult.Error -> view().showError(result.message)
+                val result = getMoviesUseCase.execute(genreId)
+                view().sticky {
+                    when (result) {
+                        is SResult.Success -> showItems(result.data)
+                        is SResult.Error -> showError(result.message)
+                    }
                 }
             },
             catchBlock = catchBlock
     )
 
-    override fun getNextMoviesByGenreId(genreId: Int?) = launchOnUITryCatch(
+    override fun getNextMoviesByGenreId() = launchOnUITryCatch(
             tryBlock = {
                 view().showLoading()
-                when(val result = getNextMoviesUseCase.execute(genreId)) {
-                    is SResult.Success -> view().addItems(result.data)
-                    is SResult.Error -> view().showError(result.message)
+                val result = getNextMoviesUseCase.execute(genreId)
+                view().singleSticky {
+                    when (result) {
+                        is SResult.Success -> addItems(result.data)
+                        is SResult.Error -> showError(result.message)
+                    }
                 }
             }, catchBlock = catchBlock
     )
+
+    override fun onViewDestroyed() {
+        genreId = 0
+        cleanup()
+    }
 }

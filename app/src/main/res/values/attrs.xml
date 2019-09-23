@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MovieImageView">
+        <attr name="widthProc" format="float"/>
+        <attr name="heightProc" format="float"/>
+    </declare-styleable>
+</resources>

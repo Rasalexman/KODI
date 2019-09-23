@@ -4,14 +4,15 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'org.jetbrains.dokka-android'
 apply plugin: 'maven-publish'
+apply from: 'keystore.gradle'//the file, containing the bintray API key
 
 android {
     compileSdkVersion COMPILE_VERSION
     defaultConfig {
         minSdkVersion MIN_VERSION
         targetSdkVersion TARGET_VERSION
-        versionCode 10100
-        versionName "1.1.0"
+        versionCode libReflectCode
+        versionName libReflectVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -21,6 +22,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 
 }

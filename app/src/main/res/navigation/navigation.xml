@@ -12,14 +12,15 @@
         tools:layout="@layout/fragment_appbar_recycler" >
         <action
             android:id="@+id/action_genresFragment_to_moviesFragment"
-            app:destination="@id/moviesFragment" />
+            app:destination="@id/moviesFragment"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
         android:id="@+id/moviesFragment"
         android:name="com.mincor.kodiexample.presentation.movies.MoviesFragment"
         android:label="fragment_movies"
-        tools:layout="@layout/fragment_movies" >
+        tools:layout="@layout/fragment_appbar_recycler" >
         <argument
             android:name="genre_id"
             app:argType="integer"
@@ -32,5 +33,20 @@
             app:destination="@id/genresFragment"
             app:popUpTo="@id/genresFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_moviesFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
+
+    <fragment android:id="@+id/detailsFragment"
+        android:name="com.mincor.kodiexample.presentation.details.DetailsFragment"
+        android:label="fragment_details"
+        tools:layout="@layout/fragment_details">
+
+        <argument
+            android:name="movie_id"
+            app:argType="integer"
+            android:defaultValue="0" />
+
     </fragment>
 </navigation>

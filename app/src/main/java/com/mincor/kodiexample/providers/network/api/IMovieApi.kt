@@ -33,5 +33,5 @@ interface IMovieApi {
     ): Response<GetMoviesByGenreIdResponse>
 
     @GET("movie/{movie_id}")
-    suspend fun getMovieDetails(@Path("movie_id") movieId: Int): Call<MovieModel>
+    suspend fun getMovieDetails(@Path("movie_id") movieId: Int): Response<MovieModel>
 }

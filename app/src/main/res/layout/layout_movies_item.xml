@@ -23,12 +23,12 @@
             android:visibility="gone"
             android:indeterminateDrawable="@drawable/spinner_ring"/>
 
-
         <com.mincor.kodiexample.presentation.layouts.MovieImageView
             android:id="@+id/movieImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
+            app:heightProc="0.4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

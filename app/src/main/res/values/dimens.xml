@@ -10,4 +10,11 @@
     <dimen name="size_4dp">4dp</dimen>
     <dimen name="size_8dp">8dp</dimen>
     <dimen name="size_16dp">16dp</dimen>
+    <dimen name="size_32dp">32dp</dimen>
+
+    <dimen name="image_backdrop_height">140dp</dimen>
+
+    <dimen name="image_poster_width">80dp</dimen>
+    <dimen name="image_poster_height">100dp</dimen>
+    <dimen name="size_6dp">6dp</dimen>
 </resources>

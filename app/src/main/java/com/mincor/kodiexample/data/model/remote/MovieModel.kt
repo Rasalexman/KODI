@@ -38,7 +38,7 @@ data class MovieModel(
             originalTitle = original_title.orEmpty(),
             genreIds = genre_ids ?: emptyList(),
             backdropPath = backdrop_path.orEmpty(),
-            releaseDate = release_date?.let { Consts.MODEL_DATE_FORMATTER.parse(release_date).time } ?: 0L,
+            releaseDate = release_date?.let { Consts.MODEL_DATE_FORMATTER.parse(release_date)?.time } ?: 0L,
             adult = adult ?: false,
             overview = overview.orEmpty(),
             revenue = revenue ?: 0,

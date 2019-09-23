@@ -71,7 +71,7 @@ data class MovieUI(
                 overviewTextView.clear()
                 voteAverageTextView.clear()
                 movieImageView.clear()
-                imageProgressBar.hide(true)
+                imageProgressBar.hide()
             }
         }
 
@@ -80,7 +80,7 @@ data class MovieUI(
                 voteAverageTextView.show()
                 voteAverageTextView.text = item.voteAverage.toString()
             } else {
-                voteAverageTextView.hide(true)
+                voteAverageTextView.hide()
             }
         }
     }

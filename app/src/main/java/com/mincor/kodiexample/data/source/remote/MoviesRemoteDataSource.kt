@@ -1,6 +1,5 @@
 package com.mincor.kodiexample.data.source.remote
 
-import com.mincor.kodiexample.activity.log
 import com.mincor.kodiexample.common.Consts
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.emptyResult
@@ -11,8 +10,6 @@ import com.mincor.kodiexample.providers.network.api.IMovieApi
 import com.mincor.kodiexample.providers.network.responses.GetMoviesByGenreIdResponse
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import ru.gildor.coroutines.retrofit.Result
-import ru.gildor.coroutines.retrofit.awaitResult
 
 class MoviesRemoteDataSource(
     private val moviesApi: IMovieApi
@@ -46,19 +43,12 @@ class MoviesRemoteDataSource(
     }
 
     override suspend fun getMovieDetails(movieId: Int): SResult<MovieModel> {
-        return when(val result = moviesApi.getMovieDetails(movieId).awaitResult()) {
-            is Result.Ok -> {
-                log { "HERE IS A RESULT OK ${result.value}" }
-                successResult(result.value)
-            }
-            is Result.Error -> {
-                log { "THERE IS AN ERROR" }
-                errorResult(result.response.code(), result.exception.message())
-            }
-            is Result.Exception -> {
-                log { "THERE IS AN EXCEPTION" }
-                emptyResult()
-            }
+        return moviesApi.getMovieDetails(movieId).run {
+            this.body()?.let { resultValue ->
+                successResult(resultValue)
+            } ?: this.errorBody()?.let {
+                errorResult(this.code(), this.message())
+            } ?: emptyResult()
         }
     }
 

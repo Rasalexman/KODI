@@ -60,7 +60,6 @@ val useCasesModule = kodiModule {
     bind<GetMoviesUseCase>() with provider {
         GetMoviesUseCase(
             instance(),
-            instance(),
             instance()
         )
     }
