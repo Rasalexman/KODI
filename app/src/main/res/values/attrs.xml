@@ -3,5 +3,17 @@
     <declare-styleable name="MovieImageView">
         <attr name="widthProc" format="float"/>
         <attr name="heightProc" format="float"/>
+        <attr name="widthAspect" format="string">
+            <enum name="fourToThree" value="0" />
+            <enum name="threeToFour" value="1" />
+            <enum name="sixteenToNine" value="2" />
+            <enum name="nineToSixteen" value="3" />
+        </attr>
+        <attr name="heightAspect" format="string">
+            <enum name="fourToThree" value="0" />
+            <enum name="threeToFour" value="1" />
+            <enum name="sixteenToNine" value="2" />
+            <enum name="nineToSixteen" value="3" />
+        </attr>
     </declare-styleable>
 </resources>
