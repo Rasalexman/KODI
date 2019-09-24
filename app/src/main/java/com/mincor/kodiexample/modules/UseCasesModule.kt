@@ -1,14 +1,12 @@
 package com.mincor.kodiexample.modules
 
-import com.mincor.kodi.core.bind
-import com.mincor.kodi.core.instance
-import com.mincor.kodi.core.kodiModule
-import com.mincor.kodi.core.provider
+import com.mincor.kodi.core.*
 import com.mincor.kodiexample.domain.usecases.details.GetLocalDetailsUseCase
 import com.mincor.kodiexample.domain.usecases.details.GetRemoteDetailsUseCase
 import com.mincor.kodiexample.domain.usecases.genres.GetGenresUseCase
 import com.mincor.kodiexample.domain.usecases.genres.GetLocalGenresUseCase
 import com.mincor.kodiexample.domain.usecases.genres.GetRemoteGenresUseCase
+import com.mincor.kodiexample.domain.usecases.genres.IGenresOutUseCase
 import com.mincor.kodiexample.domain.usecases.movies.*
 
 val useCasesModule = kodiModule {
@@ -51,13 +49,13 @@ val useCasesModule = kodiModule {
     }
 
     //---- Combined Use-cases
-    bind<GetGenresUseCase>() with provider {
+    bindType<IGenresOutUseCase, GetGenresUseCase>() with provider {
         GetGenresUseCase(
             instance(),
             instance()
         )
     }
-    bind<GetMoviesUseCase>() with provider {
+    bindType<IGetMoviesInOutUseCase, GetMoviesUseCase>() with provider {
         GetMoviesUseCase(
             instance(),
             instance()

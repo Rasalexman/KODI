@@ -22,7 +22,7 @@ class MainApplication : Application() {
         bind<IAsyncTasksManager>() with provider { AsyncTasksManager() }
 
 
-        import(kodiAndroidXModule)
+        //import(kodiAndroidXModule)
         import(databaseModule)
         import(networkModule)
         import(imageModule)
@@ -38,5 +38,12 @@ class MainApplication : Application() {
 
         if(BuildConfig.DEBUG) CoilLogger.setEnabled(false)
         Coil.setDefaultImageLoader(kodi { instance<ImageLoader>() })
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        kodi {
+            unbindAll()
+        }
     }
 }

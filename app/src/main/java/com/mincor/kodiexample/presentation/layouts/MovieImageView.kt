@@ -8,8 +8,8 @@ import com.mincor.kodiexample.R
 
 class MovieImageView : ImageView {
 
-    private var heightProc: Float = 1f
-    private var widthProc: Float = 1f
+    private var heightProc: Float = DEFAULT_VALUE
+    private var widthProc: Float = DEFAULT_VALUE
 
     private var heightAspect: String = ""
     private var widthAspect: String = ""
@@ -29,8 +29,8 @@ class MovieImageView : ImageView {
         }
 
         val ta = context.obtainStyledAttributes(set, R.styleable.MovieImageView)
-        widthProc = ta.getFloat(R.styleable.MovieImageView_widthProc, 1f)
-        heightProc = ta.getFloat(R.styleable.MovieImageView_heightProc, 1f)
+        widthProc = ta.getFloat(R.styleable.MovieImageView_widthProc, DEFAULT_VALUE)
+        heightProc = ta.getFloat(R.styleable.MovieImageView_heightProc, DEFAULT_VALUE)
 
         widthAspect = ta.getString(R.styleable.MovieImageView_widthAspect) ?: ASPECT_4_3
         heightAspect = ta.getString(R.styleable.MovieImageView_heightAspect) ?: ASPECT_4_3
@@ -43,36 +43,36 @@ class MovieImageView : ImageView {
         when {
             ///-------> HEIGHT ASPECT
             heightAspect == ASPECT_4_3 -> {
-                imageWidth = (context.resources.displayMetrics.widthPixels * widthProc).toInt()
+                imageWidth = getWidthByDisplay(widthMeasureSpec)
                 imageHeight = (imageWidth * 4) / 3
             }
             heightAspect == ASPECT_3_4 -> {
-                imageWidth = (context.resources.displayMetrics.widthPixels * widthProc).toInt()
+                imageWidth = getWidthByDisplay(widthMeasureSpec)
                 imageHeight = (imageWidth * 3) / 4
             }
             heightAspect == ASPECT_16_9 -> {
-                imageWidth = (context.resources.displayMetrics.widthPixels * widthProc).toInt()
+                imageWidth = getWidthByDisplay(widthMeasureSpec)
                 imageHeight = (imageWidth * 16) / 9
             }
             heightAspect == ASPECT_9_16 -> {
-                imageWidth = (context.resources.displayMetrics.widthPixels * widthProc).toInt()
+                imageWidth = getWidthByDisplay(widthMeasureSpec)
                 imageHeight = (imageWidth * 9) / 16
             }
             ////-----> WIDTH ASPECT
             widthAspect == ASPECT_4_3 -> {
-                imageHeight = (context.resources.displayMetrics.heightPixels * heightProc).toInt()
+                imageHeight = getHeightByDisplay(heightMeasureSpec)
                 imageWidth = (imageHeight * 4) / 3
             }
             widthAspect == ASPECT_3_4 -> {
-                imageHeight = (context.resources.displayMetrics.heightPixels * heightProc).toInt()
+                imageHeight = getHeightByDisplay(heightMeasureSpec)
                 imageWidth = (imageHeight * 3) / 4
             }
             widthAspect == ASPECT_16_9 -> {
-                imageHeight = (context.resources.displayMetrics.heightPixels * heightProc).toInt()
+                imageHeight = getHeightByDisplay(heightMeasureSpec)
                 imageWidth = (imageHeight * 16) / 9
             }
             widthAspect == ASPECT_9_16 -> {
-                imageHeight = (context.resources.displayMetrics.heightPixels * heightProc).toInt()
+                imageHeight = getHeightByDisplay(heightMeasureSpec)
                 imageWidth = (imageHeight * 9) / 16
             }
             else -> {
@@ -84,10 +84,20 @@ class MovieImageView : ImageView {
         setMeasuredDimension(imageWidth, imageHeight)
     }
 
+    private fun getWidthByDisplay(widthMeasureSpec: Int): Int {
+        return widthMeasureSpec.takeIf { widthProc == DEFAULT_VALUE } ?: ((context.resources.displayMetrics.widthPixels * widthProc).toInt())
+    }
+
+    private fun getHeightByDisplay(heightMeasureSpec: Int): Int {
+        return heightMeasureSpec.takeIf { heightProc == DEFAULT_VALUE } ?: ((context.resources.displayMetrics.heightPixels * heightProc).toInt())
+    }
+
     companion object {
         private const val ASPECT_4_3 = "0"
         private const val ASPECT_3_4 = "1"
         private const val ASPECT_16_9 = "2"
         private const val ASPECT_9_16 = "3"
+
+        private const val DEFAULT_VALUE = 1f
     }
 }

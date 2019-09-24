@@ -9,7 +9,7 @@ import com.rasalexman.coroutinesmanager.doAsyncAwait
 class GetMoviesUseCase(
         private val getCachedMoviesUseCase: GetCachedMoviesUseCase,
         private val getRemoteMoviesUseCase: GetRemoteMoviesUseCase
-) : AsyncTasksManager(), IUseCase.InOut<Int, SResult<List<MovieUI>>> {
+) : AsyncTasksManager(), IGetMoviesInOutUseCase {
 
     override suspend fun execute(data: Int): SResult<List<MovieUI>> = doAsyncAwait {
         when (val localResult = getCachedMoviesUseCase.execute(data)) {
@@ -19,3 +19,5 @@ class GetMoviesUseCase(
         }
     }
 }
+
+typealias IGetMoviesInOutUseCase = IUseCase.InOut<Int, SResult<List<MovieUI>>>

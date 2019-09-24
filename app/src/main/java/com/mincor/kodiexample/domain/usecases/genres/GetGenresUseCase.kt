@@ -9,7 +9,7 @@ import com.rasalexman.coroutinesmanager.doAsyncAwait
 class GetGenresUseCase(
         private val getLocalGenresUseCase: GetLocalGenresUseCase,
         private val getRemoteGenresUseCase: GetRemoteGenresUseCase
-) : AsyncTasksManager(), IUseCase.Out<SResult<List<GenreUI>>> {
+) : AsyncTasksManager(), IGenresOutUseCase {
     override suspend fun execute(): SResult<List<GenreUI>> = doAsyncAwait {
         getLocalGenresUseCase.execute().let { localResultList ->
             if (localResultList is SResult.Success && localResultList.data.isNotEmpty()) localResultList
@@ -17,3 +17,5 @@ class GetGenresUseCase(
         }
     }
 }
+
+typealias IGenresOutUseCase = IUseCase.Out<SResult<List<GenreUI>>>

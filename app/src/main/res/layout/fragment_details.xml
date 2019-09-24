@@ -51,12 +51,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="parent">
 
-            <ImageView
+            <com.mincor.kodiexample.presentation.layouts.MovieImageView
                 android:id="@+id/backdropImageView"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/image_backdrop_height"
                 android:scaleType="centerCrop"
                 android:background="@color/gray_alpha_20"
+                app:heightAspect="nineToSixteen"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
@@ -65,13 +66,14 @@
                 android:id="@+id/posterImageView"
                 android:layout_width="@dimen/image_poster_width"
                 android:layout_height="@dimen/image_poster_height"
-                android:layout_marginStart="@dimen/size_32dp"
+                android:layout_marginStart="@dimen/size_16dp"
                 android:layout_marginTop="@dimen/size_16dp"
-                android:scaleType="centerCrop"
                 android:background="@color/gray_alpha_60"
-                app:widthProc="0.25"
+                android:scaleType="centerCrop"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/backdropImageView" />
+                app:layout_constraintTop_toBottomOf="@+id/backdropImageView"
+                app:widthAspect="fourToThree"
+                app:widthProc="0.3" />
 
             <TextView
                 android:id="@+id/titleTextView"
@@ -125,27 +127,22 @@
                 app:layout_constraintTop_toBottomOf="@+id/releaseTextView"
                 tools:text="rating: 7.7"/>
 
-
             <TextView
                 android:id="@+id/overviewTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_16dp"
                 android:background="@color/gray_alpha_60"
                 android:padding="@dimen/size_8dp"
-                android:layout_margin="@dimen/size_16dp"
-                android:textSize="@dimen/text_size_16sp"
                 android:textColor="@color/text_white"
+                android:textSize="@dimen/text_size_16sp"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/posterImageView"
-                tools:text="MovieImageView Title"/>
+                tools:text="MovieImageView Title" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </ScrollView>
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

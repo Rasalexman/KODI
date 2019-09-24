@@ -5,6 +5,7 @@ import com.mincor.kodi.core.immutableInstance
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.movies.GetMoviesUseCase
 import com.mincor.kodiexample.domain.usecases.movies.GetNextMoviesUseCase
+import com.mincor.kodiexample.domain.usecases.movies.IGetMoviesInOutUseCase
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
 import com.rasalexman.coroutinesmanager.SuspendCatch
 import com.rasalexman.coroutinesmanager.launchOnUITryCatch
@@ -13,10 +14,9 @@ class MoviesPresenter(
         coroutinesManager: ICoroutinesManager
 ) : MoviesContract.IPresenter, IKodi, ICoroutinesManager by coroutinesManager {
 
-    override val mustRestoreSticky: Boolean
-        get() = true
-    private val getMoviesUseCase: GetMoviesUseCase by immutableInstance()
-    private val getNextMoviesUseCase: GetNextMoviesUseCase by immutableInstance()
+    override val mustRestoreSticky: Boolean get() = true
+    private val getMoviesUseCase: IGetMoviesInOutUseCase by immutableInstance<GetMoviesUseCase>()
+    private val getNextMoviesUseCase: IGetMoviesInOutUseCase by immutableInstance<GetNextMoviesUseCase>()
 
     private val catchBlock: SuspendCatch<Unit> = {
         view().showError(it.message.orEmpty())

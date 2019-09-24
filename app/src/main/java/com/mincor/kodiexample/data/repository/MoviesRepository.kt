@@ -19,8 +19,9 @@ class MoviesRepository(
     suspend fun getLocalMovies(genreId: Int): SResult<List<MovieEntity>> =
             localDataSource
                     .getAll(genreId)
-                    .apply {
-                        hasLocalResults = this.data.isNotEmpty()
+                    .run {
+                        hasLocalResults = data.size >= 19
+                        this
                     }.applyIf(hasLocalResults) {
                         remoteDataSource.upPage()
                     }
