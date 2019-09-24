@@ -19,6 +19,7 @@ In order to get a value or add a new one to the dependency graph, you need to ca
 You can use `val myModule = kodiModule { bind<ISomeInstance> with ...}` for separate and organize independent component of your programm. Just call `kodi {import(myModule) }` to bind all dependencies from it.
 Keywords:
 - `bind`: bind string tag or generic type `with` given provided instance
+- `bindType`: bind inherit type `with` given provided instance
 - `at`: add instance at scope
 - `kodiModule { }`: instantiate module for dependency separation
 - `withScope`: can used only with `kodiModule` for bind all instances at selected scope. If there is any scope binding inside this module, it will be used as main scope for this bindings
