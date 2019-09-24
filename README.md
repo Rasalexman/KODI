@@ -254,8 +254,8 @@ implementation 'com.rasalexman.kodi:kodi:x.y.z'
 // AndroidX Module
 implementation 'com.rasalexman.kodiandroidx:kodiandroidx:1.0.0'
 
-// Old Reflection Library. It's a final version and don't have any plans to support it in the future.
-implementation 'com.rasalexman.kodireflect:kodireflect:1.1.0'
+// Old Reflection Library. It's a final version and i don't have any plans to support it in the future.
+implementation 'com.rasalexman.kodireflect:kodireflect:1.1.1'
 ```
 
 Maven:
@@ -280,7 +280,7 @@ Maven:
 <dependency>
 	<groupId>com.rasalexman.kodireflect</groupId>
 	<artifactId>kodireflect</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 	<type>pom</type>
 </dependency>
 ```
