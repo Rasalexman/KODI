@@ -31,6 +31,9 @@ fun main(args: Array<String>) {
         bind<ISingleInterface>() with single { SingleClass(UUID.randomUUID().toString()) }
         // this will be use a `MY_PROVIDER_SCOPE_NAME` scope
         bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) } at scope(MY_PROVIDER_SCOPE_NAME)
+	// since version 1.2.7
+	bindType<ISingleInterface, AnotherSingleClass>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
+        bindType<ISingleInterface, OneMoreSingleClass>() with single { OneMoreSingleClass(UUID.randomUUID().toString()) }
     } withScope MY_SINGLE_SCOPE_NAME.asScope()
 
     kodi {
@@ -40,7 +43,15 @@ fun main(args: Array<String>) {
         bind<String>(SOME_CONSTANT_TAG) with constant { "Hello" } at scope(CONSTANTS_SCOPE)
         // bind singleton value with lazy reciever properties
         bind<IInjectable>() with single { InjectableClass(instance(), instance()) } at MY_SINGLE_SCOPE_NAME.asScope()
-        // get value
+        
+	// Multi type instance from inherits (since 1.2.7)
+        val anotherInstance: ISingleInterface = instance<AnotherSingleClass>()
+        anotherInstance.printName()
+        // Call Instance of the same interface but another implementation
+        val oneMoreInstance: ISingleInterface = instance<OneMoreSingleClass>()
+        oneMoreInstance.printName()
+	
+	// get value
         val singleInstance = instance<ISingleInterface>()
         singleInstance.printName()
         // immutable variable
@@ -82,6 +93,8 @@ interface IPrintable {
 
 interface ISingleInterface : IPrintable
 data class SingleClass(override val id: String, override val name: String = "Single") : ISingleInterface
+data class AnotherSingleClass(override val id: String, override val name: String = "Another") : ISingleInterface
+data class OneMoreSingleClass(override val id: String, override val name: String = "OneMore") : ISingleInterface
 
 interface IProviderInterface : IPrintable, Cloneable
 data class ProviderClass(override val id: String, override val name: String = "Provider") : IProviderInterface
