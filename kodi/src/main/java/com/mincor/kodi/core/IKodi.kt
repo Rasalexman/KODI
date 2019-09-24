@@ -52,13 +52,26 @@ inline fun <reified T : Any> kodi(block: IKodi.() -> T): T {
  * Bind Any Generic type withScope some instance or KodiHolder types
  *
  * @param tag - optional parameter for custom manipulating withScope instance tag
- * if there is no tag provided the generic class name will be used as `T::class.toString()`
+ * if there is no tag provided the generic class name will be used as `T::class.java.toString()`
  *
  * @receiver [IKodi]
  * @return [KodiTagWrapper]
  */
 inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
-    return KodiTagWrapper(tag ?: T::class.toString())
+    return (tag ?: "${T::class.java}").asTag()
+}
+
+/**
+ * Bind Typed Instance to inherits type like <ISimpleInterface, BaseSimpleInterfaceImplementation>
+ *
+ * @param tag - optional parameter for custom manipulating withScope instance tag
+ * if there is no tag provided the generic class name will be used as `T::class.java.toString()`
+ *
+ * @receiver [IKodi]
+ * @return [KodiTagWrapper]
+ */
+inline fun <reified T : Any, reified R : T> IKodi.bindType(tag: String?= null): KodiTagWrapper {
+    return (tag ?: "${R::class.java}").asTag()
 }
 
 /**
@@ -68,7 +81,7 @@ inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
  * if there is no tag provided the generic class name will be used as `T::class.toString()`
  */
 inline fun <reified T : Any> IKodi.unbind(tag: String? = null): Boolean {
-    val tagToWrapper = (tag ?: T::class.toString()).asTag()
+    val tagToWrapper = (tag ?: "${T::class.java}").asTag()
     return Kodi.removeInstance(tagToWrapper)?.apply { at(emptyScope()) } != null
 }
 
@@ -79,6 +92,15 @@ inline fun <reified T : Any> IKodi.unbind(tag: String? = null): Boolean {
  */
 fun IKodi.unbindScope(scopeTagWrapper: KodiScopeWrapper): Boolean {
     return Kodi.removeAllScope(scopeTagWrapper)
+}
+
+/**
+ * Unbind moduleScope and all instances from dependency graph
+ *
+ * @param scopeTagWrapper - [KodiScopeWrapper] to remove
+ */
+fun IKodi.unbindAll() {
+    return Kodi.clearAll()
 }
 
 /**
@@ -100,9 +122,10 @@ inline fun <reified T : Any> IKodi.instance(tag: String? = null): T {
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 inline fun <reified T : Any> IKodi.holder(tag: String? = null): KodiHolder {
-    val tagToWrap = tag ?: T::class.toString()
+    val instance = this
+    val tagToWrap = tag ?: T::class.java.toString()
     return Kodi.createOrGet(tagToWrap.asTag()) {
-        throwException<IllegalAccessException>("There is no tag $tagToWrap in dependency graph")
+        throwException<IllegalAccessException>("There is no tag `$tagToWrap` in dependency graph injected into IKodi instance [$instance]")
     }
 }
 
@@ -129,28 +152,15 @@ inline fun <reified T : Any> IKodi.mutableInstance(tag: String? = null): IMutabl
 }
 
 /**
- * Helper throwable method
- *
- * @param message - Message for notify user in log
- */
-inline fun <reified T : Exception> throwException(message: String): Nothing {
-    val exception = when (T::class) {
-        RuntimeException::class -> RuntimeException(message)
-        IllegalStateException::class -> IllegalStateException(message)
-        else -> NoSuchElementException(message)
-    }
-    throw exception
-}
-
-/**
  * Extension function to IKodi implementation to get reference to Generic<T>
  * @param clazz - [Class]::class.java
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 fun<T : Any> IKodi.instanceWith(clazz: Class<T>): T {
+    val instance = this
     val tagToWrap = clazz.toString()
     return Kodi.createOrGet(tagToWrap.asTag()) {
-        throwException<IllegalAccessException>("There is no tag $tagToWrap in dependency graph")
+        throwException<IllegalAccessException>("There is no tag `$tagToWrap` in dependency graph injected into IKodi instance [$instance]")
     }.collect(this)
 }
 
@@ -160,8 +170,9 @@ fun<T : Any> IKodi.instanceWith(clazz: Class<T>): T {
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 fun<T : Any> IKodi.instanceWith(tag: String): T {
+    val instance = this
     return Kodi.createOrGet(tag.asTag()) {
-        throwException<IllegalAccessException>("There is no tag $tag in dependency graph")
+        throwException<IllegalAccessException>("There is no tag `$tag` in dependency graph injected into IKodi instance [${instance}]")
     }.collect(this)
 }
 

@@ -57,3 +57,17 @@ fun <T> T.applyIf(prediction: Boolean, action: (T) -> Unit): T {
     if (prediction) action(this)
     return this
 }
+
+/**
+ * Helper throwable method
+ *
+ * @param message - Message for notify user in log
+ */
+inline fun <reified T : Exception> throwException(message: String): Nothing {
+    val exception = when (T::class) {
+        RuntimeException::class -> RuntimeException(message)
+        IllegalStateException::class -> IllegalStateException(message)
+        else -> NoSuchElementException(message)
+    }
+    throw exception
+}

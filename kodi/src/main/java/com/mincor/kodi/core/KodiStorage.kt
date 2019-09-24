@@ -87,6 +87,12 @@ interface IKodiStorage<V> {
      * @param scope String representing the moduleScope
      */
     fun removeAllScope(scope: KodiScopeWrapper): Boolean
+
+    /**
+     * Remove all instances and scopes from dependency graph
+     * Warning!!! - this action cannot be reverted
+     */
+    fun clearAll()
 }
 
 /**
@@ -170,6 +176,15 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
                 ?.forEach { typeWrapper -> removeInstance(typeWrapper) }
                 .runCatching { scopeSet.removeAll { it.first == scope } }
                 .isSuccess
+    }
+
+    /**
+     * Remove all instances and scopes from dependency graph
+     * Warning!!! - this action cannot be reverted
+     */
+    override fun clearAll() {
+        scopeSet.clear()
+        instanceMap.clear()
     }
 
     /**
