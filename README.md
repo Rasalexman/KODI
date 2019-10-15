@@ -1,7 +1,7 @@
 # KODI
 KOtlin Dependency Injection (KODI) 
 
-[ ![Kotlin 1.3.50](https://img.shields.io/badge/Kotlin-1.3.50-blue.svg)](http://kotlinlang.org) [ ![Download](https://api.bintray.com/packages/sphc/Kodi/kodi/images/download.svg) ](https://bintray.com/sphc/Kodi/kodi/_latestVersion)
+[ ![Kotlin 1.3.50](https://img.shields.io/badge/Kotlin-1.3.50-blue.svg)](http://kotlinlang.org) [ ![Download](https://api.bintray.com/packages/sphc/Kodi/kodi/images/download.svg) ](https://bintray.com/sphc/Kodi/kodi/_latestVersion) [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
 
 This is simple and useful dependency injection framework for work with your regular projects. It use standart Kotlin language construction like `literal function with recieve`, `infix function`, `hight-order function`, ets. to bind and inject dependencies into your objects. It has two packages:
 
