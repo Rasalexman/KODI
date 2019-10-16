@@ -1,7 +1,7 @@
 # KODI
 KOtlin Dependency Injection (KODI) 
 
-[ ![Kotlin 1.3.50](https://img.shields.io/badge/Kotlin-1.3.50-blue.svg)](http://kotlinlang.org) [ ![Download](https://api.bintray.com/packages/sphc/Kodi/kodi/images/download.svg) ](https://bintray.com/sphc/Kodi/kodi/_latestVersion)
+[ ![Kotlin 1.3.50](https://img.shields.io/badge/Kotlin-1.3.50-blue.svg)](http://kotlinlang.org) [ ![Download](https://api.bintray.com/packages/sphc/Kodi/kodi/images/download.svg) ](https://bintray.com/sphc/Kodi/kodi/_latestVersion) [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
 
 This is simple and useful dependency injection framework for work with your regular projects. It use standart Kotlin language construction like `literal function with recieve`, `infix function`, `hight-order function`, ets. to bind and inject dependencies into your objects. It has two packages:
 
@@ -19,6 +19,7 @@ In order to get a value or add a new one to the dependency graph, you need to ca
 You can use `val myModule = kodiModule { bind<ISomeInstance> with ...}` for separate and organize independent component of your programm. Just call `kodi {import(myModule) }` to bind all dependencies from it.
 Keywords:
 - `bind`: bind string tag or generic type `with` given provided instance
+- `bindType`: bind inherit type `with` given provided instance
 - `at`: add instance at scope
 - `kodiModule { }`: instantiate module for dependency separation
 - `withScope`: can used only with `kodiModule` for bind all instances at selected scope. If there is any scope binding inside this module, it will be used as main scope for this bindings
@@ -30,6 +31,9 @@ fun main(args: Array<String>) {
         bind<ISingleInterface>() with single { SingleClass(UUID.randomUUID().toString()) }
         // this will be use a `MY_PROVIDER_SCOPE_NAME` scope
         bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) } at scope(MY_PROVIDER_SCOPE_NAME)
+	// since version 1.2.7
+	bindType<ISingleInterface, AnotherSingleClass>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
+        bindType<ISingleInterface, OneMoreSingleClass>() with single { OneMoreSingleClass(UUID.randomUUID().toString()) }
     } withScope MY_SINGLE_SCOPE_NAME.asScope()
 
     kodi {
@@ -39,7 +43,15 @@ fun main(args: Array<String>) {
         bind<String>(SOME_CONSTANT_TAG) with constant { "Hello" } at scope(CONSTANTS_SCOPE)
         // bind singleton value with lazy reciever properties
         bind<IInjectable>() with single { InjectableClass(instance(), instance()) } at MY_SINGLE_SCOPE_NAME.asScope()
-        // get value
+        
+	// Multi type instance from inherits (since 1.2.7)
+        val anotherInstance: ISingleInterface = instance<AnotherSingleClass>()
+        anotherInstance.printName()
+        // Call Instance of the same interface but another implementation
+        val oneMoreInstance: ISingleInterface = instance<OneMoreSingleClass>()
+        oneMoreInstance.printName()
+	
+	// get value
         val singleInstance = instance<ISingleInterface>()
         singleInstance.printName()
         // immutable variable
@@ -81,6 +93,8 @@ interface IPrintable {
 
 interface ISingleInterface : IPrintable
 data class SingleClass(override val id: String, override val name: String = "Single") : ISingleInterface
+data class AnotherSingleClass(override val id: String, override val name: String = "Another") : ISingleInterface
+data class OneMoreSingleClass(override val id: String, override val name: String = "OneMore") : ISingleInterface
 
 interface IProviderInterface : IPrintable, Cloneable
 data class ProviderClass(override val id: String, override val name: String = "Provider") : IProviderInterface
