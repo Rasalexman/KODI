@@ -154,10 +154,10 @@ inline fun <reified T : Any> IKodiReflect.instanceByTag(tag: String, vararg para
  * function params as listOf<Any>(...)
  */
 inline fun <reified T : Any> IKodiReflect.provider(tag: String = "", function: KFunction<T?>? = null, params: List<Any>? = null): ProviderHolder<T?> {
-    if (!KodiReflect.hasInstance(tag) && function == null) throw RuntimeException("There is no provider for given tag '$tag'. You must set function for provider")
+    if (!KodiReflect.hasInstance(tag) && function == null) throw Exceptions.ProviderException(tag)
     val valmap = params?.toValMap(function?.parameters)
     val key = if (tag.isEmpty()) function?.name
-            ?: throw RuntimeException("There is no provider for given tag '$tag'. You must set function for provider") else tag
+            ?: throw Exceptions.ProviderException(tag) else tag
     return KodiReflect.createOrGet(key) {
         ProviderHolder(function, valmap)
     } as ProviderHolder<T?>
