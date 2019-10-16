@@ -19,14 +19,22 @@ import kotlin.reflect.KProperty
 
 /**
  * Immutable Lazy Delegate with some optional Value
+ *
+ * @param init - initialization lambda function
  */
-class ImmutableLazy<T>(val init: () -> T) : ReadOnlyProperty<Any?, T> {
+class ImmutableLazy<T>(init: () -> T) : ReadOnlyProperty<Any?, T> {
 
     /**
      * Optional value holder
      */
     private var value: Optional<T> = Optional.Some(init())
 
+    /**
+     * Get the value of current lazy instance. Internal function
+     *
+     * @param thisRef
+     * @param property
+     */
     override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return value.get()
     }
