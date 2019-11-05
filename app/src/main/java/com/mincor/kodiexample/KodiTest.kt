@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
         import(kodiModule)
         // bind constant value
         bind<String>(SOME_CONSTANT_TAG) with constant { "Hello" }
-        // bind singleton value with lazy reciever properties
+        // bind singleton value with lazy receiver properties
         bind<IInjectable>() with single { InjectableClass(instance(), instance()) } at MY_SINGLE_SCOPE_NAME.asScope()
         // Multi type instance from inherits
         val anotherInstance: ISingleInterface = instance<AnotherSingleClass>()
@@ -61,6 +61,9 @@ fun main(args: Array<String>) {
 
         // unbind all scope of instances and removed it from dependency graph
         unbindScope(MY_SINGLE_SCOPE_NAME.asScope())
+
+        // You can use this unbinding function
+        kodiModule.remove()
     }
 }
 

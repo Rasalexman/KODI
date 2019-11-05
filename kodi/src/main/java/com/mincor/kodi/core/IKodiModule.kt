@@ -24,7 +24,7 @@ typealias ModuleInitializer = InstanceInitializer<Unit>
  */
 interface IKodiModule : IKodi {
     /**
-     * Initialization literal function withScope reciever
+     * Initialization literal function withScope receiver
      */
     val instanceInitializer: ModuleInitializer
     /**
@@ -33,7 +33,7 @@ interface IKodiModule : IKodi {
     var scope: KodiScopeWrapper
 
     /**
-     * Set of current module [KodiHolder]'s
+     * Set of current module binding types
      */
     val moduleHolders: MutableSet<String>
 
@@ -53,6 +53,7 @@ interface IKodiModule : IKodi {
  *
  * @param instanceInitializer - initializer [ModuleInitializer]
  * @param scope - current [emptyScope]
+ * @param moduleHolders - all binding tags of this module
  */
 data class KodiModule(
         override val instanceInitializer: ModuleInitializer,
@@ -73,6 +74,13 @@ fun kodiModule(init: ModuleInitializer): IKodiModule = KodiModule(init)
  * @param module - [IKodiModule]
  */
 fun IKodi.import(module: IKodiModule) {
-    val initializer = module.instanceInitializer
-    module.initializer()
+    Kodi.addModule(module)
+}
+
+/**
+ * Unbind all instances in this module from dependency graph
+ * also remove current module from KODI storage
+ */
+fun IKodiModule.remove() {
+    Kodi.removeModule(this)
 }

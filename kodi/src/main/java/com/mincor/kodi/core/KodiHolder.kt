@@ -189,4 +189,3 @@ inline fun <reified R : KodiHolder, reified T : Any> IKodi.createHolder(noinline
         holder at (this as IKodiModule).scope
     }
 }
-

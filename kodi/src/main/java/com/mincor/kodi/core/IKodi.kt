@@ -58,7 +58,13 @@ inline fun <reified T : Any> kodi(block: IKodi.() -> T): T {
  * @return [KodiTagWrapper]
  */
 inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
-    return (tag ?: "${T::class.java}").asTag()
+    val receiver = this
+    return (tag ?: "${T::class.java}").run {
+        if(receiver is KodiModule) {
+            receiver.moduleHolders.add(this)
+        }
+        this.asTag()
+    }
 }
 
 /**
@@ -71,7 +77,7 @@ inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
  * @return [KodiTagWrapper]
  */
 inline fun <reified T : Any, reified R : T> IKodi.bindType(tag: String?= null): KodiTagWrapper {
-    return (tag ?: "${R::class.java}").asTag()
+    return this.bind<R>(tag)
 }
 
 /**
@@ -96,8 +102,6 @@ fun IKodi.unbindScope(scopeTagWrapper: KodiScopeWrapper): Boolean {
 
 /**
  * Unbind moduleScope and all instances from dependency graph
- *
- * @param scopeTagWrapper - [KodiScopeWrapper] to remove
  */
 fun IKodi.unbindAll() {
     return Kodi.clearAll()
@@ -123,7 +127,7 @@ inline fun <reified T : Any> IKodi.instance(tag: String? = null): T {
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 inline fun <reified T : Any> IKodi.holder(tag: String? = null): KodiHolder {
     val instance = this
-    val tagToWrap = tag ?: T::class.java.toString()
+    val tagToWrap = (tag ?: "${T::class.java}")
     return Kodi.createOrGet(tagToWrap.asTag()) {
         throwException<IllegalAccessException>("There is no tag `$tagToWrap` in dependency graph injected into IKodi instance [$instance]")
     }

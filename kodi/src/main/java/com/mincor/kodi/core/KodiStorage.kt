@@ -88,6 +88,11 @@ interface IKodiStorage<V> {
      */
     fun removeAllScope(scope: KodiScopeWrapper): Boolean
 
+
+    fun addModule(module: IKodiModule)
+
+    fun removeModule(module: IKodiModule)
+
     /**
      * Remove all instances and scopes from dependency graph
      * Warning!!! - this action cannot be reverted
@@ -109,6 +114,35 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * Main `moduleScope` to `tags` storage instance (`MutableSet<[ScopeSetItem]>`)
      */
     private val scopeSet by immutableGetter { mutableSetOf<ScopeSetItem>() }
+
+    /**
+     *  Kodi modules set
+     */
+    private val modulesSet by immutableGetter { mutableSetOf<IKodiModule>() }
+
+    /**
+     *
+     */
+    override fun addModule(module: IKodiModule) {
+        val initializer = module.instanceInitializer
+        module.initializer()
+        modulesSet.add(module)
+    }
+
+    /**
+     *
+     */
+    override fun removeModule(module: IKodiModule) {
+        with(module) {
+            if(modulesSet.remove(this)) {
+                moduleHolders.forEach { tag ->
+                    removeInstance(tag.asTag())
+                }
+                moduleHolders.clear()
+            }
+        }
+
+    }
 
     /**
      * Create or get value from instance map
