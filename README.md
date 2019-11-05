@@ -1,7 +1,7 @@
 # KODI
 KOtlin Dependency Injection (KODI) 
 
-[ ![Kotlin 1.3.50](https://img.shields.io/badge/Kotlin-1.3.50-blue.svg)](http://kotlinlang.org) [ ![Download](https://api.bintray.com/packages/sphc/Kodi/kodi/images/download.svg) ](https://bintray.com/sphc/Kodi/kodi/_latestVersion) [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
+[ ![Kotlin 1.3.50](https://img.shields.io/badge/Kotlin-1.3.50-blue.svg)](http://kotlinlang.org) [ ![Download](https://api.bintray.com/packages/sphc/Kodi/kodi/images/download.svg) ](https://bintray.com/sphc/Kodi/kodi/_latestVersion) [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d298c3a2eb044d688f9a4b33bf352389)](https://www.codacy.com/manual/Rasalexman/KODI?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Rasalexman/KODI&amp;utm_campaign=Badge_Grade)
 
 This is simple and useful dependency injection framework for work with your regular projects. It use standart Kotlin language construction like `literal function with recieve`, `infix function`, `hight-order function`, ets. to bind and inject dependencies into your objects. It has two packages:
 
@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
         import(kodiModule)
         // bind constant value
         bind<String>(SOME_CONSTANT_TAG) with constant { "Hello" } at scope(CONSTANTS_SCOPE)
-        // bind singleton value with lazy reciever properties
+        // bind singleton value with lazy receiver properties
         bind<IInjectable>() with single { InjectableClass(instance(), instance()) } at MY_SINGLE_SCOPE_NAME.asScope()
         
 	// Multi type instance from inherits (since 1.2.7)

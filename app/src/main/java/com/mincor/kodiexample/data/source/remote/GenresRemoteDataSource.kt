@@ -1,5 +1,6 @@
 package com.mincor.kodiexample.data.source.remote
 
+import com.mincor.kodiexample.common.getResult
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.emptyResult
 import com.mincor.kodiexample.data.dto.errorResult
@@ -18,13 +19,7 @@ class GenresRemoteDataSource(
     private val addedImages by lazy { mutableSetOf<String>() }
 
     override suspend fun getRemoteGenresList(): SResult<List<GenreModel>> {
-        return moviesApi.getGenresList().run {
-            body()?.let {
-                successResult(it.genres)
-            } ?: errorBody()?.let {
-                errorResult(this.code(), this.message())
-            } ?: emptyResult()
-        }
+        return moviesApi.getGenresList().getResult { it.genres }
     }
 
     override suspend fun getGenresImages(result: GenreEntity): GenreEntity {
