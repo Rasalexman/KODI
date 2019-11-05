@@ -1,10 +1,9 @@
 package com.mincor.kodiexample.data.source.remote
 
 import com.mincor.kodiexample.common.Consts
+import com.mincor.kodiexample.common.getResult
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.emptyResult
-import com.mincor.kodiexample.data.dto.errorResult
-import com.mincor.kodiexample.data.dto.successResult
 import com.mincor.kodiexample.data.model.remote.MovieModel
 import com.mincor.kodiexample.providers.network.api.IMovieApi
 import com.mincor.kodiexample.providers.network.responses.GetMoviesByGenreIdResponse
@@ -22,34 +21,27 @@ class MoviesRemoteDataSource(
     private val isCanChangePage: Boolean
         get() = currentPage < maxPages
 
+
+    /**
+     * Get movies by genre id with pagination
+     */
     override suspend fun getByGenreId(genreId: Int): SResult<List<MovieModel>> =
         if(isCanChangePage) {
             requestHandler(genreId = genreId, page = currentPage, needChangePage = true)
         } else emptyResult()
 
-    private suspend fun requestHandler(genreId: Int, page: Int, needChangePage: Boolean = true) = mutex.withLock {
-        moviesApi.getMoviesListByGenreId(genreId, page).run {
-            this.body()?.let { resultValue ->
-                if(needChangePage) changePage(resultValue)
-                successResult(resultValue.results)
-            } ?: this.errorBody()?.let {
-                errorResult(this.code(), this.message())
-            } ?: emptyResult()
-        }
-    }
-
+    /**
+     * Get New movies list by genre id starting from first page (for swipe to refresh)
+     */
     override suspend fun getNewMoviesByGenreId(genreId: Int): SResult<List<MovieModel>> {
         return requestHandler(genreId = genreId, page = 1, needChangePage = false)
     }
 
+    /**
+     * Get all the movie details for current id
+     */
     override suspend fun getMovieDetails(movieId: Int): SResult<MovieModel> {
-        return moviesApi.getMovieDetails(movieId).run {
-            this.body()?.let { resultValue ->
-                successResult(resultValue)
-            } ?: this.errorBody()?.let {
-                errorResult(this.code(), this.message())
-            } ?: emptyResult()
-        }
+        return moviesApi.getMovieDetails(movieId).getResult { it }
     }
 
     override fun upPage() {
@@ -62,6 +54,16 @@ class MoviesRemoteDataSource(
     override fun clearPage() {
         currentPage = 1
         maxPages = Consts.PAGES_DEFAULT_MAX_COUNT
+    }
+
+    /**
+     * Request data from API
+     */
+    private suspend fun requestHandler(genreId: Int, page: Int, needChangePage: Boolean = true) = mutex.withLock {
+        moviesApi.getMoviesListByGenreId(genreId, page).getResult { response ->
+            if(needChangePage) changePage(response)
+            response.results
+        }
     }
 
     /**

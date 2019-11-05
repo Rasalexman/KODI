@@ -5,6 +5,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.mincor.kodiexample.data.dto.SResult
+import com.mincor.kodiexample.data.dto.emptyResult
+import com.mincor.kodiexample.data.dto.errorResult
+import com.mincor.kodiexample.data.dto.successResult
+import retrofit2.Response
 
 data class ScrollPosition(var index: Int = 0, var top: Int = 0) {
     fun drop() {
@@ -36,4 +41,12 @@ fun View.hide(gone: Boolean = true) {
 
 fun View.show() {
     visibility = View.VISIBLE
+}
+
+inline fun <reified T : Any, reified O : Any> Response<T>.getResult(alsoAction: (T) -> O): SResult<O> {
+    return this.body()?.run {
+        successResult(alsoAction(this))
+    } ?: this.errorBody()?.let {
+        errorResult(this.code(), this.message())
+    } ?: emptyResult()
 }

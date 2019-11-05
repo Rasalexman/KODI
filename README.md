@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
         import(kodiModule)
         // bind constant value
         bind<String>(SOME_CONSTANT_TAG) with constant { "Hello" } at scope(CONSTANTS_SCOPE)
-        // bind singleton value with lazy reciever properties
+        // bind singleton value with lazy receiver properties
         bind<IInjectable>() with single { InjectableClass(instance(), instance()) } at MY_SINGLE_SCOPE_NAME.asScope()
         
 	// Multi type instance from inherits (since 1.2.7)

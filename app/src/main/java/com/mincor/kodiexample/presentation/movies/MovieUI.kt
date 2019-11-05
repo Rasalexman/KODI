@@ -9,6 +9,7 @@ import com.mincor.kodiexample.common.clear
 import com.mincor.kodiexample.common.hide
 import com.mincor.kodiexample.common.show
 import com.mincor.kodiexample.presentation.base.BaseRecyclerUI
+import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.layout_movies_item.view.*
 
 data class MovieUI(
@@ -28,10 +29,9 @@ data class MovieUI(
         val overview: String
 ) : BaseRecyclerUI<MovieUI.MovieViewHolder>() {
 
-    override val layoutRes: Int
-        get() = R.layout.layout_movies_item
-
+    override val layoutRes: Int = R.layout.layout_movies_item
     override fun getViewHolder(v: View) = MovieViewHolder(v)
+    override val type: Int = 1032
 
     init {
         identifier = id.toLong()
@@ -40,10 +40,13 @@ data class MovieUI(
     val fullPosterUrl: String
         get() = "${BuildConfig.IMAGES_URL}$posterPath"
 
-    class MovieViewHolder(view: View) : FastAdapter.ViewHolder<MovieUI>(view) {
+    class MovieViewHolder(view: View) : FastAdapter.ViewHolder<MovieUI>(view), LayoutContainer {
+
+        override val containerView: View
+            get() = itemView
 
         override fun bindView(item: MovieUI, payloads: MutableList<Any>) {
-            with(itemView) {
+            with(containerView) {
                 titleTextView.text = item.title
                 releaseTextView.text = item.releaseDate
                 overviewTextView.text = item.overview
@@ -65,7 +68,7 @@ data class MovieUI(
         }
 
         override fun unbindView(item: MovieUI) {
-            with(itemView) {
+            with(containerView) {
                 titleTextView.clear()
                 releaseTextView.clear()
                 overviewTextView.clear()
