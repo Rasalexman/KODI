@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion COMPILE_VERSION
-    buildToolsVersion = '29.0.0'
+    buildToolsVersion = BUILD_TOOLS_VERSION
     defaultConfig {
         applicationId "com.mincor.kodiexample"
         minSdkVersion MIN_VERSION

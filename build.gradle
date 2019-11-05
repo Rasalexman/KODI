@@ -32,6 +32,7 @@ buildscript {
         MIN_VERSION = 19
         COMPILE_VERSION = 29
         TARGET_VERSION = 29
+        BUILD_TOOLS_VERSION = "29.0.2"
 
         libVersion = "1.2.7"
         libCode = 10207

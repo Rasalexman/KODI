@@ -2,6 +2,7 @@ package com.mincor.kodiexample.presentation.genres
 
 import android.view.View
 import android.widget.ImageView
+import androidx.annotation.Keep
 import androidx.core.view.forEachIndexed
 import coil.api.clear
 import coil.api.load
@@ -12,6 +13,7 @@ import com.mincor.kodiexample.presentation.base.BaseRecyclerUI
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.layout_genre_item.view.*
 
+@Keep
 data class GenreUI(
         val id: Int,
         val name: String,
@@ -43,8 +45,6 @@ data class GenreUI(
                     imageView.load(imageUrl)
                 }
             }
-
-
         }
 
         override fun unbindView(item: GenreUI) {
@@ -57,4 +57,3 @@ data class GenreUI(
         }
     }
 }
-
