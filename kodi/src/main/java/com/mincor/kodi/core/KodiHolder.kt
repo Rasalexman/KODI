@@ -27,26 +27,14 @@ sealed class KodiHolder {
     /**
      * Local Holder scope [KodiScopeWrapper]
      */
-    private var scope: KodiScopeWrapper = emptyScope()
+    var scope: KodiScopeWrapper = emptyScope()
+        private set
 
     /**
      * Current Holder [KodiTagWrapper]
      */
-    private var tag: KodiTagWrapper = emptyTag()
-
-    /**
-     * Add Instance Tag to moduleScope
-     * Or remove it if input [KodiScopeWrapper] is [emptyScope]
-     *
-     * @param scopeWrapper - [KodiScopeWrapper] to add instance tag
-     */
-    infix fun at(scopeWrapper: KodiScopeWrapper) {
-        removeFromScope()
-        scope = scopeWrapper
-        if (scopeWrapper.isNotEmpty()) {
-            addToScope()
-        }
-    }
+    var tag: KodiTagWrapper = emptyTag()
+        private set
 
     /**
      * Add [KodiTagWrapper] to current Holder
@@ -54,7 +42,7 @@ sealed class KodiHolder {
      *
      * @param instanceTag - tag for instance binding
      */
-    infix fun tag(instanceTag: KodiTagWrapper): KodiHolder {
+    internal infix fun KodiHolder.tagWith(instanceTag: KodiTagWrapper): KodiHolder {
         if (instanceTag.isNotEmpty() && !this.tag.isNotEmpty()) {
             this.tag = instanceTag
             addToGraph()
@@ -64,6 +52,22 @@ sealed class KodiHolder {
             removeFromScope()
         } else {
             throwException<IllegalStateException>("You can't change tag `$tag` on `$this`. Only set it to emptyTag()")
+        }
+        return this
+    }
+
+    /**
+     * Add Instance Tag to moduleScope
+     * Or remove it if input [KodiScopeWrapper] is [emptyScope]
+     *
+     * @param scopeWrapper - [KodiScopeWrapper] to add instance tag
+     * @return [KodiHolder]
+     */
+    internal infix fun KodiHolder.scopeWith(scopeWrapper: KodiScopeWrapper): KodiHolder {
+        removeFromScope()
+        scope = scopeWrapper
+        if (scopeWrapper.isNotEmpty()) {
+            addToScope()
         }
         return this
     }
@@ -136,6 +140,36 @@ sealed class KodiHolder {
      * @param constantValue - value for initialization
      */
     data class KodiConstant<T : Any>(val constantValue: T) : KodiHolder()
+}
+
+/**
+ * Add Instance Tag to moduleScope
+ * Or remove it if input [KodiScopeWrapper] is [emptyScope]
+ *
+ * @param scopeWrapper - [KodiScopeWrapper] to add instance tag
+ */
+infix fun KodiHolder.at(scopeWrapper: KodiScopeWrapper): KodiHolder {
+    return this.scopeWith(scopeWrapper)
+}
+
+/**
+ * Add Instance Tag to moduleScope
+ * Or remove it if input is empty string
+ *
+ * @param scopeName - [KodiScopeWrapper] to add instance tag
+ */
+infix fun KodiHolder.at(scopeName: String): KodiHolder {
+    return this.scopeWith(scopeName.asScope())
+}
+
+/**
+ * Add [KodiTagWrapper] to current Holder
+ * And put it into dependency scope
+ *
+ * @param instanceTag - tag for instance binding
+ */
+infix fun KodiHolder.tag(instanceTag: KodiTagWrapper): KodiHolder {
+    return this.tagWith(instanceTag)
 }
 
 /**

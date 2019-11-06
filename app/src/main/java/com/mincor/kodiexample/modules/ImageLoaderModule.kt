@@ -1,10 +1,7 @@
 package com.mincor.kodiexample.modules
 
 import coil.ImageLoader
-import com.mincor.kodi.core.bind
-import com.mincor.kodi.core.instance
-import com.mincor.kodi.core.kodiModule
-import com.mincor.kodi.core.provider
+import com.mincor.kodi.core.*
 import okhttp3.OkHttpClient
 
 val imageModule = kodiModule {

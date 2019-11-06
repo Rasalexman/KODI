@@ -35,17 +35,7 @@ interface IKodiModule : IKodi {
     /**
      * Set of current module binding types
      */
-    val moduleHolders: MutableSet<String>
-
-    /**
-     * Set scope for all bindings in module
-     *
-     * @param scopeWrapper - [KodiScopeWrapper] for module
-     */
-    infix fun withScope(scopeWrapper: KodiScopeWrapper): IKodiModule {
-        scope = scopeWrapper
-        return this
-    }
+    val moduleInstancesSet: MutableSet<KodiTagWrapper>
 }
 
 /**
@@ -53,13 +43,34 @@ interface IKodiModule : IKodi {
  *
  * @param instanceInitializer - initializer [ModuleInitializer]
  * @param scope - current [emptyScope]
- * @param moduleHolders - all binding tags of this module
+ * @param moduleInstancesSet - all binding tags of this module
  */
 data class KodiModule(
         override val instanceInitializer: ModuleInitializer,
         override var scope: KodiScopeWrapper = emptyScope(),
-        override val moduleHolders: MutableSet<String> = mutableSetOf()
+        override val moduleInstancesSet: MutableSet<KodiTagWrapper> = mutableSetOf()
 ) : IKodiModule
+
+/**
+ * Set scope for all bindings in module
+ *
+ * @param scopeWrapper - [KodiScopeWrapper] for module
+ */
+@Deprecated("Will be removed in future releases", ReplaceWith("withScope(scopeName: String)"))
+infix fun IKodiModule.withScope(scopeWrapper: KodiScopeWrapper): IKodiModule {
+    scope = scopeWrapper
+    return this
+}
+
+/**
+ * Set scope for all bindings in module
+ *
+ * @param scopeName - [String] scope name for module
+ */
+infix fun IKodiModule.withScope(scopeName: String): IKodiModule {
+    scope = scopeName.asScope()
+    return this
+}
 
 /**
  * Kodi module implementation
@@ -75,6 +86,13 @@ fun kodiModule(init: ModuleInitializer): IKodiModule = KodiModule(init)
  */
 fun IKodi.import(module: IKodiModule) {
     Kodi.addModule(module)
+}
+
+/**
+ * Does this module contains input instance tag or class type
+ */
+inline fun <reified T : Any> IKodiModule.hasInstance(tag: String? = null): Boolean {
+    return this.moduleInstancesSet.contains((tag ?: "${T::class.java}").asTag())
 }
 
 /**

@@ -1,9 +1,6 @@
 package com.mincor.kodiexample.modules
 
-import com.mincor.kodi.core.bind
-import com.mincor.kodi.core.instance
-import com.mincor.kodi.core.kodiModule
-import com.mincor.kodi.core.single
+import com.mincor.kodi.core.*
 import com.mincor.kodiexample.data.source.remote.GenresRemoteDataSource
 import com.mincor.kodiexample.data.source.remote.IGenresRemoteDataSource
 import com.mincor.kodiexample.data.source.remote.IMoviesRemoteDataSource

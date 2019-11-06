@@ -22,16 +22,6 @@ package com.mincor.kodi.core
 inline class KodiTagWrapper(private val instanceTag: String) {
 
     /**
-     * Bind instanceTag withScope available instance holders
-     *
-     * @param instance - [KodiHolder] instance for store
-     * @return [KodiHolder] instance
-     */
-    infix fun with(instance: KodiHolder): KodiHolder {
-        return instance tag this
-    }
-
-    /**
      * Check instanceTag is not empty
      *
      * @return [Boolean]
@@ -39,6 +29,16 @@ inline class KodiTagWrapper(private val instanceTag: String) {
     fun isNotEmpty(): Boolean {
         return instanceTag.isNotEmpty()
     }
+}
+
+/**
+ * Bind instanceTag withScope available instance holders
+ *
+ * @param instance - [KodiHolder] instance for store
+ * @return [KodiHolder] instance
+ */
+inline infix fun <reified T : KodiHolder> KodiTagWrapper.with(instance: T): KodiHolder {
+    return instance tag this
 }
 
 /**
@@ -53,4 +53,9 @@ inline class KodiScopeWrapper(private val scopeTag: String) {
      * @return [Boolean]
      */
     fun isNotEmpty(): Boolean = this.scopeTag.isNotEmpty()
+
+    /**
+     * Return a [String] representation of Wrapper
+     */
+    fun asString(): String = this.scopeTag
 }
