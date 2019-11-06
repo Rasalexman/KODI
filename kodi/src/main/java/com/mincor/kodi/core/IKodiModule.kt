@@ -14,6 +14,9 @@
 
 package com.mincor.kodi.core
 
+import com.mincor.kodi.delegates.immutableGetter
+import com.mincor.kodi.delegates.mutableGetter
+
 /**
  * Module Initializer
  */
@@ -42,14 +45,20 @@ interface IKodiModule : IKodi {
  * Module implementation
  *
  * @param instanceInitializer - initializer [ModuleInitializer]
- * @param scope - current [emptyScope]
- * @param moduleInstancesSet - all binding tags of this module
  */
 data class KodiModule(
-        override val instanceInitializer: ModuleInitializer,
-        override var scope: KodiScopeWrapper = emptyScope(),
-        override val moduleInstancesSet: MutableSet<KodiTagWrapper> = mutableSetOf()
-) : IKodiModule
+        override val instanceInitializer: ModuleInitializer
+) : IKodiModule {
+    /**
+     * Module Scope. It's Lazy initializing
+     */
+    override var scope: KodiScopeWrapper by mutableGetter(::emptyScope)
+
+    /**
+     * Set of all instances that includes in this module
+     */
+    override val moduleInstancesSet: MutableSet<KodiTagWrapper> by immutableGetter { mutableSetOf<KodiTagWrapper>() }
+}
 
 /**
  * Set scope for all bindings in module
@@ -90,6 +99,8 @@ fun IKodi.import(module: IKodiModule) {
 
 /**
  * Does this module contains input instance tag or class type
+ *
+ * @param tag [String] - string representation of instance must be unique
  */
 inline fun <reified T : Any> IKodiModule.hasInstance(tag: String? = null): Boolean {
     return this.moduleInstancesSet.contains((tag ?: "${T::class.java}").asTag())

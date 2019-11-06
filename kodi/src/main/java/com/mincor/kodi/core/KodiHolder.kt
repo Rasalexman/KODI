@@ -14,6 +14,8 @@
 
 package com.mincor.kodi.core
 
+import com.mincor.kodi.delegates.mutableGetter
+
 /**
  * Typealias for simplification
  */
@@ -27,13 +29,13 @@ sealed class KodiHolder {
     /**
      * Local Holder scope [KodiScopeWrapper]
      */
-    var scope: KodiScopeWrapper = emptyScope()
+    var scope: KodiScopeWrapper by mutableGetter { emptyScope() }
         private set
 
     /**
      * Current Holder [KodiTagWrapper]
      */
-    var tag: KodiTagWrapper = emptyTag()
+    var tag: KodiTagWrapper by mutableGetter { emptyTag() }
         private set
 
     /**

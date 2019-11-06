@@ -24,8 +24,12 @@ class MoviesPresenter(
     }
 
     override var genreId: Int = 0
+        set(value) {
+            field = value
+            onGenreIdChanged()
+        }
 
-    override fun onViewCreated(view: MoviesContract.IView) = launchOnUITryCatch(
+    private fun onGenreIdChanged() = launchOnUITryCatch(
             tryBlock = {
                 view().showLoading()
                 val result = getMoviesUseCase.execute(genreId)

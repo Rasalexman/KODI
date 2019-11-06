@@ -1,6 +1,5 @@
 package com.mincor.kodiexample.presentation.genres
 
-import com.mincor.kodi.core.IKodi
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.genres.IGenresOutUseCase
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
@@ -10,7 +9,7 @@ import com.rasalexman.sticky.core.IStickyPresenter
 class GenresPresenter(
         private val getGenresUseCase: IGenresOutUseCase
 ) : IStickyPresenter<GenresContract.IView>,
-        GenresContract.IPresenter, ICoroutinesManager, IKodi {
+        GenresContract.IPresenter, ICoroutinesManager {
 
     override val mustRestoreSticky: Boolean
         get() = true

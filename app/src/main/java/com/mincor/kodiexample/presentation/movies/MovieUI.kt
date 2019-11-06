@@ -40,10 +40,7 @@ data class MovieUI(
     val fullPosterUrl: String
         get() = "${BuildConfig.IMAGES_URL}$posterPath"
 
-    class MovieViewHolder(view: View) : FastAdapter.ViewHolder<MovieUI>(view), LayoutContainer {
-
-        override val containerView: View
-            get() = itemView
+    class MovieViewHolder(override val containerView: View) : FastAdapter.ViewHolder<MovieUI>(containerView), LayoutContainer {
 
         override fun bindView(item: MovieUI, payloads: MutableList<Any>) {
             with(containerView) {

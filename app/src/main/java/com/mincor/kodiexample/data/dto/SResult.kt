@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 
 @Keep
 sealed class SResult<out T : Any> {
+
     class Success<out T : Any>(
             val data: T
     ) : SResult<T>()
