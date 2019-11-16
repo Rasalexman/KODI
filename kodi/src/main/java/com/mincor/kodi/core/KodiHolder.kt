@@ -26,6 +26,9 @@ typealias InstanceInitializer<T> = IKodi.() -> T
  */
 sealed class KodiHolder {
 
+    /**
+     * Getting value from holder
+     */
     abstract fun get(kodiImpl: IKodi): Any
 
     /**
@@ -126,7 +129,8 @@ sealed class KodiHolder {
         private var singleInstance: T? = null
 
         /**
-         * Get <T> Single Value
+         * Get holder value
+         * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T = singleInstance ?: Kodi.singleInstanceProvider().apply {
             singleInstance = this
@@ -139,6 +143,10 @@ sealed class KodiHolder {
      * @param providerLiteral - [InstanceInitializer] function
      */
     data class KodiProvider<T : Any>(private val providerLiteral: InstanceInitializer<T>) : KodiHolder() {
+        /**
+         * Get holder value
+         * @param kodiImpl - implemented [IKodi] instance
+         */
         override fun get(kodiImpl: IKodi): T {
             return providerLiteral.invoke(kodiImpl)
         }
@@ -150,6 +158,10 @@ sealed class KodiHolder {
      * @param constantValue - value for initialization
      */
     data class KodiConstant<T : Any>(private val constantValue: T) : KodiHolder() {
+        /**
+         * Get holder value
+         * @param kodiImpl - implemented [IKodi] instance
+         */
         override fun get(kodiImpl: IKodi): T {
             return constantValue
         }
