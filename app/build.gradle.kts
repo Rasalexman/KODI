@@ -1,8 +1,56 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+import appdependencies.Apps.APP_ID
+import appdependencies.Apps.BUILD_TOOLS
+import appdependencies.Apps.COMPILE_VERSION
+import appdependencies.Apps.MIN_VERSION
+import appdependencies.Apps.TARGET_VERSION
+import appdependencies.Apps.VERSION_CODE
+import appdependencies.Apps.VERSION_NAME
+import appdependencies.Libs
+import appdependencies.Versions
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+plugins {
+    id("com.android.application")
+    kotlin("android")
+    kotlin("android.extensions")
+    kotlin("kapt")
+}
+
+android {
+    compileSdkVersion(COMPILE_VERSION)
+    buildToolsVersion = BUILD_TOOLS
+    defaultConfig {
+        applicationId = APP_ID
+        minSdkVersion(MIN_VERSION)
+        targetSdkVersion(TARGET_VERSION)
+        versionCode = VERSION_CODE
+        versionName = VERSION_NAME
+        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField ("String", "ApiKey", "\"026a257e7842ac9cac1fa627496b1468\"")
+        buildConfigField ("String", "IMAGES_URL", "\"https://image.tmdb.org/t/p/w500\"")
+        buildConfigField ("String", "SERVER_URL", "\"https://api.themoviedb.org/3/\"")
+        buildConfigField ("String", "IMAGES_BACKDROP_URL", "\"https://image.tmdb.org/t/p/original\"")
+    }
+    buildTypes {
+        getByName("debug") {
+            isMinifyEnabled = false
+            isDebuggable = true
+        }
+
+        getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+/*
 android {
     compileSdkVersion COMPILE_VERSION
     buildToolsVersion = BUILD_TOOLS_VERSION
@@ -86,7 +134,7 @@ dependencies {
     //implementation project(":kodireflect")
 
     kapt "androidx.room:room-compiler:$roomVersion"
-}
+}*/
 /*
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->

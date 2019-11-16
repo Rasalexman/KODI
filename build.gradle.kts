@@ -1,5 +1,42 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+import appdependencies.ClassPath
+import appdependencies.Versions
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url = uri("https://maven.fabric.io/public")
+        }
+
+    }
+    dependencies {
+        classpath(appdependencies.ClassPath.gradle)
+        classpath(kotlin("gradle-plugin", version = appdependencies.Versions.kotlin))
+
+        classpath(appdependencies.ClassPath.dokka)
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url = uri("https://www.jitpack.io") }
+    }
+}
+
+tasks.register("clean", Delete::class) {
+    delete(rootProject.buildDir)
+}
+
+/*
 buildscript {
     ext.kotlin_version = '1.3.50'
     ext.dokka_version = '0.9.17'
@@ -9,7 +46,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.1'
+        classpath 'com.android.tools.build:gradle:3.5.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // The Gradle Bintray Plugin allows you to publish artifacts to Bintray.
@@ -34,8 +71,8 @@ buildscript {
         TARGET_VERSION = 29
         BUILD_TOOLS_VERSION = "29.0.2"
 
-        libVersion = "1.2.8"
-        libCode = 10208
+        libVersion = "1.2.9"
+        libCode = 10209
 
         appCompatXVersion = '1.1.0'
         appCoreXVersion = '1.1.0'
@@ -74,3 +111,4 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+*?

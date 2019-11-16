@@ -1,10 +1,16 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'org.jetbrains.dokka-android'
-apply plugin: 'maven-publish'
-apply from: 'keystore.gradle'
+plugins {
+    id("com.android.library")
+    kotlin("android")
+    id("com.jfrog.bintray")
+    id("org.jetbrains.dokka-android")
+    id("maven-publish")
+}
 
+apply {
+    from("keystore.gradle")
+}
+
+/*
 android {
     compileSdkVersion COMPILE_VERSION
 
@@ -15,7 +21,6 @@ android {
         versionName libVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -55,3 +60,4 @@ repositories {
 }
 apply from: 'deploy.gradle'
 
+*/

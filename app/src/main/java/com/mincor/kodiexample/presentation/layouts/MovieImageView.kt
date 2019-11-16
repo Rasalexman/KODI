@@ -2,8 +2,14 @@ package com.mincor.kodiexample.presentation.layouts
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import android.widget.ImageView
 import com.mincor.kodiexample.R
+import sun.jvm.hotspot.utilities.IntArray
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.R
+
+
 
 
 class MovieImageView : ImageView {
@@ -91,6 +97,8 @@ class MovieImageView : ImageView {
     private fun getHeightByDisplay(heightMeasureSpec: Int): Int {
         return heightMeasureSpec.takeIf { heightProc == DEFAULT_VALUE } ?: ((context.resources.displayMetrics.heightPixels * heightProc).toInt())
     }
+
+    
 
     companion object {
         private const val ASPECT_4_3 = "0"
