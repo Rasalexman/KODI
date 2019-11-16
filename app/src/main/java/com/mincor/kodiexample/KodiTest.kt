@@ -46,7 +46,6 @@ fun main(args: Array<String>) {
         val dynamicInstance = instanceWith(DynamicSingleClass::class.java, single { DynamicSingleClass(UUID.randomUUID().toString()) } at MY_SINGLE_SCOPE_NAME)
         dynamicInstance.printName()
 
-
         val randomInstance = object : ISingleInterface {
             override val id: String = UUID.randomUUID().toString()
             override val name: String = "RandomInstance"

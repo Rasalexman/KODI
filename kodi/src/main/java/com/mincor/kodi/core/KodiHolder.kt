@@ -26,6 +26,8 @@ typealias InstanceInitializer<T> = IKodi.() -> T
  */
 sealed class KodiHolder {
 
+    abstract fun get(kodiImpl: IKodi): Any
+
     /**
      * Local Holder scope [KodiScopeWrapper]
      */
@@ -112,6 +114,8 @@ sealed class KodiHolder {
 
     /**
      * Single Instance Holder withScope lazy initialization
+     *
+     * @param singleInstanceProvider - the single lazy immutable instance provider
      */
     data class KodiSingle<T : Any>(
             private val singleInstanceProvider: InstanceInitializer<T>
@@ -124,7 +128,7 @@ sealed class KodiHolder {
         /**
          * Get <T> Single Value
          */
-        fun get(): T = singleInstance ?: Kodi.singleInstanceProvider().apply {
+        override fun get(kodiImpl: IKodi): T = singleInstance ?: Kodi.singleInstanceProvider().apply {
             singleInstance = this
         }
     }
@@ -134,14 +138,22 @@ sealed class KodiHolder {
      *
      * @param providerLiteral - [InstanceInitializer] function
      */
-    data class KodiProvider<T : Any>(val providerLiteral: InstanceInitializer<T>) : KodiHolder()
+    data class KodiProvider<T : Any>(private val providerLiteral: InstanceInitializer<T>) : KodiHolder() {
+        override fun get(kodiImpl: IKodi): T {
+            return providerLiteral.invoke(kodiImpl)
+        }
+    }
 
     /**
      * Constant value instance holder
      *
      * @param constantValue - value for initialization
      */
-    data class KodiConstant<T : Any>(val constantValue: T) : KodiHolder()
+    data class KodiConstant<T : Any>(private val constantValue: T) : KodiHolder() {
+        override fun get(kodiImpl: IKodi): T {
+            return constantValue
+        }
+    }
 }
 
 /**
@@ -174,37 +186,17 @@ infix fun KodiHolder.tag(instanceTag: KodiTagWrapper): KodiHolder {
     return this.tagWith(instanceTag)
 }
 
-/**
- * Bind singleton, only one instance will be stored and injected
- *
- * @param init - instance initializer [InstanceInitializer]
- *
- * @return [KodiHolder.KodiSingle] implementation instance
- */
-inline fun <reified T : Any> IKodi.single(noinline init: InstanceInitializer<T>): KodiHolder {
-    return createHolder<KodiHolder.KodiSingle<T>, T>(init)
-}
 
 /**
- * Bind the provider function
+ * Collect instance from [KodiHolder]
+ * @param kodiImpl - implemented instance of [IKodi]
  *
- * @param init - instance initializer [InstanceInitializer]
- *
- * @return [KodiHolder.KodiProvider] implementation instance
+ * @throws IllegalAccessException - if there is no tag in dependency graph
  */
-inline fun <reified T : Any> IKodi.provider(noinline init: InstanceInitializer<T>): KodiHolder {
-    return createHolder<KodiHolder.KodiProvider<T>, T>(init)
-}
-
-/**
- * Bind initialized constant value like String, Int, etc... or Any
- *
- * @param init - instance initializer [InstanceInitializer]
- *
- * @return [KodiHolder.KodiConstant] implementation instance
- */
-inline fun <reified T : Any> IKodi.constant(noinline init: InstanceInitializer<T>): KodiHolder {
-    return createHolder<KodiHolder.KodiConstant<T>, T>(init)
+@Suppress("UNCHECKED_CAST")
+@CanThrowException("Cannot cast instance from KodiHolder to Generic type T")
+infix fun <T : Any> KodiHolder.collect(kodiImpl: IKodi): T {
+    return (this.get(kodiImpl) as? T) ?: throwException<ClassCastException>("Cannot cast instance $this to Generic type T")
 }
 
 /**
@@ -215,6 +207,7 @@ inline fun <reified T : Any> IKodi.constant(noinline init: InstanceInitializer<T
  *
  * @return [KodiHolder] implementation instance
  */
+@CanThrowException("If there is no typed initializer passed throw an exception")
 inline fun <reified R : KodiHolder, reified T : Any> IKodi.createHolder(noinline init: InstanceInitializer<T>): KodiHolder {
     return when (R::class) {
         KodiHolder.KodiSingle::class -> KodiHolder.KodiSingle(init)

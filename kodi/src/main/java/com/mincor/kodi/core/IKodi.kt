@@ -193,6 +193,39 @@ inline fun <reified T : Any> IKodi.holder(tag: String? = null): KodiHolder {
 }
 
 /**
+ * Bind singleton, only one instance will be stored and injected
+ *
+ * @param init - instance initializer [InstanceInitializer]
+ *
+ * @return [KodiHolder.KodiSingle] implementation instance
+ */
+inline fun <reified T : Any> IKodi.single(noinline init: InstanceInitializer<T>): KodiHolder {
+    return createHolder<KodiHolder.KodiSingle<T>, T>(init)
+}
+
+/**
+ * Bind the provider function
+ *
+ * @param init - instance initializer [InstanceInitializer]
+ *
+ * @return [KodiHolder.KodiProvider] implementation instance
+ */
+inline fun <reified T : Any> IKodi.provider(noinline init: InstanceInitializer<T>): KodiHolder {
+    return createHolder<KodiHolder.KodiProvider<T>, T>(init)
+}
+
+/**
+ * Bind initialized constant value like String, Int, etc... or Any
+ *
+ * @param init - instance initializer [InstanceInitializer]
+ *
+ * @return [KodiHolder.KodiConstant] implementation instance
+ */
+inline fun <reified T : Any> IKodi.constant(noinline init: InstanceInitializer<T>): KodiHolder {
+    return createHolder<KodiHolder.KodiConstant<T>, T>(init)
+}
+
+/**
  * Lazy immutable property initializer wrapper for injection
  * Example: `val someValue by immutableInstance<ISomeValueClass>()`
  * It cannot be change
@@ -258,22 +291,4 @@ private fun <T : Any> IKodi.getInstanceByWrapperOrCreateDynamically(kodiTagWrapp
     return Kodi.createOrGet(kodiTagWrapper) {
         initKodiHolder ?: throwException<IllegalAccessException>("There is no tag `$kodiTagWrapper` in dependency graph injected into IKodi instance [${instance}]")
     } collect this
-}
-
-/**
- * Collect instance from [KodiHolder]
- * @param kodiImpl - implemented instance of [IKodi]
- *
- * @throws IllegalAccessException - if there is no tag in dependency graph
- */
-@Suppress("UNCHECKED_CAST")
-@CanThrowException("Cannot cast instance from KodiHolder to Generic type T")
-infix fun <T : Any> KodiHolder.collect(kodiImpl: IKodi): T {
-    return when (this) {
-        is KodiHolder.KodiSingle<*> -> get()
-        is KodiHolder.KodiProvider<*> -> providerLiteral(kodiImpl)
-        is KodiHolder.KodiConstant<*> -> constantValue
-    }.run {
-        (this as? T) ?: throwException<ClassCastException>("Cannot cast instance $this to Generic type T")
-    }
 }
