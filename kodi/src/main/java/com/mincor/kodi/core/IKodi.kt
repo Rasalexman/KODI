@@ -141,6 +141,36 @@ inline fun <reified T : Any> IKodi.isKodiInstance(tag: String? = null): Boolean 
 }
 
 /**
+ * Bind only by tag Instance
+ *
+ * @param tag - required parameter for key in injection graph
+ *
+ * @receiver [IKodi]
+ * @return [KodiTagWrapper]
+ */
+@CanThrowException("Parameter tag cannot be empty string")
+fun IKodi.bindTag(tag: String): KodiTagWrapper {
+    return tag.takeIf { it.isNotEmpty() }?.let {
+        this.bind<Any>(it)
+    } ?: throwException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
+}
+
+/**
+ * Unbind only by tag Instance
+ *
+ * @param tag - required parameter for key in injection graph
+ *
+ * @receiver [IKodi]
+ * @return [KodiTagWrapper]
+ */
+@CanThrowException("Parameter tag cannot be empty string")
+fun IKodi.unbindTag(tag: String): Boolean {
+    return tag.takeIf { it.isNotEmpty() }?.let {
+        this.unbind<Any>(it)
+    } ?: throwException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
+}
+
+/**
  * Unbind moduleScope and all instances from dependency graph
  *
  * @param scopeTagWrapper - [KodiScopeWrapper] to remove

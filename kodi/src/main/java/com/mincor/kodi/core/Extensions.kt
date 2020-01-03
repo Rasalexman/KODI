@@ -66,7 +66,9 @@ fun <T> T.applyIf(prediction: Boolean, action: (T) -> Unit): T {
 inline fun <reified T : Exception> throwException(message: String): Nothing {
     val exception = when (T::class) {
         RuntimeException::class -> RuntimeException(message)
+        ClassCastException::class -> ClassCastException(message)
         IllegalStateException::class -> IllegalStateException(message)
+        IllegalArgumentException::class -> IllegalArgumentException(message)
         else -> NoSuchElementException(message)
     }
     throw exception

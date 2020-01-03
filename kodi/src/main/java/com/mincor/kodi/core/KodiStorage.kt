@@ -185,9 +185,11 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * @return [Boolean]
      */
     override fun removeFromModule(instanceTag: KodiTagWrapper): Boolean {
-       return instanceTag.takeIf { it.isNotEmpty() }?.let {
-           modulesSet.find { it.moduleInstancesSet.remove(instanceTag) } != null
-       } ?: false
+        return if (instanceTag.isNotEmpty()) {
+            modulesSet.find { it.moduleInstancesSet.remove(instanceTag) } != null
+        } else {
+            false
+        }
     }
 
     /**
@@ -197,9 +199,11 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * @return [Boolean]
      */
     override fun hasModuleByTag(instanceTag: KodiTagWrapper): Boolean {
-       return instanceTag.takeIf { it.isNotEmpty() }?.let {
-           modulesSet.find { it.moduleInstancesSet.contains(instanceTag) } != null
-       } ?: false
+        return if (instanceTag.isNotEmpty()) {
+            modulesSet.find { it.moduleInstancesSet.contains(instanceTag) } != null
+        } else {
+            false
+        }
     }
 
     /**
@@ -267,13 +271,15 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * @param scope - moduleScope tag for remove
      */
     override fun removeAllScope(scope: KodiScopeWrapper): Boolean {
-        return scope.takeIf { it.isNotEmpty() }?.let {
+        return if (scope.isNotEmpty()) {
             scopeSet.findTagSet(scope)
                     ?.forEach { typeWrapper -> removeInstance(typeWrapper) }
                     .runCatching {
                         scopeSet.removeAll { it.first == scope }
                     }.isSuccess
-        } ?: false
+        } else {
+            false
+        }
     }
 
     /**
