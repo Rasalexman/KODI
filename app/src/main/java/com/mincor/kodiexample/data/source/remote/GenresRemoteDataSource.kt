@@ -15,27 +15,25 @@ class GenresRemoteDataSource(
         private val moviesApi: IMovieApi
 ) : IGenresRemoteDataSource {
 
-    private val mutex by lazy { Mutex() }
     private val addedImages by lazy { mutableSetOf<String>() }
 
     override suspend fun getRemoteGenresList(): SResult<List<GenreModel>> {
         return moviesApi.getGenresList().getResult { it.genres }
     }
 
-    override suspend fun getGenresImages(result: GenreEntity): GenreEntity {
-        return mutex.withLock {
-            moviesApi.getMoviesListByPopularity(result.id).run {
+    override suspend fun getGenresImages(result: List<GenreEntity>) {
+        result.forEach { genreEntity ->
+            moviesApi.getMoviesListByPopularity(genreEntity.id).run {
                 body()?.let { moviesResult ->
                     moviesResult.results.filter {
-                        val path = it.poster_path.orEmpty()
+                        val path = it.poster_path ?: it.backdrop_path.orEmpty()
                         path.isNotEmpty() && !addedImages.contains(path)
-                    }.take(3).mapTo(result.images) {
+                    }.take(3).mapTo(genreEntity.images) {
                         val imagePoster = it.poster_path ?: it.backdrop_path.orEmpty()
                         addedImages.add(imagePoster)
                         imagePoster
                     }
-                    result
-                } ?: result
+                }
             }
         }
 

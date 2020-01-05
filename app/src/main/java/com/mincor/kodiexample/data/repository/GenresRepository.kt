@@ -28,9 +28,7 @@ class GenresRepository(
                 .mapListTo()
 
         if(result is SResult.Success<List<GenreEntity>>) {
-            result.data.map {
-                remoteDataSource.getGenresImages(it)
-            }
+            remoteDataSource.getGenresImages(result.data)
         }
         return result
     }

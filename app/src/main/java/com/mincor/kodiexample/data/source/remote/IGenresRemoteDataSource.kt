@@ -6,5 +6,5 @@ import com.mincor.kodiexample.data.model.remote.GenreModel
 
 interface IGenresRemoteDataSource {
     suspend fun getRemoteGenresList(): SResult<List<GenreModel>>
-    suspend fun getGenresImages(result: GenreEntity): GenreEntity
+    suspend fun getGenresImages(result: List<GenreEntity>)
 }
