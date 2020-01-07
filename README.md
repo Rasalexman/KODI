@@ -266,10 +266,10 @@ Gradle:
 implementation 'com.rasalexman.kodi:kodi:x.y.z'
 
 // AndroidX Module
-implementation 'com.rasalexman.kodiandroidx:kodiandroidx:1.0.0'
+implementation 'com.rasalexman.kodiandroidx:kodiandroidx:1.0.3'
 
 // Old Reflection Library. It's a final version and i don't have any plans to support it in the future.
-implementation 'com.rasalexman.kodireflect:kodireflect:1.1.1'
+implementation 'com.rasalexman.kodireflect:kodireflect:1.1.3'
 ```
 
 Maven:
