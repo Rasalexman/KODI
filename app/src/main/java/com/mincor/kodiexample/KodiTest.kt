@@ -1,26 +1,42 @@
 package com.mincor.kodiexample
 
 import com.mincor.kodi.core.*
+import com.mincor.kodiexample.activity.log
 import java.util.*
 
 const val SOME_CONSTANT_TAG = "SOME_CONSTANT_TAG"
 
 const val MY_PROVIDER_SCOPE_NAME = "MY_PROVIDER_SCOPE_NAME"
 const val MY_SINGLE_SCOPE_NAME = "MY_SINGLE_SCOPE_NAME"
+const val MY_ANOTHER_SCOPE_NAME = "MY_ANOTHER_SCOPE_NAME"
 
 const val TAG = "----->"
 
-fun main(args: Array<String>) {
+fun main() {
 
     val kodiModule = kodiModule {
         bind<ISingleInterface>() with single { SingleClass(UUID.randomUUID().toString()) }
         bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) } at MY_PROVIDER_SCOPE_NAME
 
-        bindType<ISingleInterface, AnotherSingleClass>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
-        bindType<ISingleInterface, OneMoreSingleClass>() with single { OneMoreSingleClass(UUID.randomUUID().toString()) }
+        //bindType<ISingleInterface, AnotherSingleClass>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
+        //bindType<ISingleInterface, OneMoreSingleClass>() with single { OneMoreSingleClass(UUID.randomUUID().toString()) }
     } withScope MY_SINGLE_SCOPE_NAME
 
+    val anotherModule = kodiModule {
+        bind<ISingleInterface>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
+    } withScope MY_ANOTHER_SCOPE_NAME
+
     kodi {
+        import(kodiModule)
+        import(anotherModule)
+
+        val firstModuleInstance: ISingleInterface = instance()
+        val secondModuleInstance: ISingleInterface = instance()
+
+        log { "Is instance equals = ${firstModuleInstance == secondModuleInstance}" }
+    }
+
+    /*kodi {
         // Import module
         import(kodiModule)
         // bind constant value
@@ -95,7 +111,7 @@ fun main(args: Array<String>) {
         kodiModule.remove()
 
         println("$TAG AnotherSingleClass in module after remove = ${kodiModule.hasInstance<AnotherSingleClass>()} | hasScope = ${hasScope<AnotherSingleClass>()}")
-    }
+    }*/
 }
 
 interface IPrintable {

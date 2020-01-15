@@ -21,6 +21,8 @@ import com.mincor.kodi.delegates.mutableGetter
  */
 typealias InstanceInitializer<T> = IKodi.() -> T
 
+typealias InstanceInitializerWithParam<T, R> = IKodi.(R?) -> T
+
 /**
  * Available classes for binding
  */
@@ -150,6 +152,23 @@ sealed class KodiHolder {
         override fun get(kodiImpl: IKodi): T {
             return providerLiteral.invoke(kodiImpl)
         }
+    }
+
+    /**
+     * Provider Instance Holder withScope many execution
+     *
+     * @param providerLiteral - [InstanceInitializer] function
+     */
+    data class KodiProviderWithParam<T : Any, R : Any?>(private val providerLiteral: InstanceInitializerWithParam<T, R>) : KodiHolder() {
+        /**
+         * Get holder value
+         * @param kodiImpl - implemented [IKodi] instance
+         */
+        override fun get(kodiImpl: IKodi): T {
+            return providerLiteral.invoke(kodiImpl, null)
+        }
+
+        fun getWithParam(kodiImpl: IKodi, param: R) = providerLiteral.invoke(kodiImpl, param)
     }
 
     /**

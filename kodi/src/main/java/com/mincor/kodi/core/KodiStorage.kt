@@ -37,6 +37,8 @@ typealias ScopeSetItem = Pair<KodiScopeWrapper, TypesSet>
  */
 typealias LambdaWithReturn<T> = () -> T
 
+typealias KodiInstanceMap = MutableMap<KodiTagWrapper, KodiHolder>
+
 /**
  * Main storage abstraction
  */
@@ -125,6 +127,8 @@ interface IKodiStorage<V> {
      * Warning!!! - this action cannot be reverted
      */
     fun clearAll()
+
+    fun createOrGet(key: KodiTagWrapper, scope: KodiScopeWrapper, defaultValue: LambdaWithReturn<KodiHolder>): KodiHolder
 }
 
 /**
@@ -136,6 +140,8 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * Main instance storage (`MutableMap<[KodiTagWrapper], T>`)
      */
     private val instanceMap by immutableGetter { mutableMapOf<KodiTagWrapper, KodiHolder>() }
+
+    private val scopedInstanceSet by immutableGetter { mutableMapOf<KodiScopeWrapper, KodiInstanceMap>() }
 
     /**
      * Main `moduleScope` to `tags` storage instance (`MutableSet<[ScopeSetItem]>`)
@@ -217,6 +223,11 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      */
     override fun createOrGet(key: KodiTagWrapper, defaultValue: LambdaWithReturn<KodiHolder>): KodiHolder {
         return instanceMap.getOrPut(key, defaultValue)
+    }
+
+    override fun createOrGet(key: KodiTagWrapper, scope: KodiScopeWrapper, defaultValue: LambdaWithReturn<KodiHolder>): KodiHolder {
+        val instanceMapper = scopedInstanceSet.getOrPut(scope) { mutableMapOf() }
+        return instanceMapper.getOrPut(key, defaultValue)
     }
 
     /**
