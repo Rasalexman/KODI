@@ -15,7 +15,7 @@
 package com.mincor.kodi.delegates
 
 import com.mincor.kodi.core.CanThrowException
-import com.mincor.kodi.core.throwException
+import com.mincor.kodi.core.throwKodiException
 
 /**
  * Base immutable realization provider
@@ -109,7 +109,7 @@ sealed class Optional<out T> {
          */
         @CanThrowException
         override fun get(): T {
-            throwException<NoSuchElementException>("Can't get object from Optional.None")
+            throwKodiException<NoSuchElementException>("Can't get object from Optional.None")
         }
     }
 }

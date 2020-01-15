@@ -50,3 +50,14 @@ inline fun <reified T : Any, reified O : Any> Response<T>.getResult(alsoAction: 
         errorResult(this.code(), this.message())
     } ?: emptyResult()
 }
+
+/**
+ * Apply actions to <T> if prediction is true
+ *
+ * @param prediction true prediction
+ * @param action action to do
+ */
+fun <T> T.applyIf(prediction: Boolean, action: (T) -> Unit): T {
+    if (prediction) action(this)
+    return this
+}

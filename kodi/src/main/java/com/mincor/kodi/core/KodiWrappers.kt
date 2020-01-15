@@ -39,22 +39,31 @@ typealias KodiTagScopeWrappers = Pair<KodiTagWrapper, KodiScopeWrapper>
  * @param instance - [KodiHolder] instance for store
  * @return [KodiHolder] instance
  */
-inline infix fun <reified T : KodiHolder> KodiTagWrapper.with(instance: T): KodiHolder {
-    return instance tag this
+inline infix fun <reified T : KodiHolder> KodiTagWrapper.with(instance: T) {
+    instance tag this
 }
 
-inline infix fun <reified T : KodiHolder> KodiTagScopeWrappers.with(instance: T): KodiHolder {
+/**
+ *
+ */
+inline infix fun <reified T : KodiHolder> KodiTagScopeWrappers.with(instance: T) {
     val (kodiTagWrapper, kodiScopeWrapper) = this
-    return (instance at kodiScopeWrapper) tag kodiTagWrapper
+    (instance at kodiScopeWrapper) tag kodiTagWrapper
 }
 
+/**
+ *
+ */
 infix fun KodiTagWrapper.at(scopeWrapper: KodiScopeWrapper): KodiTagScopeWrappers {
-    if(!scopeWrapper.isNotEmpty()) throwException<IllegalStateException>("Parameter scopeWrapper can't be empty")
+    if(!scopeWrapper.isNotEmpty()) throwKodiException<IllegalStateException>("Parameter `scopeWrapper` can't be empty")
     return this to scopeWrapper
 }
 
-infix fun KodiTagWrapper.at(scopeName: String): Pair<KodiTagWrapper, KodiScopeWrapper> {
-    if(scopeName.isEmpty()) throwException<IllegalStateException>("Parameter scopeName can't be empty")
+/**
+ *
+ */
+infix fun KodiTagWrapper.at(scopeName: String): KodiTagScopeWrappers {
+    if(scopeName.isEmpty()) throwKodiException<IllegalStateException>("Parameter `scopeName: String` can't be empty")
     return this to scopeName.asScope()
 }
 

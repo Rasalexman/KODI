@@ -99,7 +99,6 @@ inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = 
  * @return [String] optional if it has scope return it name or null
  */
 inline fun <reified T : Any> IKodi.getScope(tag: String? = null): String? {
-    val instance = this
     val tagToWrap = (tag ?: "${T::class.java}").asTag()
     return if (Kodi.hasInstance(tagToWrap)) {
         null
@@ -150,7 +149,7 @@ inline fun <reified T : Any> IKodi.isKodiInstance(tag: String? = null): Boolean 
 fun IKodi.bindTag(tag: String): KodiTagWrapper {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.bind<Any>(it)
-    } ?: throwException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
+    } ?: throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
 }
 
 /**
@@ -165,7 +164,7 @@ fun IKodi.bindTag(tag: String): KodiTagWrapper {
 fun IKodi.unbindTag(tag: String): Boolean {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.unbind<Any>(it)
-    } ?: throwException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
+    } ?: throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
 }
 
 /**
@@ -202,7 +201,7 @@ fun IKodi.unbindAll() {
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? = null): T {
-    return holder<T>(tag, scope) collect this
+    return holder<T>(tag, scope).get(this) as? T ?: throwKodiException<ClassCastException>("Cannot cast instance $this to Generic type T")
 }
 
 /**
@@ -212,12 +211,12 @@ inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? 
  * @throws IllegalAccessException - if there is no tag in dependency graph it's crash
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
-inline fun <reified T : Any> IKodi.holder(tag: String? = null, scopeTagWrapper: String? = null): KodiHolder {
+inline fun <reified T : Any> IKodi.holder(tag: String? = null, scope: String? = null): KodiHolder {
     val instance = this
     val tagToWrap = (tag ?: "${T::class.java}").asTag()
-    val scope = scopeTagWrapper?.asScope() ?: defaultScope
-    return Kodi.createOrGet(tagToWrap, scope) {
-        throwException<IllegalAccessException>("There is no tag `$tagToWrap` in dependency graph injected into IKodi instance [$instance]")
+    val scopeToWrap = scope?.asScope() ?: defaultScope
+    return Kodi.createOrGet(tagToWrap, scopeToWrap) {
+        throwKodiException<IllegalAccessException>("There is no tag `$tagToWrap` in dependency graph with scope `$scopeToWrap` injected into IKodi instance [$instance]")
     }
 }
 
@@ -314,11 +313,11 @@ fun <T : Any> IKodi.instanceWith(tag: String, initKodiHolder: KodiHolder? = null
  *
  * @throws IllegalAccessException - if there is no tag in dependency graph
  */
+@Suppress("UNCHECKED_CAST")
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 private fun <T : Any> IKodi.getInstanceByWrapperOrCreateDynamically(kodiTagWrapper: KodiTagWrapper, scopeScopeWrapper: KodiScopeWrapper = defaultScope, initKodiHolder: KodiHolder? = null): T {
     val instance = this
     return Kodi.createOrGet(kodiTagWrapper, scopeScopeWrapper) {
-        initKodiHolder
-                ?: throwException<IllegalAccessException>("There is no tag `$kodiTagWrapper` in dependency graph injected into IKodi instance [${instance}]")
-    } collect this
+        initKodiHolder ?: throwKodiException<IllegalAccessException>("There is no tag `$kodiTagWrapper` in dependency graph injected into IKodi instance [${instance}]")
+    }.get(this) as? T ?: throwKodiException<ClassCastException>("Cannot cast instance of $initKodiHolder to Generic type T")
 }

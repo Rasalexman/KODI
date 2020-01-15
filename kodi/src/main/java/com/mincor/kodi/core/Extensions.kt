@@ -38,20 +38,13 @@ fun String.asScope() = KodiScopeWrapper(this)
  */
 fun String.asTag() = KodiTagWrapper(this)
 
-/**
- * Apply actions to <T> if prediction is true
- *
- * @param prediction true prediction
- * @param action action to do
- */
-fun <T> T.applyIf(prediction: Boolean, action: (T) -> Unit): T {
-    if (prediction) action(this)
-    return this
-}
 
-fun <T> KodiHolder.applyAs(prediction: T?, action: KodiHolder.(T) -> Unit): KodiHolder {
-    prediction?.let {
-        this.action(it)
+/**
+ *
+ */
+fun <T : IKodi> KodiHolder.holderAs(prediction: T?, action: KodiHolder.(T) -> Unit): KodiHolder {
+    prediction?.let { kodiInstance ->
+        this.action(kodiInstance)
     }
     return this
 }
@@ -61,7 +54,7 @@ fun <T> KodiHolder.applyAs(prediction: T?, action: KodiHolder.(T) -> Unit): Kodi
  *
  * @param message - Message for notify user in log
  */
-inline fun <reified T : Exception> throwException(message: String): Nothing {
+inline fun <reified T : Exception> throwKodiException(message: String): Nothing {
     val exception = when (T::class) {
         RuntimeException::class -> RuntimeException(message)
         ClassCastException::class -> ClassCastException(message)

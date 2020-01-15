@@ -5,7 +5,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.mincor.kodi.core.IKodi
 import com.mincor.kodi.core.instance
-import com.mincor.kodi.core.throwException
+import com.mincor.kodi.core.throwKodiException
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.presentation.base.BaseRecyclerFragment
 import com.mincor.kodiexample.presentation.details.DetailsFragment.Companion.KEY_MOVIE_ID
@@ -23,7 +23,7 @@ class MoviesFragment : BaseRecyclerFragment<MovieUI, MoviesContract.IPresenter>(
     override val presenter: MoviesContract.IPresenter
         get() = instance<MoviesContract.IPresenter>().apply {
                 genreId = arguments?.getInt(KEY_GENRE_ID)
-                        ?: throwException<IllegalStateException>("Genre Id can't be null")
+                        ?: throwKodiException<IllegalStateException>("Genre Id can't be null")
             }
 
     override val toolbarView: Toolbar?

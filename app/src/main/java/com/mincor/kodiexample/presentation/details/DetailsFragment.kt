@@ -4,7 +4,7 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import coil.api.load
 import com.mincor.kodi.core.IKodi
-import com.mincor.kodi.core.throwException
+import com.mincor.kodi.core.throwKodiException
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.common.Consts
 import com.mincor.kodiexample.data.model.local.MovieEntity
@@ -30,7 +30,7 @@ class DetailsFragment : BaseFragment<DetailsPresenter>(),
         get() = contentProgressBar
 
     override val presenter: DetailsPresenter get() = DetailsPresenter().apply {
-        movieId = arguments?.getInt(KEY_MOVIE_ID) ?: throwException<IllegalAccessException>("Movie Id can't be null")
+        movieId = arguments?.getInt(KEY_MOVIE_ID) ?: throwKodiException<IllegalAccessException>("Movie Id can't be null")
     }
 
     override fun showDetails(movieEntity: MovieEntity) {

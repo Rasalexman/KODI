@@ -193,7 +193,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * The instance [KodiTagWrapper] to retrieve
      */
     override fun hasInstance(key: KodiTagWrapper): Boolean {
-        return false//scopedInstanceSet.
+        return scopedInstanceSet[defaultScope]?.containsKey(key) == true
     }
 
     /**
@@ -204,7 +204,16 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * @return - optional [KodiHolder]
      */
     override fun removeInstance(key: KodiTagWrapper, scope: KodiScopeWrapper): KodiHolder? {
-        return null//instanceMap.remove(key)
+        return key.takeIf {
+            it.isNotEmpty()
+        }?.let {
+            val scopeToRemove = scopedInstanceSet[defaultScope]?.remove(key)
+            scope.takeIf { it != defaultScope }?.let {
+                scopedInstanceSet[scope]?.remove(key)
+            } ?: scopeToRemove?.let {
+                scopedInstanceSet[it.scopeName()]?.remove(key)
+            }
+        }
     }
 
     /**
@@ -214,7 +223,9 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      */
     override fun removeAllScope(scope: KodiScopeWrapper): Boolean {
         return if (scope.isNotEmpty()) {
-            scopedInstanceSet.remove(scope) != null
+            val map = scopedInstanceSet.remove(scope)
+            val defaultMap = scopedInstanceSet[defaultScope]?.filter { map?.remove(it.key) != null }
+            defaultMap != null && defaultMap.isNotEmpty()
         } else {
             false
         }

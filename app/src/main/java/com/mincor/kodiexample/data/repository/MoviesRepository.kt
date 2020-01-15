@@ -1,6 +1,6 @@
 package com.mincor.kodiexample.data.repository
 
-import com.mincor.kodi.core.applyIf
+import com.mincor.kodiexample.common.applyIf
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.mapListTo
 import com.mincor.kodiexample.data.dto.mapTo

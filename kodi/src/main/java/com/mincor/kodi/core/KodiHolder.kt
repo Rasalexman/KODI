@@ -50,16 +50,15 @@ sealed class KodiHolder {
      *
      * @param instanceTag - tag for instance binding
      */
-    internal infix fun KodiHolder.tagWith(instanceTag: KodiTagWrapper): KodiHolder {
+    internal infix fun KodiHolder.tagWith(instanceTag: KodiTagWrapper) {
         if (instanceTag.isNotEmpty() && !tag.isNotEmpty()) {
             tag = instanceTag
             addToGraph()
         } else if (!instanceTag.isNotEmpty()) {
             removeFromGraph()
         } else {
-            throwException<IllegalStateException>("You can't change tag `$tag` on `$this`. Only set it to emptyTag()")
+            throwKodiException<IllegalStateException>("You can't change tag `$tag` on `$this`. Only set it to emptyTag()")
         }
-        return this
     }
 
     /**
@@ -102,6 +101,11 @@ sealed class KodiHolder {
      *
      */
     private fun getDefaultValue() = this
+
+    /**
+     *
+     */
+    fun scopeName(): KodiScopeWrapper = scope
 
     /**
      * Single Instance Holder withScope lazy initialization
@@ -190,23 +194,12 @@ infix fun KodiHolder.at(scopeWrapper: KodiScopeWrapper): KodiHolder {
  *
  * @param instanceTag - tag for instance binding
  */
-infix fun KodiHolder.tag(instanceTag: KodiTagWrapper): KodiHolder {
-    return this.tagWith(instanceTag)
+infix fun KodiHolder.tag(instanceTag: KodiTagWrapper) {
+    this.tagWith(instanceTag)
 }
 
 
-/**
- * Collect instance from [KodiHolder]
- * @param kodiImpl - implemented instance of [IKodi]
- *
- * @throws IllegalAccessException - if there is no tag in dependency graph
- */
-@Suppress("UNCHECKED_CAST")
-@CanThrowException("Cannot cast instance from KodiHolder to Generic type T")
-infix fun <T : Any> KodiHolder.collect(kodiImpl: IKodi): T {
-    return (this.get(kodiImpl) as? T)
-            ?: throwException<ClassCastException>("Cannot cast instance $this to Generic type T")
-}
+
 
 /**
  * Create [KodiHolder] with given [InstanceInitializer]
@@ -222,6 +215,6 @@ inline fun <reified R : KodiHolder, reified T : Any> IKodi.createHolder(noinline
         KodiHolder.KodiSingle::class -> KodiHolder.KodiSingle(init)
         KodiHolder.KodiProvider::class -> KodiHolder.KodiProvider(init)
         KodiHolder.KodiConstant::class -> KodiHolder.KodiConstant(init())
-        else -> throwException<ClassCastException>("There is no type holder like ${T::class}")
-    }.applyAs(this as? IKodiModule) { module -> this at module.scope }
+        else -> throwKodiException<ClassCastException>("There is no type holder like ${T::class}")
+    }.holderAs(this as? IKodiModule) { module -> this at module.scope }
 }
