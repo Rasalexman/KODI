@@ -14,8 +14,6 @@
 
 package com.mincor.kodi.core
 
-import com.mincor.kodi.delegates.mutableGetter
-
 /**
  * Typealias for simplification
  */
@@ -39,14 +37,12 @@ sealed class KodiHolder {
     /**
      * Local Holder scope [KodiScopeWrapper]
      */
-    var scope: KodiScopeWrapper by mutableGetter { defaultScope }
-        private set
+    private var scope: KodiScopeWrapper = emptyScope()
 
     /**
      * Current Holder [KodiTagWrapper]
      */
-    var tag: KodiTagWrapper by mutableGetter { emptyTag() }
-        private set
+    private var tag: KodiTagWrapper = emptyTag()
 
     /**
      * Add [KodiTagWrapper] to current Holder
@@ -55,8 +51,8 @@ sealed class KodiHolder {
      * @param instanceTag - tag for instance binding
      */
     internal infix fun KodiHolder.tagWith(instanceTag: KodiTagWrapper): KodiHolder {
-        if (instanceTag.isNotEmpty() && !this.tag.isNotEmpty()) {
-            this.tag = instanceTag
+        if (instanceTag.isNotEmpty() && !tag.isNotEmpty()) {
+            tag = instanceTag
             addToGraph()
         } else if (!instanceTag.isNotEmpty()) {
             removeFromGraph()
@@ -74,7 +70,7 @@ sealed class KodiHolder {
      * @return [KodiHolder]
      */
     internal infix fun KodiHolder.scopeWith(scopeWrapper: KodiScopeWrapper): KodiHolder {
-        scope = scopeWrapper.takeIf { it.isNotEmpty() } ?: defaultScope
+        scope = scopeWrapper
         return this
     }
 
@@ -83,9 +79,11 @@ sealed class KodiHolder {
      */
     private fun addToGraph() {
         if (tag.isNotEmpty()) {
-            Kodi.createOrGet(tag, scope.takeIf { it.isNotEmpty() } ?: defaultScope) { this }
+            Kodi.createOrGet(tag, defaultScope, ::getDefaultValue)
+            if(scope.isNotEmpty()) {
+                Kodi.createOrGet(tag, scope, ::getDefaultValue)
+            }
         }
-
     }
 
     /**
@@ -93,9 +91,17 @@ sealed class KodiHolder {
      */
     private fun removeFromGraph() {
         if (tag.isNotEmpty()) {
-            Kodi.removeInstance(tag, scope)
+            Kodi.removeInstance(tag, defaultScope)
+            if(scope.isNotEmpty()) {
+                Kodi.removeInstance(tag, scope)
+            }
         }
     }
+
+    /**
+     *
+     */
+    private fun getDefaultValue() = this
 
     /**
      * Single Instance Holder withScope lazy initialization
@@ -114,9 +120,10 @@ sealed class KodiHolder {
          * Get holder value
          * @param kodiImpl - implemented [IKodi] instance
          */
-        override fun get(kodiImpl: IKodi): T = singleInstance ?: Kodi.singleInstanceProvider().apply {
-            singleInstance = this
-        }
+        override fun get(kodiImpl: IKodi): T = singleInstance
+                ?: Kodi.singleInstanceProvider().apply {
+                    singleInstance = this
+                }
     }
 
     /**
@@ -178,16 +185,6 @@ infix fun KodiHolder.at(scopeWrapper: KodiScopeWrapper): KodiHolder {
 }
 
 /**
- * Add Instance Tag to moduleScope
- * Or remove it if input is empty string
- *
- * @param scopeName - [KodiScopeWrapper] to add instance tag
- */
-infix fun KodiHolder.at(scopeName: String): KodiHolder {
-    return this.scopeWith(scopeName.asScope())
-}
-
-/**
  * Add [KodiTagWrapper] to current Holder
  * And put it into dependency scope
  *
@@ -207,7 +204,8 @@ infix fun KodiHolder.tag(instanceTag: KodiTagWrapper): KodiHolder {
 @Suppress("UNCHECKED_CAST")
 @CanThrowException("Cannot cast instance from KodiHolder to Generic type T")
 infix fun <T : Any> KodiHolder.collect(kodiImpl: IKodi): T {
-    return (this.get(kodiImpl) as? T) ?: throwException<ClassCastException>("Cannot cast instance $this to Generic type T")
+    return (this.get(kodiImpl) as? T)
+            ?: throwException<ClassCastException>("Cannot cast instance $this to Generic type T")
 }
 
 /**
@@ -225,5 +223,5 @@ inline fun <reified R : KodiHolder, reified T : Any> IKodi.createHolder(noinline
         KodiHolder.KodiProvider::class -> KodiHolder.KodiProvider(init)
         KodiHolder.KodiConstant::class -> KodiHolder.KodiConstant(init())
         else -> throwException<ClassCastException>("There is no type holder like ${T::class}")
-    }.applyAs(this as? IKodiModule) { this at it.scope }
+    }.applyAs(this as? IKodiModule) { module -> this at module.scope }
 }

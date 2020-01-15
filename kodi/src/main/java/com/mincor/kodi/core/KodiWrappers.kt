@@ -31,6 +31,8 @@ inline class KodiTagWrapper(private val instanceTag: String) {
     }
 }
 
+typealias KodiTagScopeWrappers = Pair<KodiTagWrapper, KodiScopeWrapper>
+
 /**
  * Bind instanceTag withScope available instance holders
  *
@@ -39,6 +41,21 @@ inline class KodiTagWrapper(private val instanceTag: String) {
  */
 inline infix fun <reified T : KodiHolder> KodiTagWrapper.with(instance: T): KodiHolder {
     return instance tag this
+}
+
+inline infix fun <reified T : KodiHolder> KodiTagScopeWrappers.with(instance: T): KodiHolder {
+    val (kodiTagWrapper, kodiScopeWrapper) = this
+    return (instance at kodiScopeWrapper) tag kodiTagWrapper
+}
+
+infix fun KodiTagWrapper.at(scopeWrapper: KodiScopeWrapper): KodiTagScopeWrappers {
+    if(!scopeWrapper.isNotEmpty()) throwException<IllegalStateException>("Parameter scopeWrapper can't be empty")
+    return this to scopeWrapper
+}
+
+infix fun KodiTagWrapper.at(scopeName: String): Pair<KodiTagWrapper, KodiScopeWrapper> {
+    if(scopeName.isEmpty()) throwException<IllegalStateException>("Parameter scopeName can't be empty")
+    return this to scopeName.asScope()
 }
 
 /**

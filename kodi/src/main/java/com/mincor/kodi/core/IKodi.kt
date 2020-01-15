@@ -287,7 +287,7 @@ inline fun <reified T : Any> IKodi.mutableInstance(tag: String? = null): IMutabl
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 fun <T : Any> IKodi.instanceWith(clazz: Class<T>, initKodiHolder: KodiHolder? = null): T {
-    val tagToWrap = initKodiHolder?.tag?.takeIf { it.isNotEmpty() } ?: clazz.toString().asTag()
+    val tagToWrap = clazz.toString().asTag()
     return getInstanceByWrapperOrCreateDynamically(tagToWrap, defaultScope, initKodiHolder)
 }
 
@@ -302,7 +302,7 @@ fun <T : Any> IKodi.instanceWith(clazz: Class<T>, initKodiHolder: KodiHolder? = 
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 fun <T : Any> IKodi.instanceWith(tag: String, initKodiHolder: KodiHolder? = null): T {
-    val tagToWrap = initKodiHolder?.tag?.takeIf { it.isNotEmpty() } ?: tag.asTag()
+    val tagToWrap = tag.asTag()
     return getInstanceByWrapperOrCreateDynamically(tagToWrap, defaultScope, initKodiHolder)
 }
 

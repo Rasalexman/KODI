@@ -16,7 +16,7 @@ fun main() {
 
     val kodiModule = kodiModule {
         bind<ISingleInterface>() with single { SingleClass(UUID.randomUUID().toString()) }
-        bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) } at MY_PROVIDER_SCOPE_NAME
+        bind<IProviderInterface>() at MY_PROVIDER_SCOPE_NAME with provider { ProviderClass(UUID.randomUUID().toString()) }
 
         //bindType<ISingleInterface, AnotherSingleClass>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
         //bindType<ISingleInterface, OneMoreSingleClass>() with single { OneMoreSingleClass(UUID.randomUUID().toString()) }
@@ -32,6 +32,9 @@ fun main() {
 
         val firstModuleInstance: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
         val secondModuleInstance: ISingleInterface = instance()
+
+        val myProvider: IProviderInterface = instance()
+        val myProviderByScope: IProviderInterface = instance(scope = MY_PROVIDER_SCOPE_NAME)
 
         log { "Is instance equals = ${firstModuleInstance == secondModuleInstance}" }
     }
