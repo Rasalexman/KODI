@@ -30,7 +30,7 @@ fun main() {
         import(kodiModule)
         import(anotherModule)
 
-        val firstModuleInstance: ISingleInterface = instance()
+        val firstModuleInstance: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
         val secondModuleInstance: ISingleInterface = instance()
 
         log { "Is instance equals = ${firstModuleInstance == secondModuleInstance}" }

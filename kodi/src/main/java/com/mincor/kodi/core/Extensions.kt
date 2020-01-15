@@ -15,21 +15,12 @@
 package com.mincor.kodi.core
 
 /**
- * Scope name wrapper
- *
- * @param scopeTag - string name of scope tag
- * @param scopeInit - initializing lambda of scope tag
- */
-fun scope(
-        scopeTag: String? = null,
-        scopeInit: (() -> String)? = null
-) = KodiScopeWrapper(scopeTag ?: scopeInit?.invoke() ?: "")
-
-/**
  * Empty moduleScope.
  * This is means that tag has no scope
  */
 fun emptyScope() = KodiScopeWrapper("")
+
+val defaultScope = KodiScopeWrapper("DEFAULT_SCOPE")
 
 /**
  * Empty instance tag holder.
@@ -55,6 +46,13 @@ fun String.asTag() = KodiTagWrapper(this)
  */
 fun <T> T.applyIf(prediction: Boolean, action: (T) -> Unit): T {
     if (prediction) action(this)
+    return this
+}
+
+fun <T> KodiHolder.applyAs(prediction: T?, action: KodiHolder.(T) -> Unit): KodiHolder {
+    prediction?.let {
+        this.action(it)
+    }
     return this
 }
 

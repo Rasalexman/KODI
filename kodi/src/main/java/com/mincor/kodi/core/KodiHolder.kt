@@ -21,6 +21,9 @@ import com.mincor.kodi.delegates.mutableGetter
  */
 typealias InstanceInitializer<T> = IKodi.() -> T
 
+/**
+ *  Typealias for simplification with params
+ */
 typealias InstanceInitializerWithParam<T, R> = IKodi.(R?) -> T
 
 /**
@@ -36,7 +39,7 @@ sealed class KodiHolder {
     /**
      * Local Holder scope [KodiScopeWrapper]
      */
-    var scope: KodiScopeWrapper by mutableGetter { emptyScope() }
+    var scope: KodiScopeWrapper by mutableGetter { defaultScope }
         private set
 
     /**
@@ -55,10 +58,8 @@ sealed class KodiHolder {
         if (instanceTag.isNotEmpty() && !this.tag.isNotEmpty()) {
             this.tag = instanceTag
             addToGraph()
-            addToScope()
         } else if (!instanceTag.isNotEmpty()) {
             removeFromGraph()
-            removeFromScope()
         } else {
             throwException<IllegalStateException>("You can't change tag `$tag` on `$this`. Only set it to emptyTag()")
         }
@@ -73,11 +74,7 @@ sealed class KodiHolder {
      * @return [KodiHolder]
      */
     internal infix fun KodiHolder.scopeWith(scopeWrapper: KodiScopeWrapper): KodiHolder {
-        removeFromScope()
-        scope = scopeWrapper
-        if (scopeWrapper.isNotEmpty()) {
-            addToScope()
-        }
+        scope = scopeWrapper.takeIf { it.isNotEmpty() } ?: defaultScope
         return this
     }
 
@@ -86,8 +83,9 @@ sealed class KodiHolder {
      */
     private fun addToGraph() {
         if (tag.isNotEmpty()) {
-            Kodi.createOrGet(tag) { this }
+            Kodi.createOrGet(tag, scope.takeIf { it.isNotEmpty() } ?: defaultScope) { this }
         }
+
     }
 
     /**
@@ -95,25 +93,7 @@ sealed class KodiHolder {
      */
     private fun removeFromGraph() {
         if (tag.isNotEmpty()) {
-            Kodi.removeInstance(tag)
-        }
-    }
-
-    /**
-     * Remove from existing `scope` when new is added
-     */
-    private fun removeFromScope() {
-        if (scope.isNotEmpty() && tag.isNotEmpty()) {
-            Kodi.removeFromScope(scope to tag)
-        }
-    }
-
-    /**
-     * Add current holder to scope
-     */
-    private fun addToScope() {
-        if (scope.isNotEmpty() && tag.isNotEmpty()) {
-            Kodi.addToScope(scope to tag)
+            Kodi.removeInstance(tag, scope)
         }
     }
 
@@ -245,7 +225,5 @@ inline fun <reified R : KodiHolder, reified T : Any> IKodi.createHolder(noinline
         KodiHolder.KodiProvider::class -> KodiHolder.KodiProvider(init)
         KodiHolder.KodiConstant::class -> KodiHolder.KodiConstant(init())
         else -> throwException<ClassCastException>("There is no type holder like ${T::class}")
-    }.applyIf(this is IKodiModule) { holder ->
-        holder at (this as IKodiModule).scope
-    }
+    }.applyAs(this as? IKodiModule) { this at it.scope }
 }

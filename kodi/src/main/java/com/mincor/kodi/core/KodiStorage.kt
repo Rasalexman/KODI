@@ -17,42 +17,19 @@ package com.mincor.kodi.core
 import com.mincor.kodi.delegates.immutableGetter
 
 /**
- * ScopeItem simple wrapper Pair<KodiScopeWrapper, KodiTagWrapper> "scopeName" to "tagName"
- * for input value in `fun addToScope`
- */
-typealias ScopeItem = Pair<KodiScopeWrapper, KodiTagWrapper>
-
-/**
- * TypesSet wrapper for KodiTagWrapper
- */
-typealias TypesSet = MutableSet<KodiTagWrapper>
-
-/**
- * ScopeSetItem wrapper for Scope storage
- */
-typealias ScopeSetItem = Pair<KodiScopeWrapper, TypesSet>
-
-/**
  * Lambda wrapper withScope generic return Type
  */
 typealias LambdaWithReturn<T> = () -> T
 
+/**
+ * Main scoped instance map
+ */
 typealias KodiInstanceMap = MutableMap<KodiTagWrapper, KodiHolder>
 
 /**
  * Main storage abstraction
  */
 interface IKodiStorage<V> {
-    /**
-     * Create or get value from instance map
-     *
-     * @param key
-     * Key for retrieve value from map
-     *
-     * @param defaultValue
-     * Lambda `fun` to create value instance for saving in storage
-     */
-    fun createOrGet(key: KodiTagWrapper, defaultValue: LambdaWithReturn<V>): V
 
     /**
      * Is there any instance by given key in instanceMap storage
@@ -67,21 +44,7 @@ interface IKodiStorage<V> {
      *
      * @param key - key to remove value if it's exist
      */
-    fun removeInstance(key: KodiTagWrapper): KodiHolder?
-
-    /**
-     * Add Our dependency tag to moduleScope storage
-     *
-     * @param item Pair<KodiScopeWrapper, KodiTagWrapper>
-     */
-    fun addToScope(item: ScopeItem)
-
-    /**
-     * Remove moduleScope item
-     *
-     * @param item - moduleScope item to Remove
-     */
-    fun removeFromScope(item: ScopeItem): Boolean
+    fun removeInstance(key: KodiTagWrapper, scope: KodiScopeWrapper): KodiHolder?
 
     /**
      * Remove moduleScope by it tag wrapper
@@ -128,7 +91,7 @@ interface IKodiStorage<V> {
      */
     fun clearAll()
 
-    fun createOrGet(key: KodiTagWrapper, scope: KodiScopeWrapper, defaultValue: LambdaWithReturn<KodiHolder>): KodiHolder
+    fun createOrGet(key: KodiTagWrapper, scope: KodiScopeWrapper, defaultValue: LambdaWithReturn<V>): V
 }
 
 /**
@@ -136,17 +99,7 @@ interface IKodiStorage<V> {
  */
 abstract class KodiStorage : IKodiStorage<KodiHolder> {
 
-    /**
-     * Main instance storage (`MutableMap<[KodiTagWrapper], T>`)
-     */
-    private val instanceMap by immutableGetter { mutableMapOf<KodiTagWrapper, KodiHolder>() }
-
     private val scopedInstanceSet by immutableGetter { mutableMapOf<KodiScopeWrapper, KodiInstanceMap>() }
-
-    /**
-     * Main `moduleScope` to `tags` storage instance (`MutableSet<[ScopeSetItem]>`)
-     */
-    private val scopeSet by immutableGetter { mutableSetOf<ScopeSetItem>() }
 
     /**
      *  Kodi modules set
@@ -176,7 +129,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
             module.apply {
                 moduleInstancesSet.apply {
                     asSequence().forEach { tag ->
-                        removeInstance(tag)?.at(emptyScope())
+                        removeInstance(tag, module.scope)
                     }
                     clear()
                 }
@@ -206,10 +159,14 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      */
     override fun hasModuleByTag(instanceTag: KodiTagWrapper): Boolean {
         return if (instanceTag.isNotEmpty()) {
-            modulesSet.find { it.moduleInstancesSet.contains(instanceTag) } != null
+            findFirstModuleByTag(instanceTag) != null
         } else {
             false
         }
+    }
+
+    private fun findFirstModuleByTag(instanceTag: KodiTagWrapper): IKodiModule? {
+        return modulesSet.first { it.moduleInstancesSet.contains(instanceTag) }
     }
 
     /**
@@ -218,13 +175,12 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * @param key
      * [KodiTagWrapper] for retrieve value from map
      *
+     * @param scope
+     * [KodiScopeWrapper] - scope wrapper for instances
+     *
      * @param defaultValue
      * [LambdaWithReturn] `fun` to create value instance for saving in storage
      */
-    override fun createOrGet(key: KodiTagWrapper, defaultValue: LambdaWithReturn<KodiHolder>): KodiHolder {
-        return instanceMap.getOrPut(key, defaultValue)
-    }
-
     override fun createOrGet(key: KodiTagWrapper, scope: KodiScopeWrapper, defaultValue: LambdaWithReturn<KodiHolder>): KodiHolder {
         val instanceMapper = scopedInstanceSet.getOrPut(scope) { mutableMapOf() }
         return instanceMapper.getOrPut(key, defaultValue)
@@ -237,7 +193,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * The instance [KodiTagWrapper] to retrieve
      */
     override fun hasInstance(key: KodiTagWrapper): Boolean {
-        return instanceMap.containsKey(key)
+        return false//scopedInstanceSet.
     }
 
     /**
@@ -247,33 +203,8 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      *
      * @return - optional [KodiHolder]
      */
-    override fun removeInstance(key: KodiTagWrapper): KodiHolder? {
-        removeFromModule(key)
-        return instanceMap.remove(key)
-    }
-
-    /**
-     * Add Our dependency tag to moduleScope storage
-     *
-     * @param item - Pair<[KodiScopeWrapper], [KodiTagWrapper]> to be added
-     */
-    override fun addToScope(item: ScopeItem) {
-        val (scope, tag) = item
-        scopeSet.apply {
-            findTagSet(scope)?.add(tag)
-                    ?: add(scope to mutableSetOf(tag))
-        }
-    }
-
-    /**
-     * Remove instance tag from given moduleScope
-     *
-     * @param item - [ScopeItem] to remove tag
-     */
-    override fun removeFromScope(item: ScopeItem): Boolean {
-        return item.let { (scope, tag) ->
-            scopeSet.findTagSet(scope)?.remove(tag) ?: false
-        }
+    override fun removeInstance(key: KodiTagWrapper, scope: KodiScopeWrapper): KodiHolder? {
+        return null//instanceMap.remove(key)
     }
 
     /**
@@ -283,11 +214,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      */
     override fun removeAllScope(scope: KodiScopeWrapper): Boolean {
         return if (scope.isNotEmpty()) {
-            scopeSet.findTagSet(scope)
-                    ?.forEach { typeWrapper -> removeInstance(typeWrapper) }
-                    .runCatching {
-                        scopeSet.removeAll { it.first == scope }
-                    }.isSuccess
+            scopedInstanceSet.remove(scope) != null
         } else {
             false
         }
@@ -298,20 +225,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * Warning!!! - this action cannot be reverted
      */
     override fun clearAll() {
-        scopeSet.clear()
-        instanceMap.clear()
+        scopedInstanceSet.clear()
         modulesSet.clear()
-    }
-
-    /**
-     * Find an [TypesSet] by given `moduleScope: [KodiScopeWrapper]
-     *
-     * @param scope - moduleScope tag wrapper for search
-     * @receiver `MutableSet` of [ScopeSetItem]
-     */
-    private fun MutableSet<ScopeSetItem>.findTagSet(scope: KodiScopeWrapper): TypesSet? {
-        return scope.takeIf { it.isNotEmpty() }?.let {
-            this.find { it.first == scope }?.second
-        }
     }
 }

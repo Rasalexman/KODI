@@ -29,14 +29,6 @@ inline class KodiTagWrapper(private val instanceTag: String) {
     fun isNotEmpty(): Boolean {
         return instanceTag.isNotEmpty()
     }
-
-    operator fun plus(scopeWrapper: KodiScopeWrapper): KodiTagWrapper  {
-        return buildString {
-            append(instanceTag)
-            append("_")
-            append(scopeWrapper.asString())
-        }.asTag()
-    }
 }
 
 /**

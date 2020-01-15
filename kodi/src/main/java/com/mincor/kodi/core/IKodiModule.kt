@@ -52,7 +52,7 @@ data class KodiModule(
     /**
      * Module Scope. It's Lazy initializing
      */
-    override var scope: KodiScopeWrapper by mutableGetter(::emptyScope)
+    override var scope: KodiScopeWrapper by mutableGetter { defaultScope }
 
     /**
      * Set of all instances that includes in this module
@@ -104,6 +104,15 @@ fun IKodi.import(module: IKodiModule) {
  */
 inline fun <reified T : Any> IKodiModule.hasInstance(tag: String? = null): Boolean {
     return this.moduleInstancesSet.contains((tag ?: "${T::class.java}").asTag())
+}
+
+/**
+ * Does this module contains input instance tag or class type
+ *
+ * @param tag [KodiTagWrapper] - string representation of instance must be unique
+ */
+inline fun <reified T : Any> IKodiModule.hasInstance(tag: KodiTagWrapper? = null): Boolean {
+    return this.moduleInstancesSet.contains(tag ?: "${T::class.java}".asTag())
 }
 
 /**
