@@ -90,10 +90,7 @@ sealed class KodiHolder {
      */
     private fun removeFromGraph() {
         if (tag.isNotEmpty()) {
-            Kodi.removeInstance(tag, defaultScope)
-            if(scope.isNotEmpty()) {
-                Kodi.removeInstance(tag, scope)
-            }
+            Kodi.removeInstance(tag, scope)
         }
     }
 
