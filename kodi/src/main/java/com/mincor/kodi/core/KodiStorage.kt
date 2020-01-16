@@ -211,7 +211,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
             scope.takeIf { it != defaultScope }?.let {
                 scopedInstanceSet[scope]?.remove(key)
             } ?: scopeToRemove?.let {
-                scopedInstanceSet[it.scopeName()]?.remove(key)
+                scopedInstanceSet[it.scope]?.remove(key)
             }
         }
     }

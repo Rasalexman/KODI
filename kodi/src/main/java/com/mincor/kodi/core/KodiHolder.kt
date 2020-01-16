@@ -37,12 +37,14 @@ sealed class KodiHolder {
     /**
      * Local Holder scope [KodiScopeWrapper]
      */
-    private var scope: KodiScopeWrapper = emptyScope()
+    var scope: KodiScopeWrapper = emptyScope()
+        private set
 
     /**
      * Current Holder [KodiTagWrapper]
      */
-    private var tag: KodiTagWrapper = emptyTag()
+    var tag: KodiTagWrapper = emptyTag()
+        private set
 
     /**
      * Add [KodiTagWrapper] to current Holder
@@ -78,9 +80,9 @@ sealed class KodiHolder {
      */
     private fun addToGraph() {
         if (tag.isNotEmpty()) {
-            Kodi.createOrGet(tag, defaultScope, ::getDefaultValue)
-            if(scope.isNotEmpty() && scope != defaultScope) {
-                Kodi.createOrGet(tag, scope, ::getDefaultValue)
+            Kodi.createOrGet(tag, defaultScope, ::getCurrentHolder)
+            if (scope.isNotEmpty() && scope != defaultScope) {
+                Kodi.createOrGet(tag, scope, ::getCurrentHolder)
             }
         }
     }
@@ -95,14 +97,10 @@ sealed class KodiHolder {
     }
 
     /**
-     *
+     * Take current holder for delegation in graph
      */
-    private fun getDefaultValue() = this
+    private fun getCurrentHolder() = this
 
-    /**
-     *
-     */
-    fun scopeName(): KodiScopeWrapper = scope
 
     /**
      * Single Instance Holder withScope lazy initialization
@@ -194,8 +192,6 @@ infix fun KodiHolder.at(scopeWrapper: KodiScopeWrapper): KodiHolder {
 infix fun KodiHolder.tag(instanceTag: KodiTagWrapper) {
     this.tagWith(instanceTag)
 }
-
-
 
 
 /**
