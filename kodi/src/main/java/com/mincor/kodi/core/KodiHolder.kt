@@ -79,7 +79,7 @@ sealed class KodiHolder {
     private fun addToGraph() {
         if (tag.isNotEmpty()) {
             Kodi.createOrGet(tag, defaultScope, ::getDefaultValue)
-            if(scope.isNotEmpty()) {
+            if(scope.isNotEmpty() && scope != defaultScope) {
                 Kodi.createOrGet(tag, scope, ::getDefaultValue)
             }
         }
