@@ -207,12 +207,15 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
         return key.takeIf {
             it.isNotEmpty()
         }?.let {
-            val scopeToRemove = scopedInstanceSet[defaultScope]?.remove(key)
             scope.takeIf { it != defaultScope }?.let {
+                scopedInstanceSet[defaultScope]?.get(key)?.scope?.
+                        takeIf { it == scope }?.
+                        let { scopedInstanceSet[defaultScope]?.remove(key) }
                 scopedInstanceSet[scope]?.remove(key)
-            } ?: scopeToRemove?.let {
-                scopedInstanceSet[it.scope]?.remove(key)
-            }
+            } ?: scopedInstanceSet[defaultScope]?.
+                    remove(key)?.scope?.
+                    takeIf { it != defaultScope }?.
+                    let { scopedInstanceSet[it]?.remove(key) }
         }
     }
 

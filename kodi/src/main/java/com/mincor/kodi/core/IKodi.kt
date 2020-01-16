@@ -87,7 +87,8 @@ inline fun <reified T : Any, reified R : T> IKodi.bindType(tag: String? = null):
  */
 inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = null): Boolean {
     val tagToWrapper = (tag ?: "${T::class.java}").asTag()
-    return Kodi.removeInstance(tagToWrapper, scope?.asScope() ?: defaultScope) != null
+    val scopeToWrap = scope?.asScope() ?: defaultScope
+    return Kodi.removeInstance(tagToWrapper, scopeToWrap) != null
 }
 
 /**

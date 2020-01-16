@@ -9,6 +9,7 @@ const val SOME_CONSTANT_TAG = "SOME_CONSTANT_TAG"
 const val MY_PROVIDER_SCOPE_NAME = "MY_PROVIDER_SCOPE_NAME"
 const val MY_SINGLE_SCOPE_NAME = "MY_SINGLE_SCOPE_NAME"
 const val MY_ANOTHER_SCOPE_NAME = "MY_ANOTHER_SCOPE_NAME"
+const val MY_EXCLUSIV_SCOPE_NAME = "MY_EXCLUSIV_SCOPE_NAME"
 
 const val TAG = "----->"
 
@@ -24,7 +25,12 @@ fun main() {
 
     val anotherModule = kodiModule {
         bind<ISingleInterface>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
+        bind<ISingleInterface>() at MY_EXCLUSIV_SCOPE_NAME with single { SingleClass(UUID.randomUUID().toString()) }
     } withScope MY_ANOTHER_SCOPE_NAME
+
+    val defaultModule = kodiModule {
+
+    }
 
     kodi {
         import(kodiModule)
@@ -32,9 +38,13 @@ fun main() {
 
         val firstModuleInstance: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
         val secondModuleInstance: ISingleInterface = instance()
+        val exclusivModuleInstance: ISingleInterface = instance(scope = MY_EXCLUSIV_SCOPE_NAME)
 
         val myProvider: IProviderInterface = instance()
         val myProviderByScope: IProviderInterface = instance(scope = MY_PROVIDER_SCOPE_NAME)
+
+        unbind<ISingleInterface>(scope = MY_ANOTHER_SCOPE_NAME)
+        val removedInterface: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
 
         log { "Is instance equals = ${firstModuleInstance == secondModuleInstance}" }
     }
