@@ -159,14 +159,10 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      */
     override fun hasModuleByTag(instanceTag: KodiTagWrapper): Boolean {
         return if (instanceTag.isNotEmpty()) {
-            findFirstModuleByTag(instanceTag) != null
+            modulesSet.firstOrNull { it.moduleInstancesSet.contains(instanceTag) } != null
         } else {
             false
         }
-    }
-
-    private fun findFirstModuleByTag(instanceTag: KodiTagWrapper): IKodiModule? {
-        return modulesSet.first { it.moduleInstancesSet.contains(instanceTag) }
     }
 
     /**
@@ -193,7 +189,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * The instance [KodiTagWrapper] to retrieve
      */
     override fun hasInstance(key: KodiTagWrapper): Boolean {
-        return scopedInstanceSet[defaultScope]?.containsKey(key) == true
+        return scopedInstanceSet.filterValues { it.containsKey(key) }.isNotEmpty()
     }
 
     /**

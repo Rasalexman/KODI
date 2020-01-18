@@ -28,9 +28,6 @@ fun main() {
         bind<ISingleInterface>() at MY_EXCLUSIV_SCOPE_NAME with single { SingleClass(UUID.randomUUID().toString()) }
     } withScope MY_ANOTHER_SCOPE_NAME
 
-    val defaultModule = kodiModule {
-
-    }
 
     kodi {
         import(kodiModule)
