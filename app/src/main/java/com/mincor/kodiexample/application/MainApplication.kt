@@ -5,14 +5,13 @@ import android.content.Context
 import coil.Coil
 import coil.ImageLoader
 import coil.util.CoilLogger
-import com.mincor.kodi.core.*
-import com.mincor.kodiandroidx.kodiAndroidXModule
 import com.mincor.kodiexample.BuildConfig
 import com.mincor.kodiexample.modules.*
 import com.rasalexman.coroutinesmanager.AsyncTasksManager
 import com.rasalexman.coroutinesmanager.CoroutinesManager
 import com.rasalexman.coroutinesmanager.IAsyncTasksManager
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
+import com.rasalexman.kodi.core.*
 
 class MainApplication : Application() {
 

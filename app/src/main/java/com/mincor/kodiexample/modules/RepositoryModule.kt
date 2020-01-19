@@ -1,6 +1,6 @@
 package com.mincor.kodiexample.modules
 
-import com.mincor.kodi.core.*
+import com.rasalexman.kodi.core.*
 import com.mincor.kodiexample.data.repository.GenresRepository
 import com.mincor.kodiexample.data.repository.MoviesRepository
 

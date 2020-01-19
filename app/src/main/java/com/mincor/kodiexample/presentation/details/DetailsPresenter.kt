@@ -1,7 +1,7 @@
 package com.mincor.kodiexample.presentation.details
 
-import com.mincor.kodi.core.IKodi
-import com.mincor.kodi.core.instance
+import com.rasalexman.kodi.core.IKodi
+import com.rasalexman.kodi.core.instance
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.movies.GetMovieDetailUseCase

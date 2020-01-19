@@ -1,7 +1,7 @@
 package com.mincor.kodiexample.presentation.movies
 
-import com.mincor.kodi.core.IKodi
-import com.mincor.kodi.core.immutableInstance
+import com.rasalexman.kodi.core.IKodi
+import com.rasalexman.kodi.core.immutableInstance
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.movies.GetMoviesUseCase
 import com.mincor.kodiexample.domain.usecases.movies.GetNextMoviesUseCase

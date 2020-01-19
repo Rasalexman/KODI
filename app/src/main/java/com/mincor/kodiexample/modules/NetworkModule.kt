@@ -1,7 +1,7 @@
 package com.mincor.kodiexample.modules
 
 import coil.util.CoilUtils
-import com.mincor.kodi.core.*
+import com.rasalexman.kodi.core.*
 import com.mincor.kodiexample.providers.network.api.IMovieApi
 import com.mincor.kodiexample.providers.network.createOkHttpClient
 import com.mincor.kodiexample.providers.network.createWebServiceApi

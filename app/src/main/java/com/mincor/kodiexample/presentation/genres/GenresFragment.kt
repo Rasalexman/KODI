@@ -5,8 +5,8 @@ import android.view.View
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.mincor.kodi.core.IKodi
-import com.mincor.kodi.core.immutableInstance
+import com.rasalexman.kodi.core.IKodi
+import com.rasalexman.kodi.core.immutableInstance
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.presentation.base.BaseRecyclerFragment
 import com.mincor.kodiexample.presentation.movies.MoviesFragment

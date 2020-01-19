@@ -1,7 +1,7 @@
 package com.mincor.kodiexample.modules
 
 import coil.ImageLoader
-import com.mincor.kodi.core.*
+import com.rasalexman.kodi.core.*
 import okhttp3.OkHttpClient
 
 val imageModule = kodiModule {

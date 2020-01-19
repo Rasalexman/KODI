@@ -3,8 +3,8 @@ package com.mincor.kodiexample.presentation.details
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import coil.api.load
-import com.mincor.kodi.core.IKodi
-import com.mincor.kodi.core.throwKodiException
+import com.rasalexman.kodi.core.IKodi
+import com.rasalexman.kodi.core.throwKodiException
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.common.Consts
 import com.mincor.kodiexample.data.model.local.MovieEntity

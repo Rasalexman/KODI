@@ -1,6 +1,6 @@
 package com.mincor.kodiexample.modules
 
-import com.mincor.kodi.core.*
+import com.rasalexman.kodi.core.*
 import com.mincor.kodiexample.domain.usecases.details.GetLocalDetailsUseCase
 import com.mincor.kodiexample.domain.usecases.details.GetRemoteDetailsUseCase
 import com.mincor.kodiexample.domain.usecases.genres.GetGenresUseCase

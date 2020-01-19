@@ -3,9 +3,9 @@ package com.mincor.kodiexample.presentation.movies
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
-import com.mincor.kodi.core.IKodi
-import com.mincor.kodi.core.instance
-import com.mincor.kodi.core.throwKodiException
+import com.rasalexman.kodi.core.IKodi
+import com.rasalexman.kodi.core.instance
+import com.rasalexman.kodi.core.throwKodiException
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.presentation.base.BaseRecyclerFragment
 import com.mincor.kodiexample.presentation.details.DetailsFragment.Companion.KEY_MOVIE_ID

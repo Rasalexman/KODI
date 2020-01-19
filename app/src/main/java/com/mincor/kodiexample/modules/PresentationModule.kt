@@ -1,6 +1,6 @@
 package com.mincor.kodiexample.modules
 
-import com.mincor.kodi.core.*
+import com.rasalexman.kodi.core.*
 import com.mincor.kodiexample.domain.usecases.genres.GetGenresUseCase
 import com.mincor.kodiexample.presentation.genres.GenresContract
 import com.mincor.kodiexample.presentation.genres.GenresPresenter

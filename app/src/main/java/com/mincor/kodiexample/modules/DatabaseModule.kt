@@ -1,7 +1,7 @@
 package com.mincor.kodiexample.modules
 
 import androidx.room.Room
-import com.mincor.kodi.core.*
+import com.rasalexman.kodi.core.*
 import com.mincor.kodiexample.providers.database.MoviesDatabase
 import com.mincor.kodiexample.providers.database.dao.IGenresDao
 import com.mincor.kodiexample.providers.database.dao.IMoviesDao
