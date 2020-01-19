@@ -12,9 +12,9 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.mincor.kodi.core
+package com.rasalexman.kodi.core
 
-import com.mincor.kodi.delegates.immutableGetter
+import com.rasalexman.kodi.delegates.immutableGetter
 
 /**
  * Lambda wrapper withScope generic return Type
@@ -91,6 +91,13 @@ interface IKodiStorage<V> {
      */
     fun clearAll()
 
+    /**
+     * Create or get [KodiHolder] instance from storage
+     *
+     * @param key [KodiTagWrapper] - for retrieve instance by tag
+     * @param scope [KodiScopeWrapper] - current scope or [defaultScope]
+     * @param defaultValue [LambdaWithReturn] - lambda for create default value if it's not exist
+     */
     fun createOrGet(key: KodiTagWrapper, scope: KodiScopeWrapper, defaultValue: LambdaWithReturn<V>): V
 }
 
@@ -99,6 +106,9 @@ interface IKodiStorage<V> {
  */
 abstract class KodiStorage : IKodiStorage<KodiHolder> {
 
+    /**
+     *  Main scoped instances map
+     */
     private val scopedInstanceSet by immutableGetter { mutableMapOf<KodiScopeWrapper, KodiInstanceMap>() }
 
     /**

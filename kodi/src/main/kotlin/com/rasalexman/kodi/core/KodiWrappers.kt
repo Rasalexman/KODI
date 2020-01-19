@@ -12,7 +12,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.mincor.kodi.core
+package com.rasalexman.kodi.core
 
 /**
  * Inline instanceTag wrapper for storing injectable class
@@ -31,6 +31,9 @@ inline class KodiTagWrapper(private val instanceTag: String) {
     }
 }
 
+/**
+ * Typealias for merge tag with scope
+ */
 typealias KodiTagScopeWrappers = Pair<KodiTagWrapper, KodiScopeWrapper>
 
 /**
@@ -44,7 +47,9 @@ inline infix fun <reified T : KodiHolder> KodiTagWrapper.with(instance: T) {
 }
 
 /**
+ * Merge scope tag with instance tag
  *
+ * @param instance - current [KodiHolder] instance for merge and store
  */
 inline infix fun <reified T : KodiHolder> KodiTagScopeWrappers.with(instance: T) {
     val (kodiTagWrapper, kodiScopeWrapper) = this
@@ -52,7 +57,9 @@ inline infix fun <reified T : KodiHolder> KodiTagScopeWrappers.with(instance: T)
 }
 
 /**
+ * Add scope tag to binding instance
  *
+ * @param scopeWrapper - String scope wrapper name
  */
 infix fun KodiTagWrapper.at(scopeWrapper: KodiScopeWrapper): KodiTagScopeWrappers {
     if(!scopeWrapper.isNotEmpty()) throwKodiException<IllegalStateException>("Parameter `scopeWrapper` can't be empty")
@@ -60,7 +67,9 @@ infix fun KodiTagWrapper.at(scopeWrapper: KodiScopeWrapper): KodiTagScopeWrapper
 }
 
 /**
+ * Add scope tag to binding instance
  *
+ * @param scopeName - String scope name
  */
 infix fun KodiTagWrapper.at(scopeName: String): KodiTagScopeWrappers {
     if(scopeName.isEmpty()) throwKodiException<IllegalStateException>("Parameter `scopeName: String` can't be empty")

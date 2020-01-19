@@ -12,7 +12,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.mincor.kodi.core
+package com.rasalexman.kodi.core
 
 /**
  * Empty moduleScope.
@@ -20,6 +20,9 @@ package com.mincor.kodi.core
  */
 fun emptyScope() = KodiScopeWrapper("")
 
+/**
+ * Default SCOPE name for all instances that doest have a scope name in bindings
+ */
 val defaultScope = KodiScopeWrapper("DEFAULT_SCOPE")
 
 /**
@@ -40,7 +43,11 @@ fun String.asTag() = KodiTagWrapper(this)
 
 
 /**
+ * Make prediction for [KodiHolder] and do some action if prediction is not null
  *
+ * @param prediction - some generic transformation as? T
+ *
+ * @param action - some action with conditional
  */
 fun <T : IKodi> KodiHolder.holderAs(prediction: T?, action: KodiHolder.(T) -> Unit): KodiHolder {
     prediction?.let { kodiInstance ->

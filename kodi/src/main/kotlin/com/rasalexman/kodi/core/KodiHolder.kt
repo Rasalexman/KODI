@@ -12,7 +12,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.mincor.kodi.core
+package com.rasalexman.kodi.core
 
 /**
  * Typealias for simplification
@@ -154,6 +154,9 @@ sealed class KodiHolder {
             return providerLiteral.invoke(kodiImpl, null)
         }
 
+        /**
+         * Get value with params not implemented yet
+         */
         fun getWithParam(kodiImpl: IKodi, param: R) = providerLiteral.invoke(kodiImpl, param)
     }
 

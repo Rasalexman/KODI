@@ -1,4 +1,4 @@
-package com.mincor.kodiandroidx
+package com.rasalexman.kodiandroidx
 
 import android.accounts.AccountManager
 import android.app.*
@@ -46,7 +46,7 @@ import android.view.accessibility.AccessibilityManager
 import android.view.accessibility.CaptioningManager
 import android.view.inputmethod.InputMethodManager
 import android.view.textservice.TextServicesManager
-import com.mincor.kodi.core.*
+import com.rasalexman.kodi.core.*
 import java.io.File
 
 const val CACHE_DIR = "cache"

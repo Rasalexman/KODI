@@ -12,10 +12,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.mincor.kodi.core
+package com.rasalexman.kodi.core
 
-import com.mincor.kodi.delegates.immutableGetter
-import com.mincor.kodi.delegates.mutableGetter
+import com.rasalexman.kodi.delegates.immutableGetter
+import com.rasalexman.kodi.delegates.mutableGetter
 
 /**
  * Module Initializer

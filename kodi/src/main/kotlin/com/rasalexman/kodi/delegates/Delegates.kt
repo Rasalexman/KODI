@@ -12,10 +12,10 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.mincor.kodi.delegates
+package com.rasalexman.kodi.delegates
 
-import com.mincor.kodi.core.CanThrowException
-import com.mincor.kodi.core.throwKodiException
+import com.rasalexman.kodi.core.CanThrowException
+import com.rasalexman.kodi.core.throwKodiException
 
 /**
  * Base immutable realization provider

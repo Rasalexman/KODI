@@ -12,12 +12,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.mincor.kodi.core
+package com.rasalexman.kodi.core
 
-import com.mincor.kodi.delegates.IImmutableDelegate
-import com.mincor.kodi.delegates.IMutableDelegate
-import com.mincor.kodi.delegates.immutableGetter
-import com.mincor.kodi.delegates.mutableGetter
+import com.rasalexman.kodi.delegates.IImmutableDelegate
+import com.rasalexman.kodi.delegates.IMutableDelegate
+import com.rasalexman.kodi.delegates.immutableGetter
+import com.rasalexman.kodi.delegates.mutableGetter
 
 /**
  * Annotation for mark some throwable functions
@@ -84,6 +84,10 @@ inline fun <reified T : Any, reified R : T> IKodi.bindType(tag: String? = null):
  *
  * @param tag - optional parameter for custom manipulating withScope instance tag
  * if there is no tag provided the generic class name will be used as `T::class.toString()`
+ *
+ * @param scope - optional parameter for removing instance from selected scope name
+ *
+ * @return [Boolean] - is instance removed
  */
 inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = null): Boolean {
     val tagToWrapper = (tag ?: "${T::class.java}").asTag()
@@ -99,6 +103,7 @@ inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = 
  *
  * @return [String] optional if it has scope return it name or null
  */
+@Deprecated("Not currently in use and will be removed in Release 1.3.0")
 inline fun <reified T : Any> IKodi.getScope(tag: String? = null): String? {
     val tagToWrap = (tag ?: "${T::class.java}").asTag()
     return if (Kodi.hasInstance(tagToWrap)) {
@@ -114,6 +119,7 @@ inline fun <reified T : Any> IKodi.getScope(tag: String? = null): String? {
  *
  * @return [Boolean] true if it has scope or false if it doesn't
  */
+@Deprecated(message = "Not currently used and will be removed in Release version 1.3.0", replaceWith = ReplaceWith("Nothing to replace with"))
 inline fun <reified T : Any> IKodi.hasScope(tag: String? = null): Boolean {
     return getScope<T>(tag) != null
 }
@@ -158,13 +164,15 @@ fun IKodi.bindTag(tag: String): KodiTagWrapper {
  *
  * @param tag - required parameter for key in injection graph
  *
+ * @param scope - optional parameter for scope in injection graph or [defaultScope]
+ *
  * @receiver [IKodi]
  * @return [KodiTagWrapper]
  */
 @CanThrowException("Parameter tag cannot be empty string")
-fun IKodi.unbindTag(tag: String): Boolean {
+fun IKodi.unbindTag(tag: String, scope: String? = null): Boolean {
     return tag.takeIf { it.isNotEmpty() }?.let {
-        this.unbind<Any>(it)
+        this.unbind<Any>(it, scope)
     } ?: throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
 }
 
@@ -286,6 +294,7 @@ inline fun <reified T : Any> IKodi.mutableInstance(tag: String? = null): IMutabl
  * @throws IllegalAccessException - if there is no tag in dependency graph
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
+@Deprecated("Not currently needed functionality and will be removed in Release version 1.3.0")
 fun <T : Any> IKodi.instanceWith(clazz: Class<T>, initKodiHolder: KodiHolder? = null): T {
     val tagToWrap = clazz.toString().asTag()
     return getInstanceByWrapperOrCreateDynamically(tagToWrap, defaultScope, initKodiHolder)
@@ -301,6 +310,7 @@ fun <T : Any> IKodi.instanceWith(clazz: Class<T>, initKodiHolder: KodiHolder? = 
  * @throws IllegalAccessException - if there is no tag in dependency graph
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
+@Deprecated("Not currently needed functionality and will be removed in Release version 1.3.0")
 fun <T : Any> IKodi.instanceWith(tag: String, initKodiHolder: KodiHolder? = null): T {
     val tagToWrap = tag.asTag()
     return getInstanceByWrapperOrCreateDynamically(tagToWrap, defaultScope, initKodiHolder)
@@ -316,6 +326,7 @@ fun <T : Any> IKodi.instanceWith(tag: String, initKodiHolder: KodiHolder? = null
  */
 @Suppress("UNCHECKED_CAST")
 @CanThrowException("There is no KodiHolder instance in dependency graph")
+@Deprecated("Not currently needed functionality and will be removed in Release version 1.3.0")
 private fun <T : Any> IKodi.getInstanceByWrapperOrCreateDynamically(kodiTagWrapper: KodiTagWrapper, scopeScopeWrapper: KodiScopeWrapper = defaultScope, initKodiHolder: KodiHolder? = null): T {
     val instance = this
     return Kodi.createOrGet(kodiTagWrapper, scopeScopeWrapper) {
