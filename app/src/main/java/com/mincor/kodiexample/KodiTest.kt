@@ -1,5 +1,6 @@
 package com.mincor.kodiexample
 
+import com.mincor.kodiexample.activity.log
 import com.rasalexman.kodi.core.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -18,43 +19,6 @@ const val MY_EXCLUSIV_SCOPE_NAME = "MY_EXCLUSIV_SCOPE_NAME"
 
 const val TAG = "----->"
 
-suspend fun getAnotherFlow() = flow {
-    getOneFlow().collect {
-        emit(it)
-    }
-
-    getTwoFlow().collect {
-        emit(it)
-    }
-}
-
-
-suspend fun pagedFlow(pageFlow: Flow<Int>) = flow {
-    pageFlow.collect { page ->
-        emit(getNextPage(page))
-    }
-}
-
-suspend fun getNextPage(page: Int): String = "next page is $page"
-
-suspend fun getOneFlow() = flow {
-    for (i in 0..10) {
-        delay(100)
-        emit("getOneFlow $i")
-    }
-
-}
-
-suspend fun getTwoFlow() = flow {
-    for (i in 0..10) {
-        delay(200)
-        emit("getTwoFlow $i")
-    }
-
-}
-
-var page: Int = 0
-
 @ExperimentalCoroutinesApi
 @UseExperimental(InternalCoroutinesApi::class)
 fun main() {
@@ -72,29 +36,7 @@ fun main() {
         bind<ISingleInterface>() at MY_EXCLUSIV_SCOPE_NAME with single { SingleClass(UUID.randomUUID().toString()) }
     } withScope MY_ANOTHER_SCOPE_NAME
 
-    val callback: (String) -> Unit = {
-        println("$TAG value from flow = $it")
-    }
 
-/*
-
-    runBlocking {
-        val btnProduceChannel = Channel<Int>()
-        launch {
-            val pagedFlow = pagedFlow(btnProduceChannel.consumeAsFlow())
-            pagedFlow.collect {
-                println("$TAG value from PAGED FLOW = $it")
-            }
-        }
-
-        launch {
-            for (i in 0..10) {
-                btnProduceChannel.send(i)
-            }
-        }
-    }*/
-
-    /*
     kodi {
         import(kodiModule)
         import(anotherModule)
@@ -110,7 +52,7 @@ fun main() {
         val removedInterface: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
 
         log { "Is instance equals = ${firstModuleInstance == secondModuleInstance}" }
-    }*/
+    }
 
     /*kodi {
         // Import module
