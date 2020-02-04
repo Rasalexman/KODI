@@ -210,7 +210,8 @@ fun IKodi.unbindAll() {
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? = null): T {
-    return holder<T>(tag, scope).get(this) as? T ?: throwKodiException<ClassCastException>("Cannot cast instance $this to Generic type T")
+    return holder<T>(tag, scope).get(this) as? T
+            ?: throwKodiException<ClassCastException>("Cannot cast instance $this to Generic type T")
 }
 
 /**
@@ -268,9 +269,10 @@ inline fun <reified T : Any> IKodi.constant(noinline init: InstanceInitializer<T
  * It cannot be change
  *
  * @param tag - there is an optional tag that we pass to key into dependency graph
+ * @param scope - there is a scope of current instance
  */
-inline fun <reified T : Any> IKodi.immutableInstance(tag: String? = null): IImmutableDelegate<T> = immutableGetter {
-    instance<T>(tag)
+inline fun <reified T : Any> IKodi.immutableInstance(tag: String? = null, scope: String? = null): IImmutableDelegate<T> = immutableGetter {
+    instance<T>(tag, scope)
 }
 
 /**
@@ -279,9 +281,10 @@ inline fun <reified T : Any> IKodi.immutableInstance(tag: String? = null): IImmu
  * It can be change `someValue = object : ISomeValueClass {}`
  *
  * @param tag - there is an optional tag that we pass to key into dependency graph
+ * @param scope - there is a scope of current instance
  */
-inline fun <reified T : Any> IKodi.mutableInstance(tag: String? = null): IMutableDelegate<T> = mutableGetter {
-    instance<T>(tag)
+inline fun <reified T : Any> IKodi.mutableInstance(tag: String? = null, scope: String? = null): IMutableDelegate<T> = mutableGetter {
+    instance<T>(tag, scope)
 }
 
 /**
@@ -330,6 +333,8 @@ fun <T : Any> IKodi.instanceWith(tag: String, initKodiHolder: KodiHolder? = null
 private fun <T : Any> IKodi.getInstanceByWrapperOrCreateDynamically(kodiTagWrapper: KodiTagWrapper, scopeScopeWrapper: KodiScopeWrapper = defaultScope, initKodiHolder: KodiHolder? = null): T {
     val instance = this
     return Kodi.createOrGet(kodiTagWrapper, scopeScopeWrapper) {
-        initKodiHolder ?: throwKodiException<IllegalAccessException>("There is no tag `$kodiTagWrapper` in dependency graph injected into IKodi instance [${instance}]")
-    }.get(this) as? T ?: throwKodiException<ClassCastException>("Cannot cast instance of $initKodiHolder to Generic type T")
+        initKodiHolder
+                ?: throwKodiException<IllegalAccessException>("There is no tag `$kodiTagWrapper` in dependency graph injected into IKodi instance [${instance}]")
+    }.get(this) as? T
+            ?: throwKodiException<ClassCastException>("Cannot cast instance of $initKodiHolder to Generic type T")
 }
