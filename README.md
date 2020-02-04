@@ -8,7 +8,7 @@ This is simple and useful dependency injection framework for work with your regu
 1) Kodi library
 
 It's a dependency injection library writen in pure Kotlin. This library has intuitive sintax like:
-`bind<SomeClassInterface>() with singleton { SomeClassImplementation() } at scope("My Scope")`. No annotation processing, and reflection in core module. 
+`bind<SomeClassInterface>() at "Any_String_Scope_Name" with singleton { SomeClassImplementation() }`. No annotation processing, and reflection in core module. 
 
 You can `bind` three type of instances:
 - `singleton`: only one instance  will be used. It's lazy instantiating
@@ -20,7 +20,7 @@ You can use `val myModule = kodiModule { bind<ISomeInstance> with ...}` for sepa
 Keywords:
 - `bind`: bind string tag or generic type `with` given provided instance
 - `bindType`: bind inherit type `with` given provided instance
-- `at`: add instance at scope
+- `at`: add instance at scope with string name
 - `kodiModule { }`: instantiate module for dependency separation
 - `withScope`: can used only with `kodiModule` for bind all instances at selected scope. If there is any scope binding inside this module, it will be used as main scope for this bindings
 
@@ -29,8 +29,8 @@ fun main(args: Array<String>) {
     // module with custom scope
     val kodiModule = kodiModule {
         bind<ISingleInterface>() with single { SingleClass(UUID.randomUUID().toString()) }
-        // this will be use a `MY_PROVIDER_SCOPE_NAME` scope
-        bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) } at scope(MY_PROVIDER_SCOPE_NAME)
+        // this will be use a `MY_PROVIDER_SCOPE_NAME` scope (since version 1.3.+)
+        bind<IProviderInterface>() at MY_PROVIDER_SCOPE_NAME with provider { ProviderClass(UUID.randomUUID().toString()) }
 	// since version 1.2.7
 	bindType<ISingleInterface, AnotherSingleClass>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
         bindType<ISingleInterface, OneMoreSingleClass>() with single { OneMoreSingleClass(UUID.randomUUID().toString()) }
@@ -266,10 +266,10 @@ Gradle:
 implementation 'com.rasalexman.kodi:kodi:x.y.z'
 
 // AndroidX Module
-implementation 'com.rasalexman.kodiandroidx:kodiandroidx:1.0.3'
+implementation 'com.rasalexman.kodiandroidx:kodiandroidx:1.0.5'
 
 // Old Reflection Library. It's a final version and i don't have any plans to support it in the future.
-implementation 'com.rasalexman.kodireflect:kodireflect:1.1.3'
+implementation 'com.rasalexman.kodireflect:kodireflect:1.1.5'
 ```
 
 Maven:
@@ -286,7 +286,7 @@ Maven:
 <dependency>
 	<groupId>com.rasalexman.kodiandroidx</groupId>
 	<artifactId>kodiandroidx</artifactId>
-	<version>1.0.0</version>
+	<version>x.y.z</version>
 	<type>pom</type>
 </dependency>
 
@@ -294,7 +294,7 @@ Maven:
 <dependency>
 	<groupId>com.rasalexman.kodireflect</groupId>
 	<artifactId>kodireflect</artifactId>
-	<version>1.1.1</version>
+	<version>x.y.z</version>
 	<type>pom</type>
 </dependency>
 ```
