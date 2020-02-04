@@ -8,7 +8,10 @@ This is simple and useful dependency injection framework for work with your regu
 1) Kodi library
 
 It's a dependency injection library writen in pure Kotlin. This library has intuitive sintax like:
-`bind<SomeClassInterface>() at "Any_String_Scope_Name" with singleton { SomeClassImplementation() }`. No annotation processing, and reflection in core module. 
+
+`bind<SomeClassInterface>() at "Any_String_Scope_Name" with singleton { SomeClassImplementation() }`
+
+<b>No annotation processing, and reflection in core module.</b> 
 
 You can `bind` three type of instances:
 - `singleton`: only one instance  will be used. It's lazy instantiating
