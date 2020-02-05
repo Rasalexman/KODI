@@ -210,8 +210,9 @@ fun IKodi.unbindAll() {
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? = null): T {
-    return holder<T>(tag, scope).get(this) as? T
-            ?: throwKodiException<ClassCastException>("Cannot cast instance $this to Generic type T")
+    val inst = holder<T>(tag, scope).get(this)
+    return inst as? T
+            ?: throwKodiException<ClassCastException>("Cannot cast instance = $inst to Generic type ${T::class.java}")
 }
 
 /**

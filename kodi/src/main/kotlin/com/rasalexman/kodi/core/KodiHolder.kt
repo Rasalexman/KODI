@@ -76,6 +76,14 @@ sealed class KodiHolder {
     }
 
     /**
+     * Clear current KodiHolder instance
+     */
+    open fun clear() {
+        scope = defaultScope
+        tag = emptyTag()
+    }
+
+    /**
      * Add current holder to instance storage
      */
     private fun addToGraph() {
@@ -108,7 +116,7 @@ sealed class KodiHolder {
      * @param singleInstanceProvider - the single lazy immutable instance provider
      */
     data class KodiSingle<T : Any>(
-            private val singleInstanceProvider: InstanceInitializer<T>
+            private var singleInstanceProvider: InstanceInitializer<T>?
     ) : KodiHolder() {
         /**
          * Lazy initialized instance
@@ -120,23 +128,17 @@ sealed class KodiHolder {
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T = singleInstance
-                ?: Kodi.singleInstanceProvider().apply {
+                ?: singleInstanceProvider?.invoke(Kodi)?.apply {
                     singleInstance = this
-                }
-    }
+                } ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
 
-    /**
-     * Provider Instance Holder withScope many execution
-     *
-     * @param providerLiteral - [InstanceInitializer] function
-     */
-    data class KodiProvider<T : Any>(private val providerLiteral: InstanceInitializer<T>) : KodiHolder() {
         /**
-         * Get holder value
-         * @param kodiImpl - implemented [IKodi] instance
+         * Clear current Single Holder
          */
-        override fun get(kodiImpl: IKodi): T {
-            return providerLiteral.invoke(kodiImpl)
+        override fun clear() {
+            singleInstance = null
+            singleInstanceProvider = null
+            super.clear()
         }
     }
 
@@ -145,19 +147,42 @@ sealed class KodiHolder {
      *
      * @param providerLiteral - [InstanceInitializer] function
      */
-    data class KodiProviderWithParam<T : Any, R : Any?>(private val providerLiteral: InstanceInitializerWithParam<T, R>) : KodiHolder() {
+    data class KodiProvider<T : Any>(private var providerLiteral: InstanceInitializer<T>?) : KodiHolder() {
         /**
          * Get holder value
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T {
-            return providerLiteral.invoke(kodiImpl, null)
+            return providerLiteral?.invoke(kodiImpl) ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
+        }
+
+        /**
+         * Clear current provider from literal
+         */
+        override fun clear() {
+            super.clear()
+            providerLiteral = null
+        }
+    }
+
+    /**
+     * Provider Instance Holder withScope many execution
+     *
+     * @param providerLiteral - [InstanceInitializer] function
+     */
+    data class KodiProviderWithParam<T : Any, R : Any?>(private var providerLiteral: InstanceInitializerWithParam<T, R>?) : KodiHolder() {
+        /**
+         * Get holder value
+         * @param kodiImpl - implemented [IKodi] instance
+         */
+        override fun get(kodiImpl: IKodi): T {
+            return providerLiteral?.invoke(kodiImpl, null) ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
         }
 
         /**
          * Get value with params not implemented yet
          */
-        fun getWithParam(kodiImpl: IKodi, param: R) = providerLiteral.invoke(kodiImpl, param)
+        fun getWithParam(kodiImpl: IKodi, param: R) = providerLiteral?.invoke(kodiImpl, param)
     }
 
     /**
@@ -165,13 +190,21 @@ sealed class KodiHolder {
      *
      * @param constantValue - value for initialization
      */
-    data class KodiConstant<T : Any>(private val constantValue: T) : KodiHolder() {
+    data class KodiConstant<T : Any>(private var constantValue: T?) : KodiHolder() {
         /**
          * Get holder value
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T {
-            return constantValue
+            return constantValue ?: throwKodiException<NoSuchElementException>("There is no instance in [KodiConstant]")
+        }
+
+        /**
+         * Clear KodiConstant value
+         */
+        override fun clear() {
+            super.clear()
+            constantValue = null
         }
     }
 }
@@ -207,10 +240,10 @@ infix fun KodiHolder.tag(instanceTag: KodiTagWrapper) {
  */
 @CanThrowException("If there is no typed initializer passed throw an exception")
 inline fun <reified R : KodiHolder, reified T : Any> IKodi.createHolder(noinline init: InstanceInitializer<T>): KodiHolder {
-    return when (R::class) {
-        KodiHolder.KodiSingle::class -> KodiHolder.KodiSingle(init)
-        KodiHolder.KodiProvider::class -> KodiHolder.KodiProvider(init)
-        KodiHolder.KodiConstant::class -> KodiHolder.KodiConstant(init())
-        else -> throwKodiException<ClassCastException>("There is no type holder like ${T::class}")
+    return when (R::class.java) {
+        KodiHolder.KodiSingle::class.java -> KodiHolder.KodiSingle(init)
+        KodiHolder.KodiProvider::class.java -> KodiHolder.KodiProvider(init)
+        KodiHolder.KodiConstant::class.java -> KodiHolder.KodiConstant(init())
+        else -> throwKodiException<ClassCastException>("There is no type holder like ${T::class.java}")
     }.holderAs(this as? IKodiModule) { module -> this at module.scope }
 }

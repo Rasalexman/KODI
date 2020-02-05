@@ -6,6 +6,7 @@ import appdependencies.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import resources.Resources.KodiAndroidX.dirs
 import resources.Resources.KodiAndroidX.javaDirs
+import java.net.URL
 
 plugins {
     id("com.android.library")
@@ -102,6 +103,14 @@ tasks {
     val dokka by getting(org.jetbrains.dokka.gradle.DokkaTask::class) {
         outputFormat = "html"
         outputDirectory = "$buildDir/dokka"
+        configuration {
+            externalDocumentationLink {
+                noJdkLink = true
+                noAndroidSdkLink = true
+                noStdlibLink = true
+                packageListUrl = URL("https://kotlinlang.org/api/latest/jvm/stdlib/package-list")
+            }
+        }
     }
 }
 
