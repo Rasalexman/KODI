@@ -83,7 +83,7 @@ inline fun <reified T : Any, reified R : T> IKodi.bindType(tag: String? = null):
  * Unbind instance by given tag or generic type
  *
  * @param tag - optional parameter for custom manipulating withScope instance tag
- * if there is no tag provided the generic class name will be used as `T::class.toString()`
+ * if there is no tag provided the generic class name will be used as `T::class.java.toString()`
  *
  * @param scope - optional parameter for removing instance from selected scope name
  *
@@ -96,36 +96,10 @@ inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = 
 }
 
 /**
- * Get instance tag or generic class has been Scope name
- *
- * @param tag - optional parameter for custom manipulating withScope instance tag
- * if there is no tag provided the generic class name will be used as `T::class.toString()`
- *
- * @return [String] optional if it has scope return it name or null
- */
-@Deprecated("Not currently in use and will be removed in Release 1.3.0")
-inline fun <reified T : Any> IKodi.getScope(tag: String? = null): String? {
-    val tagToWrap = (tag ?: "${T::class.java}").asTag()
-    return if (Kodi.hasInstance(tagToWrap)) {
-        null
-    } else null
-}
-
-/**
- * Check if tag or generic class has been added to Scope
- *
- * @param tag - optional parameter for custom manipulating withScope instance tag
- * if there is no tag provided the generic class name will be used as `T::class.toString()`
- *
- * @return [Boolean] true if it has scope or false if it doesn't
- */
-@Deprecated(message = "Not currently used and will be removed in Release version 1.3.0", replaceWith = ReplaceWith("Nothing to replace with"))
-inline fun <reified T : Any> IKodi.hasScope(tag: String? = null): Boolean {
-    return getScope<T>(tag) != null
-}
-
-/**
  * Check if tag or generic class has been added to any Kodi Module
+ *
+ * @param tag - optional parameter for custom manipulating withScope instance tag
+ * if there is no tag provided the generic class name will be used as `T::class.java.toString()`
  *
  * @return [Boolean]
  */
@@ -139,7 +113,7 @@ inline fun <reified T : Any> IKodi.hasModule(tag: String? = null): Boolean {
  *
  * @return [Boolean]
  */
-inline fun <reified T : Any> IKodi.isKodiInstance(tag: String? = null): Boolean {
+inline fun <reified T : Any> IKodi.hasInstance(tag: String? = null): Boolean {
     val tagToWrap = (tag ?: "${T::class.java}").asTag()
     return Kodi.hasInstance(tagToWrap)
 }
@@ -172,18 +146,8 @@ fun IKodi.bindTag(tag: String): KodiTagWrapper {
 @CanThrowException("Parameter tag cannot be empty string")
 fun IKodi.unbindTag(tag: String, scope: String? = null): Boolean {
     return tag.takeIf { it.isNotEmpty() }?.let {
-        this.unbind<Any>(it, scope)
+        this.unbind<Any>(tag, scope)
     } ?: throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
-}
-
-/**
- * Unbind moduleScope and all instances from dependency graph
- *
- * @param scopeTagWrapper - [KodiScopeWrapper] to remove
- */
-@Deprecated("Use [IKodi.unbindScope(scopeName: String)] and will be removed in future releases", ReplaceWith("[unbindScope(scopeName:String)]"))
-fun IKodi.unbindScope(scopeTagWrapper: KodiScopeWrapper): Boolean {
-    return Kodi.removeAllScope(scopeTagWrapper)
 }
 
 /**
@@ -286,56 +250,4 @@ inline fun <reified T : Any> IKodi.immutableInstance(tag: String? = null, scope:
  */
 inline fun <reified T : Any> IKodi.mutableInstance(tag: String? = null, scope: String? = null): IMutableDelegate<T> = mutableGetter {
     instance<T>(tag, scope)
-}
-
-/**
- * * Extension function to IKodi implementation to get reference to Generic<T> or Dynamically add instance to dependency graph
- * If there is no instance by given Class<T> and `initKodiHolder == null` there is an Exception will be throw
- *
- * @param clazz - [Class]::class.java
- * @param initKodiHolder - optional [KodiHolder]
- *
- * @throws IllegalAccessException - if there is no tag in dependency graph
- */
-@CanThrowException("There is no KodiHolder instance in dependency graph")
-@Deprecated("Not currently needed functionality and will be removed in Release version 1.3.0")
-fun <T : Any> IKodi.instanceWith(clazz: Class<T>, initKodiHolder: KodiHolder? = null): T {
-    val tagToWrap = clazz.toString().asTag()
-    return getInstanceByWrapperOrCreateDynamically(tagToWrap, defaultScope, initKodiHolder)
-}
-
-/**
- * Extension function to IKodi implementation to get reference to Generic<T> or Dynamically add instance to dependency graph
- * If there is no instance by given tag and `initKodiHolder == null` there is an Exception will be throw
- *
- * @param tag - String tag
- * @param initKodiHolder - optional [KodiHolder]
- *
- * @throws IllegalAccessException - if there is no tag in dependency graph
- */
-@CanThrowException("There is no KodiHolder instance in dependency graph")
-@Deprecated("Not currently needed functionality and will be removed in Release version 1.3.0")
-fun <T : Any> IKodi.instanceWith(tag: String, initKodiHolder: KodiHolder? = null): T {
-    val tagToWrap = tag.asTag()
-    return getInstanceByWrapperOrCreateDynamically(tagToWrap, defaultScope, initKodiHolder)
-}
-
-/**
- * Private get or create function with Exception
- *
- * @param kodiTagWrapper - [KodiTagWrapper]
- * @param initKodiHolder - optional [KodiHolder]
- *
- * @throws IllegalAccessException - if there is no tag in dependency graph
- */
-@Suppress("UNCHECKED_CAST")
-@CanThrowException("There is no KodiHolder instance in dependency graph")
-@Deprecated("Not currently needed functionality and will be removed in Release version 1.3.0")
-private fun <T : Any> IKodi.getInstanceByWrapperOrCreateDynamically(kodiTagWrapper: KodiTagWrapper, scopeScopeWrapper: KodiScopeWrapper = defaultScope, initKodiHolder: KodiHolder? = null): T {
-    val instance = this
-    return Kodi.createOrGet(kodiTagWrapper, scopeScopeWrapper) {
-        initKodiHolder
-                ?: throwKodiException<IllegalAccessException>("There is no tag `$kodiTagWrapper` in dependency graph injected into IKodi instance [${instance}]")
-    }.get(this) as? T
-            ?: throwKodiException<ClassCastException>("Cannot cast instance of $initKodiHolder to Generic type T")
 }

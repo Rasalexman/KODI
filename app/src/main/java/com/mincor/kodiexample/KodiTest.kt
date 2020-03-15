@@ -19,6 +19,9 @@ const val MY_EXCLUSIV_SCOPE_NAME = "MY_EXCLUSIV_SCOPE_NAME"
 
 const val TAG = "----->"
 
+const val FIRST_SCOPE = "FIRST_SCOPE"
+const val SECOND_SCOPE = "SECOND_SCOPE"
+
 @ExperimentalCoroutinesApi
 @UseExperimental(InternalCoroutinesApi::class)
 fun main() {
@@ -34,24 +37,34 @@ fun main() {
     val anotherModule = kodiModule {
         bind<ISingleInterface>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
         bind<ISingleInterface>() at MY_EXCLUSIV_SCOPE_NAME with single { SingleClass(UUID.randomUUID().toString()) }
-    } withScope MY_ANOTHER_SCOPE_NAME
+
+
+        bind<IClass>() at SECOND_SCOPE with single { SecondClass(instance(), instance()) }
+        bind<IClass>() at FIRST_SCOPE with single { FirstClass(instance()) }
+    } //withScope MY_ANOTHER_SCOPE_NAME
 
 
     kodi {
         import(kodiModule)
         import(anotherModule)
 
-        val firstModuleInstance: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
-        val secondModuleInstance: ISingleInterface = instance()
-        val exclusivModuleInstance: ISingleInterface = instance(scope = MY_EXCLUSIV_SCOPE_NAME)
+       // val firstModuleInstance: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
+       // val secondModuleInstance: ISingleInterface = instance()
+       // val exclusivModuleInstance: ISingleInterface = instance(scope = MY_EXCLUSIV_SCOPE_NAME)
 
         val myProvider: IProviderInterface = instance()
         val myProviderByScope: IProviderInterface = instance(scope = MY_PROVIDER_SCOPE_NAME)
 
-        unbind<ISingleInterface>(scope = MY_ANOTHER_SCOPE_NAME)
-        val removedInterface: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
+        val firstInstance: IClass = instance(scope = FIRST_SCOPE)
+        val secondInstance: IClass = instance(scope = SECOND_SCOPE)
 
-        log { "Is instance equals = ${firstModuleInstance == secondModuleInstance}" }
+        log { "firstInstance id = ${firstInstance.execute("true", "true")}" }
+        log { "secondInstance id = ${secondInstance.execute("false", "true")}" }
+
+        unbind<ISingleInterface>(scope = MY_ANOTHER_SCOPE_NAME)
+        //val removedInterface: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
+
+        //log { "Is instance equals = ${firstModuleInstance == secondModuleInstance}" }
     }
 
     /*kodi {
@@ -149,6 +162,27 @@ data class DynamicSingleClass(override val id: String, override val name: String
 interface IProviderInterface : IPrintable, Cloneable
 data class ProviderClass(override val id: String, override val name: String = "Provider") : IProviderInterface
 
+open class FirstClass(
+        private val anotherSingleClass: IProviderInterface
+) : IClass, ISingleInterface {
+    override val id: String = "hello im first"
+    override val name: String = "ISingleInterface"
+    override fun execute(firstParam: String, secondParam: String): Boolean {
+        return firstParam == secondParam
+    }
+}
+
+class SecondClass(
+        anotherSingleClass: IProviderInterface,
+        private val sinter: ISingleInterface
+) : FirstClass(anotherSingleClass) {
+    override val id: String = "hello im second"
+
+    override fun execute(firstParam: String, secondParam: String): Boolean {
+        return if(firstParam == secondParam) super.execute(firstParam, secondParam) else false
+    }
+}
+
 interface IInjectable {
     val singleInstance: ISingleInterface
     val providerInstance: IProviderInterface
@@ -158,4 +192,27 @@ data class InjectableClass(
         override val providerInstance: IProviderInterface,
         override val singleInstance: ISingleInterface
 ) : IInjectable
+
+interface IClass : IUseCase.DoubleInOut<String, String, Boolean>
+
+interface IUseCase {
+    interface SingleIn<in Input> :
+            IUseCase {
+        fun execute(data: Input)
+    }
+
+    interface DoubleInOut<in FirstInput, in SecondInput, out Output> :
+            IUseCase {
+        fun execute(firstParam: FirstInput, secondParam: SecondInput): Output
+    }
+
+    interface SingleInOut<in Input, out Output> :
+            IUseCase {
+        fun execute(data: Input): Output
+    }
+
+    interface Out<out Output> : IUseCase {
+        fun execute(): Output
+    }
+}
 

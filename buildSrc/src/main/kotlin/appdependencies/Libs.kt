@@ -1,6 +1,5 @@
 package appdependencies
 
-import appdependencies.Versions.appCompatX
 import appdependencies.Versions.appCoreX
 import appdependencies.Versions.fastAdapterLib
 import appdependencies.Versions.lifecycle
@@ -10,7 +9,7 @@ import appdependencies.Versions.savedstate
 
 object Libs {
     object Core {
-        const val appcompat = "androidx.appcompat:appcompat:$appCompatX"
+        //const val appcompat = "androidx.appcompat:appcompat:$appCompatX"
         const val coreKtx = "androidx.core:core-ktx:$appCoreX"
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
         const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:${Versions.Navigation.fragment}"

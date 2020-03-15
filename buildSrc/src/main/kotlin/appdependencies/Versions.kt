@@ -2,15 +2,15 @@ package appdependencies
 
 object Versions {
 
-    const val gradle = "3.5.3"
-    const val kotlin = "1.3.61"
-    const val kotlinGradle = "1.3.2"
+    const val gradle = "3.6.0"
+    const val kotlin = "1.3.70"
+    const val kotlinGradle = "1.3.3"
     const val google = "4.3.3"
     const val dokka = "0.10.0"
     const val bintray = "1.8.4"
     const val maven = "2.0"
 
-    const val appCompatX = "1.1.0"
+    //const val appCompatX = "1.1.0"
     const val appCoreX = "1.1.0"
     const val constraintLayout = "1.1.3"
     const val lifecycle = "2.2.0-rc03"

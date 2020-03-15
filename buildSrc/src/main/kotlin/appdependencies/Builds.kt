@@ -14,17 +14,17 @@ object Builds {
 
     object Kodi {
         const val VERSION_CODE = 10300
-        const val VERSION_NAME = "1.3.0-rc4"
+        const val VERSION_NAME = "1.3.0"
     }
 
     object KodiAndroidX {
-        const val VERSION_CODE = 10006
-        const val VERSION_NAME = "1.0.6"
+        const val VERSION_CODE = 10300
+        const val VERSION_NAME = "1.3.0"
     }
 
     object KodiReflect {
-        const val VERSION_CODE = 10106
-        const val VERSION_NAME = "1.1.6"
+        const val VERSION_CODE = 10107
+        const val VERSION_NAME = "1.1.7"
     }
 }
 

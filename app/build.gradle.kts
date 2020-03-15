@@ -119,7 +119,7 @@ dependencies {
     implementation(project(":kodi"))
     implementation(project(":kodiandroidx"))
 
-    implementation(appdependencies.Libs.Core.appcompat)
+    //implementation(appdependencies.Libs.Core.appcompat)
     implementation(appdependencies.Libs.Core.coreKtx)
     implementation(appdependencies.Libs.Core.constraintlayout)
     implementation(appdependencies.Libs.Core.navigationFragmentKtx)
