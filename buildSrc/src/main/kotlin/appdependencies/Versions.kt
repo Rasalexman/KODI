@@ -3,8 +3,8 @@ package appdependencies
 object Versions {
 
     const val gradle = "3.6.0"
-    const val kotlin = "1.3.70"
-    const val kotlinGradle = "1.3.3"
+    const val kotlin = "1.3.71"
+    const val kotlinGradle = "1.3.5"
     const val google = "4.3.3"
     const val dokka = "0.10.0"
     const val bintray = "1.8.4"
@@ -24,7 +24,7 @@ object Versions {
     const val retrofit = "2.7.1"
     const val retrofitLogging = "3.0.0"
 
-    const val fastAdapterLib = "5.0.0-a01"
+    const val fastAdapterLib = "5.0.0"
 
     const val coil = "0.9.1"
 

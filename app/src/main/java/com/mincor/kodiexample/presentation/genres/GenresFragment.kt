@@ -11,7 +11,7 @@ import com.mincor.kodiexample.R
 import com.mincor.kodiexample.presentation.base.BaseRecyclerFragment
 import com.mincor.kodiexample.presentation.movies.MoviesFragment
 
-class GenresFragment : BaseRecyclerFragment<GenreUI, GenresContract.IPresenter>(),
+class GenresFragment : BaseRecyclerFragment<GenreItem, GenresContract.IPresenter>(),
         GenresContract.IView, IKodi {
 
     override val recyclerViewId: Int
@@ -33,7 +33,7 @@ class GenresFragment : BaseRecyclerFragment<GenreUI, GenresContract.IPresenter>(
             field
         }
 
-    override val onItemClickHandler: ((GenreUI) -> Unit)? = { item ->
+    override val onItemClickHandler: ((GenreItem) -> Unit)? = { item ->
         this.findNavController().navigate(
                 R.id.action_genresFragment_to_moviesFragment,
                 bundleOf(

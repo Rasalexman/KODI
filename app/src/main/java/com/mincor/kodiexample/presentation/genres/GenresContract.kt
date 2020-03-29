@@ -5,7 +5,7 @@ import com.rasalexman.sticky.core.IStickyPresenter
 
 interface GenresContract {
 
-    interface IView : IBaseRecyclerView<GenreUI>
+    interface IView : IBaseRecyclerView<GenreItem>
 
     interface IPresenter : IStickyPresenter<IView>
 }

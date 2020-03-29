@@ -5,9 +5,10 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mikepenz.fastadapter.FastAdapter
-import com.mikepenz.fastadapter.adapters.ItemAdapter
+import com.mikepenz.fastadapter.adapters.GenericItemAdapter
 import com.mikepenz.fastadapter.diff.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.items.AbstractItem
+import com.mikepenz.fastadapter.items.BaseItem
 import com.mikepenz.fastadapter.ui.items.ProgressItem
 import com.mincor.kodiexample.common.EndlessRecyclerViewScrollListener
 import com.mincor.kodiexample.common.ScrollPosition
@@ -16,7 +17,7 @@ import com.rasalexman.sticky.core.IStickyPresenter
 import com.rasalexman.sticky.core.IStickyView
 
 abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
-        where I : BaseRecyclerUI<*>, P : IStickyPresenter<out IStickyView> {
+        where I : BaseItem<*>, P : IStickyPresenter<out IStickyView> {
 
     abstract val recyclerViewId: Int
 
@@ -38,9 +39,10 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
     protected open var itemDecoration: RecyclerView.ItemDecoration? = null
 
     // main adapter items holder
-    private val itemAdapter: ItemAdapter<AbstractItem<*>> by unsafeLazy { ItemAdapter<AbstractItem<*>>() }
+    private val itemAdapter by unsafeLazy { GenericItemAdapter() }
+    private val footerAdapter by unsafeLazy { GenericItemAdapter() }
     // save our FastAdapter
-    protected val mFastItemAdapter: FastAdapter<*> by unsafeLazy { FastAdapter.with(itemAdapter) }
+    protected val mFastItemAdapter: FastAdapter<*> by unsafeLazy { FastAdapter.with(listOf(itemAdapter, footerAdapter)) }
 
     // последняя сохраненная позиция (index & offset) прокрутки ленты
     protected val previousPosition: ScrollPosition = ScrollPosition()
@@ -86,13 +88,12 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
 
     override fun showLoading() {
         hideLoading()
-        itemAdapter.add(progressItem)
+        footerAdapter.add(progressItem)
         isLoading = true
     }
 
     override fun hideLoading() {
-        val position = itemAdapter.getAdapterPosition(progressItem)
-        if (position > -1) itemAdapter.remove(position)
+        footerAdapter.clear()
         isLoading = false
     }
 
