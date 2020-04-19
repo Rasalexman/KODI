@@ -15,7 +15,7 @@ class GetCachedMoviesUseCase(
     private var lastGenreId: Int = -1
     private var cachedResult: SResult.Success<List<MovieUI>> = successResult(listOf())
 
-    override suspend fun execute(data: Int): SResult<List<MovieUI>> {
+    override suspend fun invoke(data: Int): SResult<List<MovieUI>> {
         return checkGenreChanged(data)
                 .run {
                     if(cachedResult.data.isNotEmpty()) {

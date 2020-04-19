@@ -8,7 +8,7 @@ import com.mincor.kodiexample.domain.usecases.base.IUseCase
 class GetRemoteDetailsUseCase(
         private val moviesRepository: MoviesRepository
 ) : IUseCase.InOut<Int, SResult<MovieEntity>> {
-    override suspend fun execute(data: Int): SResult<MovieEntity> {
+    override suspend fun invoke(data: Int): SResult<MovieEntity> {
         return moviesRepository
                 .getRemoteMovieById(data)
                 .let { remoteResult ->

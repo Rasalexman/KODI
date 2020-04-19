@@ -12,7 +12,6 @@ import com.mikepenz.fastadapter.items.BaseItem
 import com.mikepenz.fastadapter.items.BaseItemFactory
 import com.mincor.kodiexample.BuildConfig
 import com.mincor.kodiexample.R
-import com.mincor.kodiexample.presentation.base.BaseRecyclerUI
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
 import com.rasalexman.coroutinesmanager.launchOnUI
 import kotlinx.android.extensions.LayoutContainer

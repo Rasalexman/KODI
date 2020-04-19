@@ -42,7 +42,7 @@ data class MovieUI(
 
     class MovieViewHolder(override val containerView: View) : FastAdapter.ViewHolder<MovieUI>(containerView), LayoutContainer {
 
-        override fun bindView(item: MovieUI, payloads: MutableList<Any>) {
+        override fun bindView(item: MovieUI, payloads: List<Any>) {
             with(containerView) {
                 titleTextView.text = item.title
                 releaseTextView.text = item.releaseDate

@@ -10,10 +10,10 @@ class GetGenresUseCase(
         private val getLocalGenresUseCase: GetLocalGenresUseCase,
         private val getRemoteGenresUseCase: GetRemoteGenresUseCase
 ) : AsyncTasksManager(), IGenresOutUseCase {
-    override suspend fun execute(): SResult<List<GenreItem>> = doAsyncAwait {
-        getLocalGenresUseCase.execute().let { localResultList ->
+    override suspend fun invoke(): SResult<List<GenreItem>> = doAsyncAwait {
+        getLocalGenresUseCase.invoke().let { localResultList ->
             if (localResultList is SResult.Success && localResultList.data.isNotEmpty()) localResultList
-            else getRemoteGenresUseCase.execute()
+            else getRemoteGenresUseCase.invoke()
         }
     }
 }

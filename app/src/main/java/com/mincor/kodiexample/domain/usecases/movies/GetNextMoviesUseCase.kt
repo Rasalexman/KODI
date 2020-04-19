@@ -10,7 +10,7 @@ import com.rasalexman.coroutinesmanager.doAsyncAwait
 
 class GetNextMoviesUseCase : AsyncTasksManager(), IKodi, IUseCase.InOut<Int, SResult<List<MovieUI>>> {
 
-    override suspend fun execute(data: Int): SResult<List<MovieUI>> = doAsyncAwait {
-        instance<GetRemoteMoviesUseCase>().execute(data)
+    override suspend fun invoke(data: Int): SResult<List<MovieUI>> = doAsyncAwait {
+        instance<GetRemoteMoviesUseCase>().invoke(data)
     }
 }

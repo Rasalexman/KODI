@@ -9,7 +9,7 @@ import com.mincor.kodiexample.presentation.genres.GenreItem
 class GetRemoteGenresUseCase(
         private val repository: GenresRepository
 ) : IUseCase.Out<SResult<List<GenreItem>>> {
-    override suspend fun execute(): SResult<List<GenreItem>> {
+    override suspend fun invoke(): SResult<List<GenreItem>> {
         return repository
                 .getRemoteGenresList()
                 .run {

@@ -13,10 +13,10 @@ class GetMovieDetailUseCase(
         private val getRemoteDetailsUseCase: GetRemoteDetailsUseCase
 ) : IUseCase.InOut<Int, SResult<MovieEntity>>, AsyncTasksManager() {
 
-    override suspend fun execute(data: Int): SResult<MovieEntity> = doAsyncAwait {
-        getLocalDetailsUseCase.execute(data).let {
+    override suspend fun invoke(data: Int): SResult<MovieEntity> = doAsyncAwait {
+        getLocalDetailsUseCase.invoke(data).let {
             if (it is SResult.Success) it
-            else getRemoteDetailsUseCase.execute(data)
+            else getRemoteDetailsUseCase.invoke(data)
         }
     }
 }

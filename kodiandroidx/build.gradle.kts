@@ -92,7 +92,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8", Versions.kotlin))
 
     implementation(appdependencies.Libs.Core.coreKtx)
-    implementation(project(":kodi"))
+    api(project(":kodi"))
 
     testImplementation(Libs.Tests.junit)
     androidTestImplementation(Libs.Tests.runner)

@@ -10,7 +10,7 @@ import com.mincor.kodiexample.data.repository.MoviesRepository
 class GetNewMoviesUseCase (
     val repository: MoviesRepository
 ) {
-    suspend fun execute(genreId: Int?): SResult<List<MovieUI>> = genreId?.let {
+    suspend fun invoke(genreId: Int?): SResult<List<MovieUI>> = genreId?.let {
         repository.getNewRemoteMovies(genreId).also {
             saveResult(it)
         }.mapListTo()

@@ -11,7 +11,7 @@ import com.mincor.kodiexample.presentation.movies.MovieUI
 class GetRemoteMoviesUseCase(
     private val repository: MoviesRepository
 ) : IUseCase.InOut<Int, SResult<List<MovieUI>>> {
-    override suspend fun execute(data: Int): SResult<List<MovieUI>> {
+    override suspend fun invoke(data: Int): SResult<List<MovieUI>> {
         val result = repository.getRemoteMovies(data)
         if(!repository.hasLocalResults) saveResult(result)
         return result.mapListTo()

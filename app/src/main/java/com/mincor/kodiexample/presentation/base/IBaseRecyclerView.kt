@@ -1,6 +1,8 @@
 package com.mincor.kodiexample.presentation.base
 
-interface IBaseRecyclerView<I : BaseRecyclerUI<*>> : IBaseStickyView {
+import com.mikepenz.fastadapter.IItem
+
+interface IBaseRecyclerView<I : IItem<*>> : IBaseStickyView {
 
     fun showItems(list: List<I>)
     fun addItems(list: List<I>)

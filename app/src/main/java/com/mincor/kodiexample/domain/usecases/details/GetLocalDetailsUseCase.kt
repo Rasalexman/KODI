@@ -8,5 +8,5 @@ import com.mincor.kodiexample.domain.usecases.base.IUseCase
 class GetLocalDetailsUseCase(
         private val moviesRepository: MoviesRepository
 ) : IUseCase.InOut<Int, SResult<MovieEntity>> {
-    override suspend fun execute(data: Int): SResult<MovieEntity> = moviesRepository.getLocalMovieById(data)
+    override suspend fun invoke(data: Int): SResult<MovieEntity> = moviesRepository.getLocalMovieById(data)
 }

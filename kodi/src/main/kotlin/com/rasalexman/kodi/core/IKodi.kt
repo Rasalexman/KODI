@@ -202,7 +202,7 @@ inline fun <reified T : Any> IKodi.holder(tag: String? = null, scope: String? = 
  *
  * @return [KodiHolder.KodiSingle] implementation instance
  */
-inline fun <reified T : Any> IKodi.single(noinline init: InstanceInitializer<T>): KodiHolder {
+inline fun <reified T : Any> IKodi.single(noinline init: InstanceInitializer<T>): KodiHolder.KodiSingle<T> {
     return createHolder<KodiHolder.KodiSingle<T>, T>(init)
 }
 
@@ -213,7 +213,7 @@ inline fun <reified T : Any> IKodi.single(noinline init: InstanceInitializer<T>)
  *
  * @return [KodiHolder.KodiProvider] implementation instance
  */
-inline fun <reified T : Any> IKodi.provider(noinline init: InstanceInitializer<T>): KodiHolder {
+inline fun <reified T : Any> IKodi.provider(noinline init: InstanceInitializer<T>): KodiHolder.KodiProvider<T> {
     return createHolder<KodiHolder.KodiProvider<T>, T>(init)
 }
 
@@ -224,7 +224,7 @@ inline fun <reified T : Any> IKodi.provider(noinline init: InstanceInitializer<T
  *
  * @return [KodiHolder.KodiConstant] implementation instance
  */
-inline fun <reified T : Any> IKodi.constant(noinline init: InstanceInitializer<T>): KodiHolder {
+inline fun <reified T : Any> IKodi.constant(noinline init: InstanceInitializer<T>): KodiHolder.KodiConstant<T> {
     return createHolder<KodiHolder.KodiConstant<T>, T>(init)
 }
 

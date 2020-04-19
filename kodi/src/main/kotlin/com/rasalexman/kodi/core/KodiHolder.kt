@@ -239,11 +239,11 @@ infix fun KodiHolder.tag(instanceTag: KodiTagWrapper) {
  * @return [KodiHolder] implementation instance
  */
 @CanThrowException("If there is no typed initializer passed throw an exception")
-inline fun <reified R : KodiHolder, reified T : Any> IKodi.createHolder(noinline init: InstanceInitializer<T>): KodiHolder {
+inline fun <reified R : KodiHolder, reified T : Any> IKodi.createHolder(noinline init: InstanceInitializer<T>): R {
     return when (R::class.java) {
         KodiHolder.KodiSingle::class.java -> KodiHolder.KodiSingle(init)
         KodiHolder.KodiProvider::class.java -> KodiHolder.KodiProvider(init)
         KodiHolder.KodiConstant::class.java -> KodiHolder.KodiConstant(init())
         else -> throwKodiException<ClassCastException>("There is no type holder like ${T::class.java}")
-    }.holderAs(this as? IKodiModule) { module -> this at module.scope }
+    }.holderAs(this as? IKodiModule) { module -> this at module.scope } as R
 }

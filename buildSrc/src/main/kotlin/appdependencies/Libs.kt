@@ -74,9 +74,6 @@ object Libs {
         // COROUTINES MANAGER
         const val coroutinesmanager = "com.rasalexman.coroutinesmanager:coroutinesmanager:${Versions.coroutinesManager}"
 
-        //----- DI
-        const val kodi = "com.rasalexman.kodi:kodi:${Versions.kodi}"
-
         //---- LOGGING TIMER =)
         const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 

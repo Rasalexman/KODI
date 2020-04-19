@@ -32,7 +32,7 @@ class MoviesPresenter(
     private fun onGenreIdChanged() = launchOnUITryCatch(
             tryBlock = {
                 view().showLoading()
-                val result = getMoviesUseCase.execute(genreId)
+                val result = getMoviesUseCase.invoke(genreId)
                 view().sticky {
                     when (result) {
                         is SResult.Success -> showItems(result.data)
@@ -46,7 +46,7 @@ class MoviesPresenter(
     override fun getNextMoviesByGenreId() = launchOnUITryCatch(
             tryBlock = {
                 view().showLoading()
-                val result = getNextMoviesUseCase.execute(genreId)
+                val result = getNextMoviesUseCase.invoke(genreId)
                 view().singleSticky {
                     when (result) {
                         is SResult.Success -> addItems(result.data)

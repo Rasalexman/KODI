@@ -11,9 +11,9 @@ class GetMoviesUseCase(
         private val getRemoteMoviesUseCase: GetRemoteMoviesUseCase
 ) : AsyncTasksManager(), IGetMoviesInOutUseCase {
 
-    override suspend fun execute(data: Int): SResult<List<MovieUI>> = doAsyncAwait {
-        when (val localResult = getCachedMoviesUseCase.execute(data)) {
-            is SResult.Empty -> getRemoteMoviesUseCase.execute(data)
+    override suspend fun invoke(data: Int): SResult<List<MovieUI>> = doAsyncAwait {
+        when (val localResult = getCachedMoviesUseCase.invoke(data)) {
+            is SResult.Empty -> getRemoteMoviesUseCase.invoke(data)
             is SResult.Success -> localResult
             is SResult.Error -> localResult
         }

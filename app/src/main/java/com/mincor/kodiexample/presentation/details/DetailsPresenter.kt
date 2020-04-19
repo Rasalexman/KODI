@@ -16,7 +16,7 @@ class DetailsPresenter : IStickyPresenter<IDetailsView>, ICoroutinesManager, IKo
     override fun onViewCreated(view: IDetailsView) = launchOnUITryCatch(
             tryBlock = {
                 view().showLoading()
-                val result = instance<GetMovieDetailUseCase>().execute(movieId)
+                val result = instance<GetMovieDetailUseCase>().invoke(movieId)
                 view().sticky {
                     when (result) {
                         is SResult.Success -> showDetails(result.data)

@@ -1,13 +1,12 @@
 package com.mincor.kodiexample
 
 import com.mincor.kodiexample.activity.log
+import com.mincor.kodiexample.domain.usecases.base.IUseCase
+import com.rasalexman.coroutinesmanager.CoroutinesManager
 import com.rasalexman.kodi.core.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import java.util.*
 
 const val SOME_CONSTANT_TAG = "SOME_CONSTANT_TAG"
@@ -58,8 +57,16 @@ fun main() {
         val firstInstance: IClass = instance(scope = FIRST_SCOPE)
         val secondInstance: IClass = instance(scope = SECOND_SCOPE)
 
-        log { "firstInstance id = ${firstInstance.execute("true", "true")}" }
-        log { "secondInstance id = ${secondInstance.execute("false", "true")}" }
+        val coroutineManager = CoroutinesManager()
+        coroutineManager.launch {
+            val result = firstInstance("true", "true")
+            log { "firstInstance id = $result" }
+        }
+
+        coroutineManager.launch {
+            val result = secondInstance("true", "true")
+            log { "secondInstance id = $result" }
+        }
 
         unbind<ISingleInterface>(scope = MY_ANOTHER_SCOPE_NAME)
         //val removedInterface: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
@@ -167,8 +174,8 @@ open class FirstClass(
 ) : IClass, ISingleInterface {
     override val id: String = "hello im first"
     override val name: String = "ISingleInterface"
-    override fun execute(firstParam: String, secondParam: String): Boolean {
-        return firstParam == secondParam
+    override suspend fun invoke(first: String, second: String): Boolean {
+        return first == second
     }
 }
 
@@ -178,8 +185,8 @@ class SecondClass(
 ) : FirstClass(anotherSingleClass) {
     override val id: String = "hello im second"
 
-    override fun execute(firstParam: String, secondParam: String): Boolean {
-        return if(firstParam == secondParam) super.execute(firstParam, secondParam) else false
+    override suspend fun invoke(first: String, second: String): Boolean {
+        return if(first == second) super.invoke(first, second) else false
     }
 }
 
@@ -195,24 +202,4 @@ data class InjectableClass(
 
 interface IClass : IUseCase.DoubleInOut<String, String, Boolean>
 
-interface IUseCase {
-    interface SingleIn<in Input> :
-            IUseCase {
-        fun execute(data: Input)
-    }
-
-    interface DoubleInOut<in FirstInput, in SecondInput, out Output> :
-            IUseCase {
-        fun execute(firstParam: FirstInput, secondParam: SecondInput): Output
-    }
-
-    interface SingleInOut<in Input, out Output> :
-            IUseCase {
-        fun execute(data: Input): Output
-    }
-
-    interface Out<out Output> : IUseCase {
-        fun execute(): Output
-    }
-}
 

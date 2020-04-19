@@ -116,7 +116,6 @@ dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", Versions.kotlin))
 
-    implementation(project(":kodi"))
     implementation(project(":kodiandroidx"))
 
     implementation(appdependencies.Libs.Core.coreKtx)

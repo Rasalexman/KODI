@@ -17,7 +17,7 @@ class GenresPresenter(
     override fun onViewCreated(view: GenresContract.IView) = launchOnUITryCatch(
             tryBlock = {
                 view().showLoading()
-                val result = getGenresUseCase.execute()
+                val result = getGenresUseCase.invoke()
                 view().sticky {
                     when(result) {
                         is SResult.Success -> showItems(result.data)
