@@ -8,30 +8,17 @@ object Resources {
         )
 
         val javaDirs = arrayListOf(
-               // "src/main/kotlin",
+                "app/build/generated/source/kaptKotlin/",
                 "src/main/java"
         )
     }
 
-    object Kodi {
-        val dirs = arrayListOf(
-                "src/main/res"
-        )
-
-        val javaDirs = arrayListOf(
-                "src/main/kotlin"
-        )
-    }
-
-    object KodiAndroidX {
-        val dirs = arrayListOf(
-                "src/main/res"
-        )
-
-        val javaDirs = arrayListOf(
-                "src/main/kotlin"
-        )
-    }
+    val resDirs = arrayListOf(
+            "src/main/res"
+    )
+    val codeDirs = arrayListOf(
+            "src/main/kotlin"
+    )
 
     object KodiReflect {
         val dirs = arrayListOf(

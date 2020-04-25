@@ -1,25 +1,19 @@
-import appdependencies.Builds.COMPILE_VERSION
-import appdependencies.Builds.MIN_VERSION
-import appdependencies.Builds.TARGET_VERSION
 import appdependencies.Libs
 import appdependencies.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.dokka.gradle.DokkaTask
-import resources.Resources.Kodi.dirs
-import resources.Resources.Kodi.javaDirs
+import resources.Resources.codeDirs
 
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    kotlin("android.extensions")
-    id("androidx.navigation.safeargs.kotlin")
+    id("java-library")
+    id("kotlin")
     id("com.jfrog.bintray")
     id("org.jetbrains.dokka")
     id("maven-publish")
 }
 
 
-
+/*
 android {
     compileSdkVersion(COMPILE_VERSION)
     defaultConfig {
@@ -43,8 +37,8 @@ android {
 
     sourceSets {
         getByName("main") {
-            java.setSrcDirs(javaDirs)
-            res.setSrcDirs(dirs)
+            java.setSrcDirs(codeDirs)
+            res.setSrcDirs(resDirs)
         }
     }
 
@@ -88,14 +82,21 @@ android {
         defaultCacheImplementation = org.jetbrains.kotlin.gradle.internal.CacheImplementation.HASH_MAP
     }
 }
+*/
+
+sourceSets {
+    getByName("main") {
+        java.setSrcDirs(codeDirs)
+    }
+}
 
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", Versions.kotlin))
 
-    testImplementation(Libs.Tests.junit)
+    /*testImplementation(Libs.Tests.junit)
     androidTestImplementation(Libs.Tests.runner)
-    androidTestImplementation(Libs.Tests.espresso)
+    androidTestImplementation(Libs.Tests.espresso)*/
 }
 
 
@@ -111,65 +112,5 @@ repositories {
 }
 
 apply {
-    from("deploy.gradle")
+    //from("deploy.gradle")
 }
-
-/*
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'org.jetbrains.dokka-android'
-apply plugin: 'maven-publish'
-apply from: 'keystore.gradle'
-
-android {
-    compileSdkVersion COMPILE_VERSION
-
-    defaultConfig {
-        minSdkVersion MIN_VERSION
-        targetSdkVersion TARGET_VERSION
-        versionCode libCode
-        versionName libVersion
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
-    }
-}
-
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test:runner:1.3.0-alpha03'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-alpha03'
-}
-
-dokka {
-    outputFormat = 'html'
-    outputDirectory = "$buildDir/javadoc"
-}
-
-repositories {
-    mavenCentral()
-}
-apply from: 'deploy.gradle'
-
-*/

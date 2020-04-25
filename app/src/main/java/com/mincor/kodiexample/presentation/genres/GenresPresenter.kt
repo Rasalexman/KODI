@@ -4,8 +4,10 @@ import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.genres.IGenresOutUseCase
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
 import com.rasalexman.coroutinesmanager.launchOnUITryCatch
+import com.rasalexman.kodiannotation.KodiSingle
 import com.rasalexman.sticky.core.IStickyPresenter
 
+@KodiSingle("GenresContract.IPresenter")
 class GenresPresenter(
         private val getGenresUseCase: IGenresOutUseCase
 ) : IStickyPresenter<GenresContract.IView>,

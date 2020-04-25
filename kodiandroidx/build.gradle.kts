@@ -4,9 +4,9 @@ import appdependencies.Builds.TARGET_VERSION
 import appdependencies.Libs
 import appdependencies.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import resources.Resources.KodiAndroidX.dirs
-import resources.Resources.KodiAndroidX.javaDirs
 import java.net.URL
+import resources.Resources.codeDirs
+import resources.Resources.resDirs
 
 plugins {
     id("com.android.library")
@@ -41,8 +41,8 @@ android {
 
     sourceSets {
         getByName("main") {
-            java.setSrcDirs(javaDirs)
-            res.setSrcDirs(dirs)
+            java.setSrcDirs(codeDirs)
+            res.setSrcDirs(resDirs)
         }
     }
 

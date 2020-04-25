@@ -52,7 +52,10 @@ android {
 
     sourceSets {
         getByName("main") {
-            java.setSrcDirs(javaDirs)
+            java.setSrcDirs(arrayListOf(
+                    "${buildDir.absolutePath}/generated/source/kaptKotlin/",
+                    "src/main/java"
+            ))
             res.setSrcDirs(dirs)
         }
     }
@@ -117,6 +120,8 @@ dependencies {
     implementation(kotlin("stdlib-jdk8", Versions.kotlin))
 
     implementation(project(":kodiandroidx"))
+    implementation(project(":kodiannotation"))
+
 
     implementation(appdependencies.Libs.Core.coreKtx)
     implementation(appdependencies.Libs.Core.constraintlayout)
@@ -161,6 +166,7 @@ dependencies {
     androidTestImplementation(Libs.Tests.runner)
     androidTestImplementation(Libs.Tests.espresso)
 
+    kapt(project(":kodiprocessor"))
     kapt(appdependencies.Libs.Room.kapt)
 }
 /*
