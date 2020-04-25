@@ -52,14 +52,14 @@ inline fun <reified T : Any> kodi(block: IKodi.() -> T): T {
  * Bind Any Generic type withScope some instance or KodiHolder types
  *
  * @param tag - optional parameter for custom manipulating withScope instance tag
- * if there is no tag provided the generic class name will be used as `T::class.java.toString()`
+ * if there is no tag provided the generic class name will be used as `T::class.java.simpleName.toString()`
  *
  * @receiver [IKodi]
  * @return [KodiTagWrapper]
  */
 inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
     val receiver = this
-    return (tag ?: "${T::class.java}").asTag().also {
+    return (tag ?: T::class.java.simpleName).asTag().also {
         if (receiver is KodiModule) {
             receiver.moduleInstancesSet.add(it)
         }
@@ -70,7 +70,7 @@ inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
  * Bind Typed Instance to inherits type like <ISimpleInterface, BaseSimpleInterfaceImplementation>
  *
  * @param tag - optional parameter for custom manipulating withScope instance tag
- * if there is no tag provided the generic class name will be used as `T::class.java.toString()`
+ * if there is no tag provided the generic class name will be used as `T::class.java.simpleName.toString()`
  *
  * @receiver [IKodi]
  * @return [KodiTagWrapper]
@@ -83,14 +83,14 @@ inline fun <reified T : Any, reified R : T> IKodi.bindType(tag: String? = null):
  * Unbind instance by given tag or generic type
  *
  * @param tag - optional parameter for custom manipulating withScope instance tag
- * if there is no tag provided the generic class name will be used as `T::class.java.toString()`
+ * if there is no tag provided the generic class name will be used as `T::class.java.simpleName.toString()`
  *
  * @param scope - optional parameter for removing instance from selected scope name
  *
  * @return [Boolean] - is instance removed
  */
 inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = null): Boolean {
-    val tagToWrapper = (tag ?: "${T::class.java}").asTag()
+    val tagToWrapper = (tag ?: T::class.java.simpleName).asTag()
     val scopeToWrap = scope?.asScope() ?: defaultScope
     return Kodi.removeInstance(tagToWrapper, scopeToWrap) != null
 }
@@ -99,12 +99,12 @@ inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = 
  * Check if tag or generic class has been added to any Kodi Module
  *
  * @param tag - optional parameter for custom manipulating withScope instance tag
- * if there is no tag provided the generic class name will be used as `T::class.java.toString()`
+ * if there is no tag provided the generic class name will be used as `T::class.java.simpleName.toString()`
  *
  * @return [Boolean]
  */
 inline fun <reified T : Any> IKodi.hasModule(tag: String? = null): Boolean {
-    val tagToWrap = (tag ?: "${T::class.java}").asTag()
+    val tagToWrap = (tag ?: T::class.java.simpleName).asTag()
     return Kodi.hasModuleByTag(tagToWrap)
 }
 
@@ -114,7 +114,7 @@ inline fun <reified T : Any> IKodi.hasModule(tag: String? = null): Boolean {
  * @return [Boolean]
  */
 inline fun <reified T : Any> IKodi.hasInstance(tag: String? = null): Boolean {
-    val tagToWrap = (tag ?: "${T::class.java}").asTag()
+    val tagToWrap = (tag ?: T::class.java.simpleName).asTag()
     return Kodi.hasInstance(tagToWrap)
 }
 
@@ -176,7 +176,7 @@ fun IKodi.unbindAll() {
 inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? = null): T {
     val inst = holder<T>(tag, scope).get(this)
     return inst as? T
-            ?: throwKodiException<ClassCastException>("Cannot cast instance = $inst to Generic type ${T::class.java}")
+            ?: throwKodiException<ClassCastException>("Cannot cast instance = $inst to Generic type ${T::class.java.simpleName}")
 }
 
 /**
@@ -188,7 +188,7 @@ inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? 
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 inline fun <reified T : Any> IKodi.holder(tag: String? = null, scope: String? = null): KodiHolder {
     val instance = this
-    val tagToWrap = (tag ?: "${T::class.java}").asTag()
+    val tagToWrap = (tag ?: T::class.java.simpleName).asTag()
     val scopeToWrap = scope?.asScope() ?: defaultScope
     return Kodi.createOrGet(tagToWrap, scopeToWrap) {
         throwKodiException<IllegalAccessException>("There is no tag `$tagToWrap` in dependency graph with scope `$scopeToWrap` injected into IKodi instance [$instance]")

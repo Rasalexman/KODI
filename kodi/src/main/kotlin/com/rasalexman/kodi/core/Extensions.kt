@@ -41,6 +41,8 @@ fun String.asScope() = KodiScopeWrapper(this)
  */
 fun String.asTag() = KodiTagWrapper(this)
 
+inline fun <reified T : Any> T.asTag() = KodiTagWrapper(T::class.java.simpleName)
+
 
 /**
  * Make prediction for [KodiHolder] and do some action if prediction is not null
