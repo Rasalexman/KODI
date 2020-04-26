@@ -1,4 +1,4 @@
-package com.rasalexman.kodiannotation
+package com.rasalexman.kodi.annotations
 
 import kotlin.reflect.KClass
 

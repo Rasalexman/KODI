@@ -1,13 +1,10 @@
-package com.rasalexman.kodiprocessor
+package com.rasalexman.kodigen
 
 import com.google.auto.service.AutoService
+import com.rasalexman.kodi.annotations.*
 import com.rasalexman.kodi.core.IKodiModule
 import com.rasalexman.kodi.core.KodiHolder
 import com.rasalexman.kodi.core.throwKodiException
-import com.rasalexman.kodiannotation.BindInstance
-import com.rasalexman.kodiannotation.BindProvider
-import com.rasalexman.kodiannotation.BindSingle
-import com.rasalexman.kodiannotation.IgnoreInstance
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.PropertySpec
 import java.io.File

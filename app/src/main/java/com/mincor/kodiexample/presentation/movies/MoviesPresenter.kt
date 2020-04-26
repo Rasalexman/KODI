@@ -8,7 +8,7 @@ import com.rasalexman.coroutinesmanager.SuspendCatch
 import com.rasalexman.coroutinesmanager.launchOnUITryCatch
 import com.rasalexman.kodi.core.IKodi
 import com.rasalexman.kodi.core.immutableInstance
-import com.rasalexman.kodiannotation.BindSingle
+import com.rasalexman.kodi.annotations.BindSingle
 
 @BindSingle(
         toClass = MoviesContract.IPresenter::class,

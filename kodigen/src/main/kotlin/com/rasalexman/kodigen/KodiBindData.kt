@@ -1,4 +1,4 @@
-package com.rasalexman.kodiprocessor
+package com.rasalexman.kodigen
 
 import javax.lang.model.element.Element
 

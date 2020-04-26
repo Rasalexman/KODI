@@ -4,9 +4,8 @@ import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.genres.IGenresOutUseCase
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
 import com.rasalexman.coroutinesmanager.launchOnUITryCatch
-import com.rasalexman.kodiannotation.BindInstance
-import com.rasalexman.kodiannotation.BindSingle
-import com.rasalexman.kodiannotation.IgnoreInstance
+import com.rasalexman.kodi.annotations.BindSingle
+import com.rasalexman.kodi.annotations.IgnoreInstance
 import com.rasalexman.sticky.core.IStickyPresenter
 
 @BindSingle(
