@@ -1,4 +1,3 @@
-import appdependencies.Libs
 import appdependencies.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.dokka.gradle.DokkaTask
@@ -51,15 +50,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    tasks.withType<KotlinCompile>().all {
-        kotlinOptions.suppressWarnings = true
-        kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.noReflect = true
-        kotlinOptions.freeCompilerArgs += listOf(
-                "-XXLanguage:+InlineClasses"
-        )
-    }
-
     packagingOptions {
         exclude("META-INF/notice.txt")
     }
@@ -84,6 +74,28 @@ android {
 }
 */
 
+// Declare the task that will monitor all configurations.
+configurations.all {
+    // 2 Define the resolution strategy in case of conflicts.
+    resolutionStrategy {
+        // Fail eagerly on version conflict (includes transitive dependencies),
+        // e.g., multiple different versions of the same dependency (group and name are equal).
+        failOnVersionConflict()
+
+        // Prefer modules that are part of this build (multi-project or composite build) over external modules.
+        preferProjectModules()
+    }
+}
+
+tasks.withType<KotlinCompile>().all {
+    kotlinOptions.suppressWarnings = true
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.noReflect = true
+    kotlinOptions.freeCompilerArgs += listOf(
+            "-XXLanguage:+InlineClasses"
+    )
+}
+
 sourceSets {
     getByName("main") {
         java.setSrcDirs(codeDirs)
@@ -93,10 +105,6 @@ sourceSets {
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", Versions.kotlin))
-
-    /*testImplementation(Libs.Tests.junit)
-    androidTestImplementation(Libs.Tests.runner)
-    androidTestImplementation(Libs.Tests.espresso)*/
 }
 
 
@@ -112,5 +120,5 @@ repositories {
 }
 
 apply {
-    //from("deploy.gradle")
+    from("deploy.gradle")
 }
