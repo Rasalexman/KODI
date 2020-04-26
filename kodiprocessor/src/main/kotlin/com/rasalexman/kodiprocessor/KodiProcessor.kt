@@ -14,6 +14,7 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
+import javax.lang.model.type.MirroredTypeException
 import javax.tools.Diagnostic
 import kotlin.reflect.KClass
 
@@ -46,10 +47,19 @@ class SingleAnnotationProcessor : AbstractProcessor() {
 
     private fun processAnnotation(element: Element) {
         val className = element.simpleName.toString()
+        val annotation = element.getAnnotation(KodiSingle::class.java)
         //val inheritance: KClass<*>? = singleAnnotation?.bindingTo
         //println("-----> inheritance = $inheritance")
-        val annotation = element.getAnnotation(KodiSingle::class.java) as KodiSingle
-        println("-----> annotation = $annotation")
+        val bindTo = element.getAnnotationClassValue<KodiSingle> { bindTo }
+        val tag = annotation.tag
+        val bindTag = tag.takeIf { it.isNotEmpty() }?.run { "\"$tag\"" }.orEmpty()
+        println("-----> annotation = $bindTo")
+       /* element.enclosedElements?.forEach {
+            val annot = it.getAnnotation(KodiSingle::class.java)
+            println("-----> enclosedElements annot = $annot")
+        }*/
+        //val bind: KClass<out Any> = annotation.bindTo
+        //println("-----> bind = $bind")
         //println("-----> bindingTo = ${annotation.bindingTo}")
         val pack = processingEnv.elementUtils.getPackageOf(element).toString()
 
@@ -60,9 +70,10 @@ class SingleAnnotationProcessor : AbstractProcessor() {
                 .addImport("com.rasalexman.kodi.core", "single")
                 .addImport("com.rasalexman.kodi.core", "instance")
                 .addImport("com.rasalexman.kodi.core", "kodiModule")
-        val classBuilder = TypeSpec.classBuilder(fileName)
 
-        var initializer = "kodiModule { bind<$className>() with single { $className("
+        //val classBuilder = TypeSpec.classBuilder(fileName)
+
+        var initializer = "kodiModule { bind<$bindTo>(tag = $bindTag) with single { $className("
 
         var classProperty = ""
         var propCount = 0
@@ -78,12 +89,21 @@ class SingleAnnotationProcessor : AbstractProcessor() {
 
         val moduleProperty = PropertySpec.builder("${className.toLowerCase()}Module", IKodiModule::class)
                 .initializer(initializer).build()
-        val companion = TypeSpec.companionObjectBuilder().addProperty(moduleProperty).build()
 
-        val file = fileBuilder.addType(classBuilder.addType(companion).build()).build()
+        fileBuilder.addProperty(moduleProperty)
+       // val companion = TypeSpec.companionObjectBuilder().addProperty(moduleProperty).build()
+
+        val file = fileBuilder.build()
         val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
         val createdFile = File(kaptKotlinGeneratedDir)
         file.writeTo(createdFile)
+    }
+
+    inline fun <reified T : Annotation> Element.getAnnotationClassValue(f: T.() -> KClass<*>) = try {
+        getAnnotation(T::class.java).f()
+        throw Exception("Expected to get a MirroredTypeException")
+    } catch (e: MirroredTypeException) {
+        e.typeMirror
     }
 
 }

@@ -7,7 +7,7 @@ import com.rasalexman.coroutinesmanager.launchOnUITryCatch
 import com.rasalexman.kodiannotation.KodiSingle
 import com.rasalexman.sticky.core.IStickyPresenter
 
-@KodiSingle("GenresContract.IPresenter")
+@KodiSingle(tag = "GenresContract.IPresenter", bindTo = GenresContract.IPresenter::class)
 class GenresPresenter(
         private val getGenresUseCase: IGenresOutUseCase
 ) : IStickyPresenter<GenresContract.IView>,
