@@ -11,7 +11,7 @@ import com.rasalexman.coroutinesmanager.doAsyncAwait
 class GetMovieDetailUseCase(
         private val getLocalDetailsUseCase: GetLocalDetailsUseCase,
         private val getRemoteDetailsUseCase: GetRemoteDetailsUseCase
-) : IUseCase.InOut<Int, SResult<MovieEntity>>, AsyncTasksManager() {
+) : IGetMovieDetailUseCase, AsyncTasksManager() {
 
     override suspend fun invoke(data: Int): SResult<MovieEntity> = doAsyncAwait {
         getLocalDetailsUseCase.invoke(data).let {
@@ -20,3 +20,5 @@ class GetMovieDetailUseCase(
         }
     }
 }
+
+interface IGetMovieDetailUseCase : IUseCase.InOut<Int, SResult<MovieEntity>>

@@ -11,18 +11,18 @@ class GenresRepository(
         private val remoteDataSource: IGenresRemoteDataSource,
         private val localDataSource: IGenresLocalDataSource,
         private val memoryDataSource: IGenresCacheDataSource
-) {
-    suspend fun getLocalGenreList(): SResult<List<GenreEntity>> =
+) : IGenresRepository {
+    override suspend fun getLocalGenreList(): SResult<List<GenreEntity>> =
         memoryDataSource.getGenresFromCache().takeIf { it.data.isNotEmpty() }
             ?: localDataSource.getGenresList().also {
                 memoryDataSource.putGenresInCache(it.data)
             }
 
-    suspend fun saveGenres(genresList: List<GenreEntity>) =
+    override suspend fun saveGenres(genresList: List<GenreEntity>) =
         localDataSource.insertGenres(genresList)
             .also { memoryDataSource.putGenresInCache(genresList) }
 
-    suspend fun getRemoteGenresList(): SResult<List<GenreEntity>> {
+    override suspend fun getRemoteGenresList(): SResult<List<GenreEntity>> {
         val result = remoteDataSource
                 .getRemoteGenresList()
                 .mapListTo()
@@ -33,4 +33,10 @@ class GenresRepository(
         return result
     }
 
+}
+
+interface IGenresRepository {
+    suspend fun getLocalGenreList(): SResult<List<GenreEntity>>
+    suspend fun saveGenres(genresList: List<GenreEntity>)
+    suspend fun getRemoteGenresList(): SResult<List<GenreEntity>>
 }

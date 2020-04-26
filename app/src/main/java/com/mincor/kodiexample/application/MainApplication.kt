@@ -5,6 +5,7 @@ import android.content.Context
 import coil.Coil
 import coil.ImageLoader
 import coil.util.CoilLogger
+import com.kodi.generated.module.presentersmodule.presentersModule
 import com.mincor.kodiexample.BuildConfig
 import com.mincor.kodiexample.modules.*
 import com.rasalexman.coroutinesmanager.AsyncTasksManager
@@ -29,7 +30,8 @@ class MainApplication : Application() {
         import(remoteDataSourceModule)
         import(repositoryModule)
         import(useCasesModule)
-        import(presentationModule)
+        import(presentersModule)
+        //import(presentationModule)
     }
 
     override fun onCreate() {

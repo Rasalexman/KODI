@@ -3,71 +3,70 @@ package com.mincor.kodiexample.modules
 import com.rasalexman.kodi.core.*
 import com.mincor.kodiexample.domain.usecases.details.GetLocalDetailsUseCase
 import com.mincor.kodiexample.domain.usecases.details.GetRemoteDetailsUseCase
-import com.mincor.kodiexample.domain.usecases.genres.GetGenresUseCase
-import com.mincor.kodiexample.domain.usecases.genres.GetLocalGenresUseCase
-import com.mincor.kodiexample.domain.usecases.genres.GetRemoteGenresUseCase
-import com.mincor.kodiexample.domain.usecases.genres.IGenresOutUseCase
+import com.mincor.kodiexample.domain.usecases.details.IGetLocalDetailsUseCase
+import com.mincor.kodiexample.domain.usecases.details.IGetRemoteDetailsUseCase
+import com.mincor.kodiexample.domain.usecases.genres.*
 import com.mincor.kodiexample.domain.usecases.movies.*
 
 val useCasesModule = kodiModule {
 
     //---- Single Use-cases
-    bind<GetLocalDetailsUseCase>() with provider {
+    bind<IGetLocalDetailsUseCase>() with provider {
         GetLocalDetailsUseCase(
             instance()
         )
     }
-    bind<GetRemoteDetailsUseCase>() with provider {
+    bind<IGetRemoteDetailsUseCase>() with provider {
         GetRemoteDetailsUseCase(
             instance()
         )
     }
-    bind<GetCachedMoviesUseCase>() with provider {
+    bind<IGetCachedMoviesUseCase>() with provider {
         GetCachedMoviesUseCase(
             instance()
         )
     }
-    bind<GetRemoteMoviesUseCase>() with provider {
+    bind<IGetRemoteMoviesUseCase>() with provider {
         GetRemoteMoviesUseCase(
             instance()
         )
     }
-    bind<GetLocalGenresUseCase>() with provider {
+    bind<IGetLocalGenresUseCase>() with provider {
         GetLocalGenresUseCase(
             instance()
         )
     }
-    bind<GetRemoteGenresUseCase>() with provider {
+    bind<IGetRemoteGenresUseCase>() with provider {
         GetRemoteGenresUseCase(
             instance()
         )
     }
-    bind<GetNewMoviesUseCase>() with provider {
+    bind<IGetNewMoviesUseCase>() with provider {
         GetNewMoviesUseCase(
             instance()
         )
     }
 
     //---- Combined Use-cases
-    bindType<IGenresOutUseCase, GetGenresUseCase>() with provider {
+    bind<IGenresOutUseCase>() with provider {
         GetGenresUseCase(
             instance(),
             instance()
         )
     }
-    bindType<IGetMoviesInOutUseCase, GetMoviesUseCase>() with provider {
+    bind<IGetMoviesInOutUseCase>() with provider {
         GetMoviesUseCase(
             instance(),
             instance()
         )
     }
-    bind<GetMovieDetailUseCase>() with provider {
+    bind<IGetMovieDetailUseCase>() with provider {
         GetMovieDetailUseCase(
             instance(),
             instance()
         )
     }
-    bind<GetNextMoviesUseCase>() with provider {
+    bind<IGetNextMoviesUseCase>() with provider {
         GetNextMoviesUseCase()
     }
 }

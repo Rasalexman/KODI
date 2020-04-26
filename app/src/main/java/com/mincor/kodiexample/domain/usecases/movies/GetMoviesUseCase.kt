@@ -20,4 +20,4 @@ class GetMoviesUseCase(
     }
 }
 
-typealias IGetMoviesInOutUseCase = IUseCase.InOut<Int, SResult<List<MovieUI>>>
+interface IGetMoviesInOutUseCase : IUseCase.InOut<Int, SResult<List<MovieUI>>>

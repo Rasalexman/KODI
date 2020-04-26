@@ -4,13 +4,13 @@ import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.emptyResult
 import com.mincor.kodiexample.data.dto.mapListTo
 import com.mincor.kodiexample.data.dto.successResult
-import com.mincor.kodiexample.data.repository.MoviesRepository
+import com.mincor.kodiexample.data.repository.IMoviesRepository
 import com.mincor.kodiexample.domain.usecases.base.IUseCase
 import com.mincor.kodiexample.presentation.movies.MovieUI
 
 class GetCachedMoviesUseCase(
-    private val repository: MoviesRepository
-) : IUseCase.InOut<Int, SResult<List<MovieUI>>> {
+    private val repository: IMoviesRepository
+) : IGetCachedMoviesUseCase {
 
     private var lastGenreId: Int = -1
     private var cachedResult: SResult.Success<List<MovieUI>> = successResult(listOf())
@@ -23,7 +23,7 @@ class GetCachedMoviesUseCase(
                     }
                     repository.getLocalMovies(lastGenreId)
                 }.let { localList ->
-                    if (repository.hasLocalResults) localList
+                    if (repository.hasResults()) localList
                     else emptyResult()
                 }.mapListTo()
                 .also {
@@ -39,3 +39,5 @@ class GetCachedMoviesUseCase(
         }
     }
 }
+
+interface IGetCachedMoviesUseCase : IUseCase.InOut<Int, SResult<List<MovieUI>>>

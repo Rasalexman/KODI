@@ -11,12 +11,13 @@ import com.mincor.kodiexample.data.source.remote.IMoviesRemoteDataSource
 class MoviesRepository(
         private val localDataSource: IMoviesLocalDataSource,
         private val remoteDataSource: IMoviesRemoteDataSource
-) {
+) : IMoviesRepository {
 
-    var hasLocalResults = false
-        private set
+    private var hasLocalResults = false
 
-    suspend fun getLocalMovies(genreId: Int): SResult<List<MovieEntity>> =
+    override fun hasResults() = hasLocalResults
+
+    override suspend fun getLocalMovies(genreId: Int): SResult<List<MovieEntity>> =
             localDataSource
                     .getAll(genreId)
                     .run {
@@ -26,35 +27,47 @@ class MoviesRepository(
                         remoteDataSource.upPage()
                     }
 
-    suspend fun getRemoteMovies(genreId: Int): SResult<List<MovieEntity>> {
+    override suspend fun getRemoteMovies(genreId: Int): SResult<List<MovieEntity>> {
         return remoteDataSource
                 .getByGenreId(genreId)
                 .mapListTo()
     }
 
-    suspend fun getNewRemoteMovies(genreId: Int): SResult<List<MovieEntity>> {
+    override suspend fun getNewRemoteMovies(genreId: Int): SResult<List<MovieEntity>> {
         return remoteDataSource
                 .getNewMoviesByGenreId(genreId)
                 .mapListTo()
     }
 
-    suspend fun saveMovies(data: List<MovieEntity>) {
+    override suspend fun saveMovies(data: List<MovieEntity>) {
         hasLocalResults = data.isNotEmpty()
         localDataSource.insertAll(data)
     }
 
-    suspend fun saveMovie(data: MovieEntity) = localDataSource.insert(data)
+    override suspend fun saveMovie(data: MovieEntity) = localDataSource.insert(data)
 
-    suspend fun getLocalMovieById(movieId: Int): SResult<MovieEntity> =
+    override suspend fun getLocalMovieById(movieId: Int): SResult<MovieEntity> =
             localDataSource.getById(movieId)
 
-    suspend fun getRemoteMovieById(movieId: Int): SResult<MovieEntity> =
+    override suspend fun getRemoteMovieById(movieId: Int): SResult<MovieEntity> =
             remoteDataSource
                     .getMovieDetails(movieId)
                     .mapTo()
 
-    fun clear() {
+    override fun clear() {
         hasLocalResults = false
         remoteDataSource.clearPage()
     }
+}
+
+interface IMoviesRepository {
+    fun clear()
+    suspend fun saveMovie(data: MovieEntity)
+    suspend fun getLocalMovieById(movieId: Int): SResult<MovieEntity>
+    suspend fun getRemoteMovieById(movieId: Int): SResult<MovieEntity>
+    suspend fun saveMovies(data: List<MovieEntity>)
+    suspend fun getNewRemoteMovies(genreId: Int): SResult<List<MovieEntity>>
+    suspend fun getRemoteMovies(genreId: Int): SResult<List<MovieEntity>>
+    suspend fun getLocalMovies(genreId: Int): SResult<List<MovieEntity>>
+    fun hasResults(): Boolean
 }

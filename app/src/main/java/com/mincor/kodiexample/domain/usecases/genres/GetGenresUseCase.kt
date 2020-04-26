@@ -7,8 +7,8 @@ import com.rasalexman.coroutinesmanager.AsyncTasksManager
 import com.rasalexman.coroutinesmanager.doAsyncAwait
 
 class GetGenresUseCase(
-        private val getLocalGenresUseCase: GetLocalGenresUseCase,
-        private val getRemoteGenresUseCase: GetRemoteGenresUseCase
+        private val getLocalGenresUseCase: IGetLocalGenresUseCase,
+        private val getRemoteGenresUseCase: IGetRemoteGenresUseCase
 ) : AsyncTasksManager(), IGenresOutUseCase {
     override suspend fun invoke(): SResult<List<GenreItem>> = doAsyncAwait {
         getLocalGenresUseCase.invoke().let { localResultList ->
@@ -18,4 +18,4 @@ class GetGenresUseCase(
     }
 }
 
-typealias IGenresOutUseCase = IUseCase.Out<SResult<List<GenreItem>>>
+interface IGenresOutUseCase : IUseCase.Out<SResult<List<GenreItem>>>

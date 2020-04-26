@@ -29,6 +29,12 @@ typealias InstanceInitializerWithParam<T, R> = IKodi.(R?) -> T
  */
 sealed class KodiHolder {
 
+    companion object {
+        const val TYPE_SINGLE = "single"
+        const val TYPE_PROVIDER = "provider"
+        const val TYPE_CONSTANT = "constant"
+    }
+
     /**
      * Getting value from holder
      */

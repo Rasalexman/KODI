@@ -2,9 +2,14 @@ package com.rasalexman.kodiprocessor
 
 import com.google.auto.service.AutoService
 import com.rasalexman.kodi.core.IKodiModule
-import com.rasalexman.kodi.core.KodiModule
-import com.rasalexman.kodiannotation.KodiSingle
-import com.squareup.kotlinpoet.*
+import com.rasalexman.kodi.core.KodiHolder
+import com.rasalexman.kodi.core.throwKodiException
+import com.rasalexman.kodiannotation.BindInstance
+import com.rasalexman.kodiannotation.BindProvider
+import com.rasalexman.kodiannotation.BindSingle
+import com.rasalexman.kodiannotation.IgnoreInstance
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.PropertySpec
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Processor
@@ -13,6 +18,7 @@ import javax.annotation.processing.SupportedSourceVersion
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.MirroredTypeException
 import javax.tools.Diagnostic
@@ -20,90 +26,179 @@ import kotlin.reflect.KClass
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @AutoService(Processor::class)
-class SingleAnnotationProcessor : AbstractProcessor() {
+class KodiAnnotationProcessor : AbstractProcessor() {
 
     companion object {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
+        const val KODI_DEFAULT_MODULE_NAME = "Kodi"
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        return mutableSetOf(KodiSingle::class.java.name)
+        return mutableSetOf(BindInstance::class.java.name, BindSingle::class.java.name, BindProvider::class.java.name)
     }
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latest()
 
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
+        val startTime = System.currentTimeMillis()
+        println("KodiAnnotationProcessor started")
         processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
-        roundEnv.getElementsAnnotatedWith(KodiSingle::class.java)
-                .forEach {
-                    if (it.kind != ElementKind.CLASS) {
-                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated")
-                        return true
-                    }
-                    processAnnotation(it)
-                }
+        val modulesMap = mutableMapOf<String, MutableList<KodiBindData>>()
+        collectAnnotationData<BindSingle>(roundEnv, modulesMap, ::takeElementFromBindSingle)
+        collectAnnotationData<BindProvider>(roundEnv, modulesMap, ::takeElementFromBindProvider)
+        collectAnnotationData<BindInstance>(roundEnv, modulesMap, ::takeElementFromBindInstance)
+        modulesMap.forEach(::processModules)
+        println("KodiAnnotationProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
         return false
     }
 
-    private fun processAnnotation(element: Element) {
-        val className = element.simpleName.toString()
-        val annotation = element.getAnnotation(KodiSingle::class.java)
-        //val inheritance: KClass<*>? = singleAnnotation?.bindingTo
-        //println("-----> inheritance = $inheritance")
-        val bindTo = element.getAnnotationClassValue<KodiSingle> { bindTo }
-        val tag = annotation.tag
-        val bindTag = tag.takeIf { it.isNotEmpty() }?.run { "\"$tag\"" }.orEmpty()
-        println("-----> annotation = $bindTo")
-       /* element.enclosedElements?.forEach {
-            val annot = it.getAnnotation(KodiSingle::class.java)
-            println("-----> enclosedElements annot = $annot")
-        }*/
-        //val bind: KClass<out Any> = annotation.bindTo
-        //println("-----> bind = $bind")
-        //println("-----> bindingTo = ${annotation.bindingTo}")
-        val pack = processingEnv.elementUtils.getPackageOf(element).toString()
+    private fun processModules(moduleName: String, moduleElements: List<KodiBindData>) {
+        val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME] ?: return
 
-        val fileName = "${className}Module"
-        val fileBuilder= FileSpec.builder(pack, fileName)
+        val lowerModuleName = moduleName.toLowerCase()
+        val packageName = "com.kodi.generated.module.${lowerModuleName}module"
+        val fileName = "${lowerModuleName.capitalize()}Module"
+        val fileBuilder= FileSpec.builder(packageName, fileName)
                 .addImport("com.rasalexman.kodi.core", "bind")
                 .addImport("com.rasalexman.kodi.core", "with")
                 .addImport("com.rasalexman.kodi.core", "single")
+                .addImport("com.rasalexman.kodi.core", "provider")
+                .addImport("com.rasalexman.kodi.core", "at")
+                .addImport("com.rasalexman.kodi.core", "constant")
                 .addImport("com.rasalexman.kodi.core", "instance")
                 .addImport("com.rasalexman.kodi.core", "kodiModule")
 
-        //val classBuilder = TypeSpec.classBuilder(fileName)
-
-        var initializer = "kodiModule { bind<$bindTo>(tag = $bindTag) with single { $className("
-
-        var classProperty = ""
-        var propCount = 0
-        for (enclosed in element.enclosedElements) {
-            if (enclosed.kind == ElementKind.FIELD) {
-                val property = enclosed.simpleName.toString()
-                classProperty += (if(propCount > 0) "," else "") + "$property = instance()"
-                propCount++
+        val initializer = buildString {
+            append("kodiModule {")
+            moduleElements.forEach {
+                appendln()
+                append(processElementAnnotation(it))
+                appendln()
             }
+            appendln()
+            append("}")
         }
-        initializer += "$classProperty) }"
-        initializer += "}"
 
-        val moduleProperty = PropertySpec.builder("${className.toLowerCase()}Module", IKodiModule::class)
+        val moduleProperty = PropertySpec.builder("${lowerModuleName}Module", IKodiModule::class)
                 .initializer(initializer).build()
-
         fileBuilder.addProperty(moduleProperty)
-       // val companion = TypeSpec.companionObjectBuilder().addProperty(moduleProperty).build()
-
         val file = fileBuilder.build()
-        val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
         val createdFile = File(kaptKotlinGeneratedDir)
         file.writeTo(createdFile)
     }
 
-    inline fun <reified T : Annotation> Element.getAnnotationClassValue(f: T.() -> KClass<*>) = try {
+    private fun processElementAnnotation(bindingData: KodiBindData): String {
+        val element = bindingData.element
+        val className = element.asType().toString()
+        val toClass = bindingData.toClass
+        val instanceType = bindingData.instanceType
+        val scope = bindingData.scope
+        val tag = bindingData.tag
+
+        if(instanceType != KodiHolder.TYPE_SINGLE && instanceType != KodiHolder.TYPE_PROVIDER && instanceType != KodiHolder.TYPE_CONSTANT) {
+            throwKodiException<IllegalStateException>("You cannot use this type as annotation processing. Allowed types in KodiHolder.Companion.*")
+        }
+
+        val allIgnoredSet = element.enclosedElements.filter { enclosed ->
+           enclosed.getAnnotation(IgnoreInstance::class.java) != null
+        }.map { it.simpleName.toString() }.toSet()
+
+        return buildString {
+            append("bind<$toClass>(")
+            if(tag.isNotEmpty()) {
+                appendln()
+                append("tag = $tag")
+                appendln()
+            }
+            append(") ")
+            if(scope.isNotEmpty()) {
+                append("at $scope ")
+            }
+            append("with $instanceType {")
+            appendln()
+            append("$className(")
+            appendln()
+
+            val constructor = element.enclosedElements.find { element ->
+                element.kind == ElementKind.CONSTRUCTOR
+            } as? ExecutableElement
+
+            var propCount = 0
+            constructor?.parameters?.forEach { enclosed ->
+                val property = enclosed.simpleName.toString()
+                val propertyType = enclosed.asType().toString()
+                if (!allIgnoredSet.contains(property)) {
+                    if (propCount > 0) appendln()
+                    append((if (propCount > 0) "," else "") + "$property = instance<${propertyType}>()")
+                    propCount++
+                }
+            }
+            if(propCount > 0) appendln()
+            append(")")
+            appendln()
+            append("}")
+        }
+    }
+
+    private fun takeElementFromBindInstance(element: Element): KodiBindData {
+        val annotation = element.getAnnotation(BindInstance::class.java)
+        return KodiBindData(
+                element = element,
+                toModule = annotation.toModule,
+                toClass = element.getAnnotationClassValue<BindInstance> { toClass }.toString(),
+                instanceType = annotation.asType.takeIf { it.isNotEmpty() } ?: KodiHolder.TYPE_SINGLE,
+                scope = annotation.atScope.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty(),
+                tag = annotation.toTag.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty()
+        )
+    }
+
+    private fun takeElementFromBindSingle(element: Element): KodiBindData {
+        val annotation = element.getAnnotation(BindSingle::class.java)
+        return KodiBindData(
+                element = element,
+                toModule = annotation.toModule,
+                toClass = element.getAnnotationClassValue<BindSingle> { toClass }.toString(),
+                instanceType = KodiHolder.TYPE_SINGLE,
+                scope = annotation.atScope.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty(),
+                tag = annotation.toTag.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty()
+        )
+    }
+
+    private fun takeElementFromBindProvider(element: Element): KodiBindData {
+        val annotation = element.getAnnotation(BindProvider::class.java)
+        return KodiBindData(
+                element = element,
+                toModule = annotation.toModule,
+                toClass = element.getAnnotationClassValue<BindProvider> { toClass }.toString(),
+                instanceType = KodiHolder.TYPE_PROVIDER,
+                scope = annotation.atScope.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty(),
+                tag = annotation.toTag.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty()
+        )
+    }
+
+    private inline fun <reified T : Annotation> collectAnnotationData(
+            roundEnv: RoundEnvironment,
+            modulesMap: MutableMap<String, MutableList<KodiBindData>>,
+            elementDataHandler: (Element) -> KodiBindData
+    ): Boolean {
+        roundEnv.getElementsAnnotatedWith(T::class.java)
+                .forEach { element ->
+                    if (element.kind != ElementKind.CLASS) {
+                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated as ${T::class.java.simpleName}")
+                        return true
+                    }
+                    val bindingData = elementDataHandler(element)
+                    val moduleName = bindingData.toModule.takeIf { it.isNotEmpty() } ?: KODI_DEFAULT_MODULE_NAME
+                    val list = modulesMap.getOrPut(moduleName) { mutableListOf() }
+                    list.add(bindingData)
+                }
+        return false
+    }
+
+    private inline fun <reified T : Annotation> Element.getAnnotationClassValue(f: T.() -> KClass<*>) = try {
         getAnnotation(T::class.java).f()
         throw Exception("Expected to get a MirroredTypeException")
     } catch (e: MirroredTypeException) {
         e.typeMirror
     }
-
 }
