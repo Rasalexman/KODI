@@ -31,7 +31,7 @@ class KodiAnnotationProcessor : AbstractProcessor() {
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        return mutableSetOf(BindInstance::class.java.name, BindSingle::class.java.name, BindProvider::class.java.name)
+        return mutableSetOf(BindSingle::class.java.name, BindProvider::class.java.name)
     }
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latest()
@@ -43,7 +43,6 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         val modulesMap = mutableMapOf<String, MutableList<KodiBindData>>()
         collectAnnotationData<BindSingle>(roundEnv, modulesMap, ::takeElementFromBindSingle)
         collectAnnotationData<BindProvider>(roundEnv, modulesMap, ::takeElementFromBindProvider)
-        collectAnnotationData<BindInstance>(roundEnv, modulesMap, ::takeElementFromBindInstance)
         modulesMap.forEach(::processModules)
         println("KodiAnnotationProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
         return false
@@ -137,18 +136,6 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         }
     }
 
-    private fun takeElementFromBindInstance(element: Element): KodiBindData {
-        val annotation = element.getAnnotation(BindInstance::class.java)
-        return KodiBindData(
-                element = element,
-                toModule = annotation.toModule,
-                toClass = element.getAnnotationClassValue<BindInstance> { toClass }.toString(),
-                instanceType = annotation.asType.takeIf { it.isNotEmpty() } ?: KodiHolder.TYPE_SINGLE,
-                scope = annotation.atScope.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty(),
-                tag = annotation.toTag.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty()
-        )
-    }
-
     private fun takeElementFromBindSingle(element: Element): KodiBindData {
         val annotation = element.getAnnotation(BindSingle::class.java)
         return KodiBindData(
@@ -156,8 +143,8 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                 toModule = annotation.toModule,
                 toClass = element.getAnnotationClassValue<BindSingle> { toClass }.toString(),
                 instanceType = KodiHolder.TYPE_SINGLE,
-                scope = annotation.atScope.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty(),
-                tag = annotation.toTag.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty()
+                scope = annotation.atScope.getSecure(),
+                tag = annotation.toTag.getSecure()
         )
     }
 
@@ -168,9 +155,13 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                 toModule = annotation.toModule,
                 toClass = element.getAnnotationClassValue<BindProvider> { toClass }.toString(),
                 instanceType = KodiHolder.TYPE_PROVIDER,
-                scope = annotation.atScope.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty(),
-                tag = annotation.toTag.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty()
+                scope = annotation.atScope.getSecure(),
+                tag = annotation.toTag.getSecure()
         )
+    }
+
+    private fun String.getSecure(): String {
+        return this.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty()
     }
 
     private inline fun <reified T : Annotation> collectAnnotationData(
