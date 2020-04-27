@@ -1,5 +1,6 @@
 package com.mincor.kodiexample.data.repository
 
+import com.mincor.kodiexample.common.Consts.Modules.RepName
 import com.mincor.kodiexample.common.applyIf
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.mapListTo
@@ -7,7 +8,13 @@ import com.mincor.kodiexample.data.dto.mapTo
 import com.mincor.kodiexample.data.model.local.MovieEntity
 import com.mincor.kodiexample.data.source.local.IMoviesLocalDataSource
 import com.mincor.kodiexample.data.source.remote.IMoviesRemoteDataSource
+import com.rasalexman.kodi.annotations.BindSingle
 
+
+@BindSingle(
+        toClass = IMoviesRepository::class,
+        toModule = RepName
+)
 class MoviesRepository(
         private val localDataSource: IMoviesLocalDataSource,
         private val remoteDataSource: IMoviesRemoteDataSource

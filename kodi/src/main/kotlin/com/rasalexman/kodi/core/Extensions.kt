@@ -41,7 +41,10 @@ fun String.asScope() = KodiScopeWrapper(this)
  */
 fun String.asTag() = KodiTagWrapper(this)
 
-inline fun <reified T : Any> T.asTag() = KodiTagWrapper(T::class.java.simpleName)
+/**
+ * Inline fun to convert any to [KodiTagWrapper]
+ */
+inline fun <reified T : Any> T.asTag() = KodiTagWrapper("${T::class.java}")
 
 
 /**

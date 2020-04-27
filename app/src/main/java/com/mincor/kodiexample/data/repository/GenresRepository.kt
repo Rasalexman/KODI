@@ -1,12 +1,18 @@
 package com.mincor.kodiexample.data.repository
 
+import com.mincor.kodiexample.common.Consts
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.mapListTo
 import com.mincor.kodiexample.data.model.local.GenreEntity
 import com.mincor.kodiexample.data.source.local.IGenresCacheDataSource
 import com.mincor.kodiexample.data.source.local.IGenresLocalDataSource
 import com.mincor.kodiexample.data.source.remote.IGenresRemoteDataSource
+import com.rasalexman.kodi.annotations.BindSingle
 
+@BindSingle(
+        toClass = IGenresRepository::class,
+        toModule = Consts.Modules.RepName
+)
 class GenresRepository(
         private val remoteDataSource: IGenresRemoteDataSource,
         private val localDataSource: IGenresLocalDataSource,

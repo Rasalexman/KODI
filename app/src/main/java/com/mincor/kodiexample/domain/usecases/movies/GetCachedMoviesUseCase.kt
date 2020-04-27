@@ -1,5 +1,6 @@
 package com.mincor.kodiexample.domain.usecases.movies
 
+import com.mincor.kodiexample.common.Consts.Modules.UCMoviesName
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.emptyResult
 import com.mincor.kodiexample.data.dto.mapListTo
@@ -7,7 +8,12 @@ import com.mincor.kodiexample.data.dto.successResult
 import com.mincor.kodiexample.data.repository.IMoviesRepository
 import com.mincor.kodiexample.domain.usecases.base.IUseCase
 import com.mincor.kodiexample.presentation.movies.MovieUI
+import com.rasalexman.kodi.annotations.BindProvider
 
+@BindProvider(
+        toClass = IGetCachedMoviesUseCase::class,
+        toModule = UCMoviesName
+)
 class GetCachedMoviesUseCase(
     private val repository: IMoviesRepository
 ) : IGetCachedMoviesUseCase {

@@ -1,11 +1,17 @@
 package com.mincor.kodiexample.data.source.local
 
+import com.mincor.kodiexample.common.Consts
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.emptyResult
 import com.mincor.kodiexample.data.dto.successResult
 import com.mincor.kodiexample.data.model.local.MovieEntity
 import com.mincor.kodiexample.providers.database.dao.IMoviesDao
+import com.rasalexman.kodi.annotations.BindSingle
 
+@BindSingle(
+        toClass = IMoviesLocalDataSource::class,
+        toModule = Consts.Modules.LDSName
+)
 class MoviesLocalDataSource(
     private val moviesDao: IMoviesDao
 ) : IMoviesLocalDataSource {

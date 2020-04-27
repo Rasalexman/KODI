@@ -5,9 +5,15 @@ import android.content.Context
 import coil.Coil
 import coil.ImageLoader
 import coil.util.CoilLogger
-import com.kodi.generated.module.presentersmodule.presentersModule
+import com.kodi.generated.modules.localdatasource.localDataSourceModule
+import com.kodi.generated.modules.presenters.presentersModule
+import com.kodi.generated.modules.providers.providersModule
+import com.kodi.generated.modules.remotedatasource.remoteDataSourceModule
+import com.kodi.generated.modules.repository.repositoryModule
+import com.kodi.generated.modules.usecasesdetails.useCasesDetailsModule
+import com.kodi.generated.modules.usecasesgenres.useCasesGenresModule
+import com.kodi.generated.modules.usecasesmovies.useCasesMoviesModule
 import com.mincor.kodiexample.BuildConfig
-import com.mincor.kodiexample.modules.*
 import com.rasalexman.coroutinesmanager.AsyncTasksManager
 import com.rasalexman.coroutinesmanager.CoroutinesManager
 import com.rasalexman.coroutinesmanager.IAsyncTasksManager
@@ -21,17 +27,16 @@ class MainApplication : Application() {
         bind<ICoroutinesManager>() with single { CoroutinesManager() }
         bind<IAsyncTasksManager>() with provider { AsyncTasksManager() }
 
+        import(providersModule)
 
-        //import(kodiAndroidXModule)
-        import(databaseModule)
-        import(networkModule)
-        import(imageModule)
-        import(localDataSourceModule)
+        import(useCasesDetailsModule)
+        import(useCasesMoviesModule)
+        import(useCasesGenresModule)
+
         import(remoteDataSourceModule)
+        import(localDataSourceModule)
         import(repositoryModule)
-        import(useCasesModule)
         import(presentersModule)
-        //import(presentationModule)
     }
 
     override fun onCreate() {

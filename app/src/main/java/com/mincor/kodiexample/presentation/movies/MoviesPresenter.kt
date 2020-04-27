@@ -1,5 +1,6 @@
 package com.mincor.kodiexample.presentation.movies
 
+import com.mincor.kodiexample.common.Consts.Modules.PresentersName
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.movies.IGetMoviesInOutUseCase
 import com.mincor.kodiexample.domain.usecases.movies.IGetNextMoviesUseCase
@@ -12,7 +13,7 @@ import com.rasalexman.kodi.annotations.BindSingle
 
 @BindSingle(
         toClass = MoviesContract.IPresenter::class,
-        toModule = "presenters"
+        toModule = PresentersName
 )
 class MoviesPresenter constructor(
         coroutinesManager: ICoroutinesManager

@@ -5,18 +5,14 @@ import com.rasalexman.kodi.annotations.*
 import com.rasalexman.kodi.core.IKodiModule
 import com.rasalexman.kodi.core.KodiHolder
 import com.rasalexman.kodi.core.throwKodiException
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.*
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedSourceVersion
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind
-import javax.lang.model.element.ExecutableElement
-import javax.lang.model.element.TypeElement
+import javax.lang.model.element.*
 import javax.lang.model.type.MirroredTypeException
 import javax.tools.Diagnostic
 import kotlin.reflect.KClass
@@ -31,7 +27,10 @@ class KodiAnnotationProcessor : AbstractProcessor() {
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        return mutableSetOf(BindSingle::class.java.name, BindProvider::class.java.name)
+        return mutableSetOf(
+                BindSingle::class.java.name,
+                BindProvider::class.java.name
+        )
     }
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latest()
@@ -41,8 +40,8 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         println("KodiAnnotationProcessor started")
         processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
         val modulesMap = mutableMapOf<String, MutableList<KodiBindData>>()
-        collectAnnotationData<BindSingle>(roundEnv, modulesMap, ::takeElementFromBindSingle)
         collectAnnotationData<BindProvider>(roundEnv, modulesMap, ::takeElementFromBindProvider)
+        collectAnnotationData<BindSingle>(roundEnv, modulesMap, ::takeElementFromBindSingle)
         modulesMap.forEach(::processModules)
         println("KodiAnnotationProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
         return false
@@ -51,8 +50,8 @@ class KodiAnnotationProcessor : AbstractProcessor() {
     private fun processModules(moduleName: String, moduleElements: List<KodiBindData>) {
         val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME] ?: return
 
-        val lowerModuleName = moduleName.toLowerCase()
-        val packageName = "com.kodi.generated.module.${lowerModuleName}module"
+        val lowerModuleName = moduleName.apply { this[0].toLowerCase() }
+        val packageName = "com.kodi.generated.modules.${moduleName.toLowerCase()}"
         val fileName = "${lowerModuleName.capitalize()}Module"
         val fileBuilder= FileSpec.builder(packageName, fileName)
                 .addImport("com.rasalexman.kodi.core", "bind")
@@ -66,6 +65,7 @@ class KodiAnnotationProcessor : AbstractProcessor() {
 
         val initializer = buildString {
             append("kodiModule {")
+            appendln()
             moduleElements.forEach {
                 appendln()
                 append(processElementAnnotation(it))
@@ -85,7 +85,6 @@ class KodiAnnotationProcessor : AbstractProcessor() {
 
     private fun processElementAnnotation(bindingData: KodiBindData): String {
         val element = bindingData.element
-        val className = element.asType().toString()
         val toClass = bindingData.toClass
         val instanceType = bindingData.instanceType
         val scope = bindingData.scope
@@ -93,11 +92,9 @@ class KodiAnnotationProcessor : AbstractProcessor() {
 
         if(instanceType != KodiHolder.TYPE_SINGLE && instanceType != KodiHolder.TYPE_PROVIDER && instanceType != KodiHolder.TYPE_CONSTANT) {
             throwKodiException<IllegalStateException>("You cannot use this type as annotation processing. Allowed types in KodiHolder.Companion.*")
+        } else if(toClass.contains("java.")) {
+            throwKodiException<IllegalStateException>("You cannot use java class $toClass as binding class cause it's goes to unexpected graph.")
         }
-
-        val allIgnoredSet = element.enclosedElements.filter { enclosed ->
-           enclosed.getAnnotation(IgnoreInstance::class.java) != null
-        }.map { it.simpleName.toString() }.toSet()
 
         return buildString {
             append("bind<$toClass>(")
@@ -106,32 +103,18 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                 append("tag = $tag")
                 appendln()
             }
-            append(") ")
-            if(scope.isNotEmpty()) {
-                append("at $scope ")
-            }
-            append("with $instanceType {")
-            appendln()
-            append("$className(")
-            appendln()
-
-            val constructor = element.enclosedElements.find { element ->
-                element.kind == ElementKind.CONSTRUCTOR
-            } as? ExecutableElement
-
-            var propCount = 0
-            constructor?.parameters?.forEach { enclosed ->
-                val property = enclosed.simpleName.toString()
-                val propertyType = enclosed.asType().toString()
-                if (!allIgnoredSet.contains(property)) {
-                    if (propCount > 0) appendln()
-                    append((if (propCount > 0) "," else "") + "$property = instance<${propertyType}>()")
-                    propCount++
-                }
-            }
-            if(propCount > 0) appendln()
             append(")")
-            appendln()
+            if(scope.isNotEmpty()) {
+                append(" at $scope")
+            }
+            append(" with $instanceType {")
+
+            if(element.kind == ElementKind.METHOD) {
+                this.bindMethodElement(element)
+            } else {
+                this.bindInstanceElement(element)
+            }
+
             append("}")
         }
     }
@@ -164,6 +147,66 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         return this.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty()
     }
 
+    private fun StringBuilder.bindInstanceElement(element: Element) {
+        val className = element.asType().toString()
+        appendln()
+        append("$className(")
+
+        val constructor = element.enclosedElements.find { enclosedElement ->
+            enclosedElement.kind == ElementKind.CONSTRUCTOR
+        } as? ExecutableElement
+
+        var propCount = 0
+        constructor?.parameters?.forEach { enclosed ->
+            val property = enclosed.simpleName.toString()
+            val propertyType = enclosed.asType().toString()
+            if (enclosed.getAnnotation(IgnoreInstance::class.java) == null) {
+                if(propCount > 0) {
+                    append(",")
+                }
+                appendln()
+                append("$property = instance<${propertyType}>()")
+                propCount++
+            }
+        }
+        if(propCount > 0) appendln()
+        append(")")
+        appendln()
+    }
+
+    private fun StringBuilder.bindMethodElement(element: Element) {
+        val packageOf = processingEnv.elementUtils.getPackageOf(element).toString()
+        val parentElement = processingEnv.typeUtils.asElement(element.enclosingElement.asType())
+        val methodName = element.simpleName.toString()
+        val parentName = parentElement.simpleName.toString()
+
+        appendln()
+        if(element.modifiers.contains(Modifier.STATIC)) {
+            append("$packageOf.$methodName(")
+        } else {
+            append("$packageOf.$parentName.$methodName(")
+        }
+
+        var propCount = 0
+        (element as? ExecutableElement)?.parameters?.forEach { variable ->
+            // We need to be able to get properties like name, fields etc from the variable which can be done if it's converted to an Element type
+            val variableAsElement = processingEnv.typeUtils.asElement(variable.asType())
+            val parameterName = variable.simpleName.toString()
+            val parameterType = variableAsElement.asType().asTypeName().toString()
+            if(!parameterType.contains("java.") && variableAsElement.getAnnotation(IgnoreInstance::class.java) == null) {
+                if(propCount > 0) {
+                    append(",")
+                }
+                appendln()
+                append("$parameterName = instance<${parameterType}>()")
+                propCount++
+            }
+        }
+        if(propCount > 0) appendln()
+        append(")")
+        appendln()
+    }
+
     private inline fun <reified T : Annotation> collectAnnotationData(
             roundEnv: RoundEnvironment,
             modulesMap: MutableMap<String, MutableList<KodiBindData>>,
@@ -171,8 +214,9 @@ class KodiAnnotationProcessor : AbstractProcessor() {
     ): Boolean {
         roundEnv.getElementsAnnotatedWith(T::class.java)
                 .forEach { element ->
-                    if (element.kind != ElementKind.CLASS) {
-                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes can be annotated as ${T::class.java.simpleName}")
+                    val kind = element.kind
+                    if (kind != ElementKind.METHOD && kind != ElementKind.CLASS) {
+                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes and methods can be annotated as @${T::class.java.simpleName}")
                         return true
                     }
                     val bindingData = elementDataHandler(element)

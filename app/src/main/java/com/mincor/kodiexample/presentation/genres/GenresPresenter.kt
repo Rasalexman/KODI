@@ -1,5 +1,6 @@
 package com.mincor.kodiexample.presentation.genres
 
+import com.mincor.kodiexample.common.Consts.Modules.PresentersName
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.genres.IGenresOutUseCase
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
@@ -10,7 +11,7 @@ import com.rasalexman.sticky.core.IStickyPresenter
 
 @BindSingle(
         toClass = GenresContract.IPresenter::class,
-        toModule = "presenters"
+        toModule = PresentersName
 )
 class GenresPresenter constructor(
         private val getGenresUseCase: IGenresOutUseCase,

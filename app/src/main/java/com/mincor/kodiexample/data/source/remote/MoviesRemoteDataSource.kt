@@ -1,15 +1,21 @@
 package com.mincor.kodiexample.data.source.remote
 
 import com.mincor.kodiexample.common.Consts
+import com.mincor.kodiexample.common.Consts.Modules.RDSName
 import com.mincor.kodiexample.common.getResult
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.emptyResult
 import com.mincor.kodiexample.data.model.remote.MovieModel
 import com.mincor.kodiexample.providers.network.api.IMovieApi
 import com.mincor.kodiexample.providers.network.responses.GetMoviesByGenreIdResponse
+import com.rasalexman.kodi.annotations.BindSingle
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
+@BindSingle(
+        toClass = IMoviesRemoteDataSource::class,
+        toModule = RDSName
+)
 class MoviesRemoteDataSource(
     private val moviesApi: IMovieApi
 ) : IMoviesRemoteDataSource {

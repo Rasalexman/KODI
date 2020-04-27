@@ -250,6 +250,6 @@ inline fun <reified R : KodiHolder, reified T : Any> IKodi.createHolder(noinline
         KodiHolder.KodiSingle::class.java -> KodiHolder.KodiSingle(init)
         KodiHolder.KodiProvider::class.java -> KodiHolder.KodiProvider(init)
         KodiHolder.KodiConstant::class.java -> KodiHolder.KodiConstant(init())
-        else -> throwKodiException<ClassCastException>("There is no type holder like ${T::class.java.simpleName}")
+        else -> throwKodiException<ClassCastException>("There is no type holder like ${T::class.java}")
     }.holderAs(this as? IKodiModule) { module -> this at module.scope } as R
 }

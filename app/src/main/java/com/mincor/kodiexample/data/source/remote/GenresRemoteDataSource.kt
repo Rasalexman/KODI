@@ -1,5 +1,6 @@
 package com.mincor.kodiexample.data.source.remote
 
+import com.mincor.kodiexample.common.Consts.Modules.RDSName
 import com.mincor.kodiexample.common.getResult
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.emptyResult
@@ -8,9 +9,14 @@ import com.mincor.kodiexample.data.dto.successResult
 import com.mincor.kodiexample.data.model.local.GenreEntity
 import com.mincor.kodiexample.data.model.remote.GenreModel
 import com.mincor.kodiexample.providers.network.api.IMovieApi
+import com.rasalexman.kodi.annotations.BindSingle
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
+@BindSingle(
+        toClass = IGenresRemoteDataSource::class,
+        toModule = RDSName
+)
 class GenresRemoteDataSource(
         private val moviesApi: IMovieApi
 ) : IGenresRemoteDataSource {

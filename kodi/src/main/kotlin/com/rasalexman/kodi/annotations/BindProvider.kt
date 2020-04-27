@@ -2,7 +2,7 @@ package com.rasalexman.kodi.annotations
 
 import kotlin.reflect.KClass
 
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
 annotation class BindProvider(
         val toClass: KClass<out Any>,

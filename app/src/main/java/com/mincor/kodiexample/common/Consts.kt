@@ -16,4 +16,16 @@ object Consts {
 
     // PAGES CONST
     const val PAGES_DEFAULT_MAX_COUNT = 1000
+
+    object Modules {
+        const val UCDetailsName = "useCasesDetails"
+        const val UCMoviesName = "useCasesMovies"
+        const val UCGenresName = "useCasesGenres"
+        const val PresentersName = "presenters"
+        const val ProvidersName = "providers"
+        const val RDSName = "remoteDataSource"
+        const val LDSName = "localDataSource"
+        const val RepName = "repository"
+    }
+
 }

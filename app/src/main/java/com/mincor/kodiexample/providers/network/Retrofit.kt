@@ -1,6 +1,8 @@
 package com.mincor.kodiexample.providers.network
 
 import com.mincor.kodiexample.BuildConfig
+import com.mincor.kodiexample.common.Consts.Modules.ProvidersName
+import com.rasalexman.kodi.annotations.BindProvider
 import com.squareup.moshi.Moshi
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -42,6 +44,10 @@ fun getUnsafeOkHttpClient(): OkHttpClient.Builder {
     }
 }
 
+@BindProvider(
+        toClass = OkHttpClient::class,
+        toModule = ProvidersName
+)
 fun createOkHttpClient(cache: Cache? = null): OkHttpClient {
     val httpClient = getUnsafeOkHttpClient()
     httpClient.connectTimeout(60, TimeUnit.SECONDS)
