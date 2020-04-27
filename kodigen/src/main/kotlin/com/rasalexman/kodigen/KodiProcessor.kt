@@ -23,7 +23,20 @@ class KodiAnnotationProcessor : AbstractProcessor() {
 
     companion object {
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
-        const val KODI_DEFAULT_MODULE_NAME = "Kodi"
+        private const val DEFAULT_MODULE_NAME = "Module"
+        private const val KODI_DEFAULT_MODULE_NAME = "kodi"
+        private const val KODI_PACKAGE_PATH = "com.rasalexman.kodi.core"
+        private const val KODI_GENERATED_PATH = "com.kodi.generated.modules."
+        private const val KODI_MEMBER_MODULE = "kodiModule"
+        private const val KODI_MEMBER_BIND = "bind"
+        private const val KODI_MEMBER_AT = "at"
+        private const val KODI_MEMBER_WITH = "with"
+        private const val KODI_MEMBER_INSTANCE = "instance"
+
+        private const val KODI_TAG_PATTERN = "tag = %S"
+        private const val KODI_SCOPE_PATTERN = "scope = %S"
+
+        private const val KODI_ERROR_PACKAGE_NAME = "java."
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
@@ -40,8 +53,8 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         println("KodiAnnotationProcessor started")
         processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
         val modulesMap = mutableMapOf<String, MutableList<KodiBindData>>()
-        collectAnnotationData<BindProvider>(roundEnv, modulesMap, ::takeElementFromBindProvider)
-        collectAnnotationData<BindSingle>(roundEnv, modulesMap, ::takeElementFromBindSingle)
+        collectAnnotationData(roundEnv.getElementsAnnotatedWith(BindProvider::class.java), modulesMap, ::getDataFromBindProvider)
+        collectAnnotationData(roundEnv.getElementsAnnotatedWith(BindSingle::class.java), modulesMap, ::getDataFromBindSingle)
         modulesMap.forEach(::processModules)
         println("KodiAnnotationProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
         return false
@@ -51,172 +64,169 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME] ?: return
 
         val lowerModuleName = moduleName.apply { this[0].toLowerCase() }
-        val packageName = "com.kodi.generated.modules.${moduleName.toLowerCase()}"
-        val fileName = "${lowerModuleName.capitalize()}Module"
+        val packageName = "$KODI_GENERATED_PATH${moduleName.toLowerCase()}"
+        val fileName = "${lowerModuleName.capitalize()}$DEFAULT_MODULE_NAME"
         val fileBuilder= FileSpec.builder(packageName, fileName)
-                .addImport("com.rasalexman.kodi.core", "bind")
-                .addImport("com.rasalexman.kodi.core", "with")
-                .addImport("com.rasalexman.kodi.core", "single")
-                .addImport("com.rasalexman.kodi.core", "provider")
-                .addImport("com.rasalexman.kodi.core", "at")
-                .addImport("com.rasalexman.kodi.core", "constant")
-                .addImport("com.rasalexman.kodi.core", "instance")
-                .addImport("com.rasalexman.kodi.core", "kodiModule")
 
-        val initializer = buildString {
-            append("kodiModule {")
-            appendln()
-            moduleElements.forEach {
-                appendln()
-                append(processElementAnnotation(it))
-                appendln()
+        val codeInitializer = buildCodeBlock {
+            add("%M {", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_MODULE))
+            moduleElements.forEach { bindingData ->
+                val element = bindingData.element
+                val toClass = bindingData.toClass
+                val toPack = bindingData.toPack
+                val instanceType = bindingData.instanceType
+                val scope = bindingData.scope
+                val tag = bindingData.tag
+
+                if(instanceType != KodiHolder.TYPE_SINGLE && instanceType != KodiHolder.TYPE_PROVIDER && instanceType != KodiHolder.TYPE_CONSTANT) {
+                    throwKodiException<IllegalStateException>("You cannot use this type as annotation processing. Allowed types in KodiHolder.Companion.*")
+                } else if(toClass.contains(KODI_ERROR_PACKAGE_NAME)) {
+                    throwKodiException<IllegalStateException>("You cannot use java class $toClass as binding class cause it's goes to unexpected graph.")
+                }
+
+
+                add(" \n")
+                add("%M", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_BIND))
+                add("<%T>", ClassName(toPack, toClass))
+                if(tag.isNotEmpty()) {
+                    add("($KODI_TAG_PATTERN) ", tag)
+                } else {
+                    add("() ")
+                }
+
+                if(scope.isNotEmpty()) {
+                    add("%M %S ", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_AT), scope)
+                }
+
+                add("%M ", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_WITH))
+                add("%M {", MemberName(KODI_PACKAGE_PATH, instanceType))
+                add(" \n")
+
+                if(element.kind == ElementKind.METHOD) {
+                    this.bindMethodElement(element)
+                } else {
+                    this.bindInstanceElement(element)
+                }
+                add("\n}\n")
+
             }
-            appendln()
-            append("}")
+            add("}")
         }
 
-        val moduleProperty = PropertySpec.builder("${lowerModuleName}Module", IKodiModule::class)
-                .initializer(initializer).build()
+        val moduleProperty = PropertySpec.builder("$lowerModuleName$DEFAULT_MODULE_NAME", IKodiModule::class)
+                .initializer(codeInitializer).build()
         fileBuilder.addProperty(moduleProperty)
         val file = fileBuilder.build()
         val createdFile = File(kaptKotlinGeneratedDir)
         file.writeTo(createdFile)
     }
 
-    private fun processElementAnnotation(bindingData: KodiBindData): String {
-        val element = bindingData.element
-        val toClass = bindingData.toClass
-        val instanceType = bindingData.instanceType
-        val scope = bindingData.scope
-        val tag = bindingData.tag
-
-        if(instanceType != KodiHolder.TYPE_SINGLE && instanceType != KodiHolder.TYPE_PROVIDER && instanceType != KodiHolder.TYPE_CONSTANT) {
-            throwKodiException<IllegalStateException>("You cannot use this type as annotation processing. Allowed types in KodiHolder.Companion.*")
-        } else if(toClass.contains("java.")) {
-            throwKodiException<IllegalStateException>("You cannot use java class $toClass as binding class cause it's goes to unexpected graph.")
-        }
-
-        return buildString {
-            append("bind<$toClass>(")
-            if(tag.isNotEmpty()) {
-                appendln()
-                append("tag = $tag")
-                appendln()
-            }
-            append(")")
-            if(scope.isNotEmpty()) {
-                append(" at $scope")
-            }
-            append(" with $instanceType {")
-
-            if(element.kind == ElementKind.METHOD) {
-                this.bindMethodElement(element)
-            } else {
-                this.bindInstanceElement(element)
-            }
-
-            append("}")
-        }
-    }
-
-    private fun takeElementFromBindSingle(element: Element): KodiBindData {
+    private fun getDataFromBindSingle(element: Element): KodiBindData {
         val annotation = element.getAnnotation(BindSingle::class.java)
+        val packageAndClass = element.getAnnotationClassValue<BindSingle> { toClass }.toString()
+        val (packName, className) = packageAndClass.getPackAndClass()
         return KodiBindData(
                 element = element,
                 toModule = annotation.toModule,
-                toClass = element.getAnnotationClassValue<BindSingle> { toClass }.toString(),
+                toPack = packName,
+                toClass = className,
                 instanceType = KodiHolder.TYPE_SINGLE,
-                scope = annotation.atScope.getSecure(),
-                tag = annotation.toTag.getSecure()
+                scope = annotation.atScope,
+                tag = annotation.toTag
         )
     }
 
-    private fun takeElementFromBindProvider(element: Element): KodiBindData {
+    private fun getDataFromBindProvider(element: Element): KodiBindData {
         val annotation = element.getAnnotation(BindProvider::class.java)
+        val packageAndClass = element.getAnnotationClassValue<BindProvider> { toClass }.toString()
+        val (packName, className) = packageAndClass.getPackAndClass()
         return KodiBindData(
                 element = element,
                 toModule = annotation.toModule,
-                toClass = element.getAnnotationClassValue<BindProvider> { toClass }.toString(),
+                toPack = packName,
+                toClass = className,
                 instanceType = KodiHolder.TYPE_PROVIDER,
-                scope = annotation.atScope.getSecure(),
-                tag = annotation.toTag.getSecure()
+                scope = annotation.atScope,
+                tag = annotation.toTag
         )
     }
 
-    private fun String.getSecure(): String {
-        return this.takeIf { it.isNotEmpty() }?.run { "\"$this\"" }.orEmpty()
-    }
-
-    private fun StringBuilder.bindInstanceElement(element: Element) {
-        val className = element.asType().toString()
-        appendln()
-        append("$className(")
-
+    private fun CodeBlock.Builder.bindInstanceElement(element: Element) {
+        val packageName = processingEnv.elementUtils.getPackageOf(element).toString()
+        val className = element.simpleName.toString()
+        add("%T(", ClassName(packageName, className))
         val constructor = element.enclosedElements.find { enclosedElement ->
             enclosedElement.kind == ElementKind.CONSTRUCTOR
         } as? ExecutableElement
 
         var propCount = 0
-        constructor?.parameters?.forEach { enclosed ->
-            val property = enclosed.simpleName.toString()
-            val propertyType = enclosed.asType().toString()
-            if (enclosed.getAnnotation(IgnoreInstance::class.java) == null) {
-                if(propCount > 0) {
-                    append(",")
-                }
-                appendln()
-                append("$property = instance<${propertyType}>()")
+        constructor?.parameters?.forEach { property ->
+            if(addProperty(property, propCount)) {
                 propCount++
             }
         }
-        if(propCount > 0) appendln()
-        append(")")
-        appendln()
+        if(propCount > 0) add("\n")
+        add(")")
     }
 
-    private fun StringBuilder.bindMethodElement(element: Element) {
+    private fun CodeBlock.Builder.bindMethodElement(element: Element) {
         val packageOf = processingEnv.elementUtils.getPackageOf(element).toString()
         val parentElement = processingEnv.typeUtils.asElement(element.enclosingElement.asType())
         val methodName = element.simpleName.toString()
+        val parentPackageOf = parentElement.asType().toString()
         val parentName = parentElement.simpleName.toString()
 
-        appendln()
         if(element.modifiers.contains(Modifier.STATIC)) {
-            append("$packageOf.$methodName(")
+            add("%M(", MemberName(packageOf, methodName))
         } else {
-            append("$packageOf.$parentName.$methodName(")
+            add("%T.%M(", ClassName(packageOf, parentName), MemberName(parentPackageOf, methodName))
         }
 
         var propCount = 0
         (element as? ExecutableElement)?.parameters?.forEach { variable ->
-            // We need to be able to get properties like name, fields etc from the variable which can be done if it's converted to an Element type
-            val variableAsElement = processingEnv.typeUtils.asElement(variable.asType())
-            val parameterName = variable.simpleName.toString()
-            val parameterType = variableAsElement.asType().asTypeName().toString()
-            if(!parameterType.contains("java.") && variableAsElement.getAnnotation(IgnoreInstance::class.java) == null) {
-                if(propCount > 0) {
-                    append(",")
-                }
-                appendln()
-                append("$parameterName = instance<${parameterType}>()")
+            if(addProperty(variable, propCount)) {
                 propCount++
             }
         }
-        if(propCount > 0) appendln()
-        append(")")
-        appendln()
+        if(propCount > 0) add("\n")
+        add(")")
     }
 
-    private inline fun <reified T : Annotation> collectAnnotationData(
-            roundEnv: RoundEnvironment,
+    private fun CodeBlock.Builder.addProperty(property: Element, propCount: Int): Boolean {
+        val parameterType = property.asType().asTypeName().toString()
+        return if (!parameterType.contains(KODI_ERROR_PACKAGE_NAME) && property.getAnnotation(IgnoreInstance::class.java) == null) {
+            val propertyName = property.simpleName.toString()
+            val instanceMember = MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_INSTANCE)
+            if(propCount > 0) {
+                add(",")
+            }
+
+            add("\n")
+            property.getAnnotation(WithInstance::class.java)?.let {
+                val tag = it.tag
+                val scope = it.scope
+                val propertyPattern = "$propertyName = %M($KODI_TAG_PATTERN"
+                if(scope.isEmpty()) add("$propertyPattern)", instanceMember, tag)
+                else add("$propertyPattern, $KODI_SCOPE_PATTERN)", instanceMember, tag, scope)
+            } ?: apply {
+                val propertyElement = processingEnv.typeUtils.asElement(property.asType())
+                val propertyPackName = processingEnv.elementUtils.getPackageOf(propertyElement).toString()
+                val propertyClassName = propertyElement.simpleName.toString()
+                add("$propertyName = %M<%T>()", instanceMember, ClassName(propertyPackName, propertyClassName))
+            }
+            true
+        } else false
+    }
+
+    private fun collectAnnotationData(
+            elementsSet: Set<Element>,
             modulesMap: MutableMap<String, MutableList<KodiBindData>>,
             elementDataHandler: (Element) -> KodiBindData
     ): Boolean {
-        roundEnv.getElementsAnnotatedWith(T::class.java)
-                .forEach { element ->
+        elementsSet.forEach { element ->
                     val kind = element.kind
                     if (kind != ElementKind.METHOD && kind != ElementKind.CLASS) {
-                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes and methods can be annotated as @${T::class.java.simpleName}")
+                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes and methods can be annotated as @BindSingle or @BindProvider")
                         return true
                     }
                     val bindingData = elementDataHandler(element)
@@ -225,6 +235,13 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                     list.add(bindingData)
                 }
         return false
+    }
+
+    private fun String.getPackAndClass(): Pair<String, String> {
+        val splitted = this.split(".")
+        val className = splitted.last()
+        val packName = splitted.subList(0, splitted.size-1).joinToString(".")
+        return packName to className
     }
 
     private inline fun <reified T : Annotation> Element.getAnnotationClassValue(f: T.() -> KClass<*>) = try {
