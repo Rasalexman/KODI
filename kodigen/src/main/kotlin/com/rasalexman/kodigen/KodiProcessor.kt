@@ -73,12 +73,13 @@ class KodiAnnotationProcessor : AbstractProcessor() {
     }
 
     private fun processModules(moduleName: String, moduleElements: List<KodiBindData>) {
-        val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME] ?: return
+        val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
+                ?: return
 
         val lowerModuleName = moduleName.apply { this[0].toLowerCase() }
         val packageName = "$KODI_GENERATED_PATH${moduleName.toLowerCase()}"
         val fileName = "${lowerModuleName.capitalize()}$DEFAULT_MODULE_NAME"
-        val fileBuilder= FileSpec.builder(packageName, fileName)
+        val fileBuilder = FileSpec.builder(packageName, fileName)
 
         val codeInitializer = buildCodeBlock {
             add("%M {", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_MODULE))
@@ -90,7 +91,7 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                 val scope = bindingData.scope
                 val tag = bindingData.tag
 
-                if(toClass.contains(KODI_ERROR_PACKAGE_NAME)) {
+                if (toClass.contains(KODI_ERROR_PACKAGE_NAME)) {
                     throwKodiException<IllegalStateException>("You cannot use java class $toClass as binding class cause it's goes to unexpected graph.")
                 }
 
@@ -98,13 +99,13 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                 add(" \n")
                 add("%M", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_BIND))
                 add("<%T>", ClassName(toPack, toClass))
-                if(tag.isNotEmpty()) {
+                if (tag.isNotEmpty()) {
                     add("($KODI_TAG_PATTERN) ", tag)
                 } else {
                     add("() ")
                 }
 
-                if(scope.isNotEmpty()) {
+                if (scope.isNotEmpty()) {
                     add("%M %S ", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_AT), scope)
                 }
 
@@ -112,7 +113,7 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                 add("%M {", MemberName(KODI_PACKAGE_PATH, instanceType))
                 add(" \n")
 
-                if(element.kind == ElementKind.METHOD) {
+                if (element.kind == ElementKind.METHOD) {
                     this.bindMethodElement(element)
                 } else {
                     this.bindInstanceElement(element)
@@ -142,7 +143,7 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                 toModule = annotation.toModule,
                 toPack = packName,
                 toClass = className,
-                instanceType =INSTANCE_TYPE_SINGLE,
+                instanceType = INSTANCE_TYPE_SINGLE,
                 scope = annotation.atScope,
                 tag = annotation.toTag
         )
@@ -166,19 +167,25 @@ class KodiAnnotationProcessor : AbstractProcessor() {
     private fun CodeBlock.Builder.bindInstanceElement(element: Element) {
         val packageName = processingEnv.elementUtils.getPackageOf(element).toString()
         val className = element.simpleName.toString()
-        add("%T(", ClassName(packageName, className))
-        val constructor = element.enclosedElements.find { enclosedElement ->
-            enclosedElement.kind == ElementKind.CONSTRUCTOR
-        } as? ExecutableElement
 
-        var propCount = 0
-        constructor?.parameters?.forEach { property ->
-            if(addProperty(property, propCount)) {
-                propCount++
+        val isAbstract = element.modifiers.contains(Modifier.ABSTRACT)
+        if (isAbstract) {
+            addInstance(packageName = packageName, className = className)
+        } else {
+            add("%T(", ClassName(packageName, className))
+            val constructor = element.enclosedElements.find { enclosedElement ->
+                enclosedElement.kind == ElementKind.CONSTRUCTOR
+            } as? ExecutableElement
+
+            var propCount = 0
+            constructor?.parameters?.forEach { property ->
+                if (addProperty(property, propCount)) {
+                    propCount++
+                }
             }
+            if (propCount > 0) add("\n")
+            add(")")
         }
-        if(propCount > 0) add("\n")
-        add(")")
     }
 
     private fun CodeBlock.Builder.bindMethodElement(element: Element) {
@@ -187,7 +194,7 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         val methodName = element.simpleName.toString()
         val parentName = parentElement.simpleName.toString()
 
-        if(packageOf.contains(KODI_ERROR_PACKAGE_NAME)) {
+        if (packageOf.contains(KODI_ERROR_PACKAGE_NAME)) {
             val error = ERROR_ANNOTATION_WITHOUT_PROPERTY_WITH.format(methodName)
             processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, error)
             throwKodiException<IllegalArgumentException>(error)
@@ -197,7 +204,7 @@ class KodiAnnotationProcessor : AbstractProcessor() {
 
         when {
             isAbstract -> {
-                addInstance(packName = packageOf, className = parentName)
+                addInstance(packageName = packageOf, className = parentName)
                 add(".$methodName(")
             }
             element.modifiers.contains(Modifier.STATIC) -> {
@@ -218,11 +225,11 @@ class KodiAnnotationProcessor : AbstractProcessor() {
 
         var propCount = 0
         (element as? ExecutableElement)?.parameters?.forEach { variable ->
-            if(addProperty(variable, propCount)) {
+            if (addProperty(variable, propCount)) {
                 propCount++
             }
         }
-        if(propCount > 0) add("\n")
+        if (propCount > 0) add("\n")
         add(")")
     }
 
@@ -230,7 +237,7 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         val parameterType = property.asType().asTypeName().toString()
         return if (!parameterType.contains(KODI_ERROR_PACKAGE_NAME) && property.getAnnotation(IgnoreInstance::class.java) == null) {
             val propertyName = property.simpleName.toString()
-            if(propCount > 0) {
+            if (propCount > 0) {
                 add(",")
             }
 
@@ -239,15 +246,15 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                 val tag = it.tag
                 val scope = it.scope
                 val packageAndClass = property.getAnnotationClassValue<WithInstance> { with }.toString()
-                val (packName, className) = packageAndClass.getPackAndClass()
+                val (packageName, className) = packageAndClass.getPackAndClass()
                 add("$propertyName = ")
-                addInstance(tag, scope, packName, className)
+                addInstance(tag = tag, scope = scope, packageName = packageName, className = className)
             } ?: apply {
                 val propertyElement = processingEnv.typeUtils.asElement(property.asType())
                 val propertyPackName = processingEnv.elementUtils.getPackageOf(propertyElement).toString()
                 val propertyClassName = propertyElement.simpleName.toString()
                 add("$propertyName = ")
-                addInstance(packName = propertyPackName, className = propertyClassName)
+                addInstance(packageName = propertyPackName, className = propertyClassName)
             }
             true
         } else false
@@ -256,20 +263,20 @@ class KodiAnnotationProcessor : AbstractProcessor() {
     private fun CodeBlock.Builder.addInstance(
             tag: String = "",
             scope: String = "",
-            packName: String = "",
+            packageName: String = "",
             className: String = ""
     ) {
         val instanceMember = MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_INSTANCE)
         add("%M", instanceMember)
-        if(packName.isNotEmpty() && className.isNotEmpty() && !packName.contains(KODI_ERROR_PACKAGE_NAME)) {
-            add("<%T>", ClassName(packName, className))
+        if (packageName.isNotEmpty() && className.isNotEmpty() && !packageName.contains(KODI_ERROR_PACKAGE_NAME)) {
+            add("<%T>", ClassName(packageName, className))
         }
 
-        if(tag.isNotEmpty() && scope.isNotEmpty()) {
+        if (tag.isNotEmpty() && scope.isNotEmpty()) {
             add("($KODI_TAG_PATTERN, $KODI_SCOPE_PATTERN)", instanceMember, tag, scope)
-        } else if(tag.isNotEmpty()) {
+        } else if (tag.isNotEmpty()) {
             add("($KODI_TAG_PATTERN)", instanceMember, tag)
-        } else if(scope.isNotEmpty()) {
+        } else if (scope.isNotEmpty()) {
             add("($KODI_SCOPE_PATTERN)", instanceMember, scope)
         } else {
             add("()")
@@ -282,23 +289,24 @@ class KodiAnnotationProcessor : AbstractProcessor() {
             elementDataHandler: (Element) -> KodiBindData
     ): Boolean {
         elementsSet.forEach { element ->
-                    val kind = element.kind
-                    if (kind != ElementKind.METHOD && kind != ElementKind.CLASS) {
-                        processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes and methods can be annotated as @BindSingle or @BindProvider")
-                        return true
-                    }
-                    val bindingData = elementDataHandler(element)
-                    val moduleName = bindingData.toModule.takeIf { it.isNotEmpty() } ?: KODI_DEFAULT_MODULE_NAME
-                    val list = modulesMap.getOrPut(moduleName) { mutableListOf() }
-                    list.add(bindingData)
-                }
+            val kind = element.kind
+            if (kind != ElementKind.METHOD && kind != ElementKind.CLASS && kind != ElementKind.INTERFACE) {
+                processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Only classes and methods can be annotated as @BindSingle or @BindProvider")
+                return true
+            }
+            val bindingData = elementDataHandler(element)
+            val moduleName = bindingData.toModule.takeIf { it.isNotEmpty() }
+                    ?: KODI_DEFAULT_MODULE_NAME
+            val list = modulesMap.getOrPut(moduleName) { mutableListOf() }
+            list.add(bindingData)
+        }
         return false
     }
 
     private fun String.getPackAndClass(): Pair<String, String> {
         val splitted = this.split(".")
         val className = splitted.last()
-        val packName = splitted.subList(0, splitted.size-1).joinToString(".")
+        val packName = splitted.subList(0, splitted.size - 1).joinToString(".")
         return packName to className
     }
 
