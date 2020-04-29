@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Aleksandr Minkin (sphc@yandex.ru)
+// Copyright (c) 2020 Aleksandr Minkin aka Rasalexman (sphc@yandex.ru)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -29,12 +29,17 @@ inline class KodiTagWrapper(private val instanceTag: String) {
     fun isNotEmpty(): Boolean {
         return instanceTag.isNotEmpty()
     }
+
+    /**
+     * Return a [String] representation of Wrapper
+     */
+    fun asString(): String = this.instanceTag
 }
 
 /**
  * Typealias for merge tag with scope
  */
-typealias KodiTagScopeWrappers = Pair<KodiTagWrapper, KodiScopeWrapper>
+internal typealias KodiTagScopeWrappers = Pair<KodiTagWrapper, KodiScopeWrapper>
 
 /**
  * Bind instanceTag withScope available instance holders
@@ -59,7 +64,7 @@ inline infix fun <reified T : KodiHolder> KodiTagScopeWrappers.with(instance: T)
 /**
  * Add scope tag to binding instance
  *
- * @param scopeWrapper - String scope wrapper name
+ * @param scopeWrapper - [KodiScopeWrapper] String scope wrapper name
  */
 infix fun KodiTagWrapper.at(scopeWrapper: KodiScopeWrapper): KodiTagScopeWrappers {
     if(!scopeWrapper.isNotEmpty()) throwKodiException<IllegalStateException>("Parameter `scopeWrapper` can't be empty")

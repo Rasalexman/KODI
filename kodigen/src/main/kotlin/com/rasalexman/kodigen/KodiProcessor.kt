@@ -1,3 +1,17 @@
+// Copyright (c) 2020 Aleksandr Minkin aka Rasalexman (sphc@yandex.ru)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+// and associated documentation files (the "Software"), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+// WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+// THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 package com.rasalexman.kodigen
 
 import com.google.auto.service.AutoService
@@ -45,7 +59,6 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         private const val KODI_SCOPE_PATTERN = "scope = %S"
 
         private const val KODI_ERROR_PACKAGE_NAME = "java."
-
 
         private const val ERROR_ANNOTATION_WITHOUT_PROPERTY_WITH =
                 "You cannot use `@%s` annotation property `toClass: KClass<out Any>` to bind on method %s with java classes. Please specify it with `T::class`"
@@ -177,13 +190,13 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                 enclosedElement.kind == ElementKind.CONSTRUCTOR
             } as? ExecutableElement
 
-            var propCount = 0
+            var propertiesCount = 0
             constructor?.parameters?.forEach { property ->
-                if (addProperty(property, propCount)) {
-                    propCount++
+                if (addProperty(property = property, count = propertiesCount)) {
+                    propertiesCount++
                 }
             }
-            if (propCount > 0) add("\n")
+            if (propertiesCount > 0) add("\n")
             add(")")
         }
     }
@@ -233,11 +246,11 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         add(")")
     }
 
-    private fun CodeBlock.Builder.addProperty(property: Element, propCount: Int): Boolean {
+    private fun CodeBlock.Builder.addProperty(property: Element, count: Int): Boolean {
         val parameterType = property.asType().asTypeName().toString()
         return if (!parameterType.contains(KODI_ERROR_PACKAGE_NAME) && property.getAnnotation(IgnoreInstance::class.java) == null) {
             val propertyName = property.simpleName.toString()
-            if (propCount > 0) {
+            if (count > 0) {
                 add(",")
             }
 

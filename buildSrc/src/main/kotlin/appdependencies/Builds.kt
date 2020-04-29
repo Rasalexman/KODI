@@ -8,28 +8,28 @@ object Builds {
     const val APP_ID = "com.mincor.kodiexample"
 
     object App {
-        const val VERSION_CODE = 10007
-        const val VERSION_NAME = "10007"
+        const val VERSION_CODE = 10008
+        const val VERSION_NAME = "10008"
     }
 
     object Kodi {
-        const val VERSION_CODE = 10401
-        const val VERSION_NAME = "1.4.1"
+        const val VERSION_CODE = 10402
+        const val VERSION_NAME = "1.4.2"
     }
 
     object KodiAndroidX {
-        const val VERSION_CODE = 10401
-        const val VERSION_NAME = "1.4.1"
+        const val VERSION_CODE = 10402
+        const val VERSION_NAME = "1.4.2"
     }
 
     object KodiReflect {
-        const val VERSION_CODE = 10116
-        const val VERSION_NAME = "1.1.16"
+        const val VERSION_CODE = 10117
+        const val VERSION_NAME = "1.1.17"
     }
 
     object KodiGen {
-        const val VERSION_CODE = 10401
-        const val VERSION_NAME = "1.4.1"
+        const val VERSION_CODE = 10402
+        const val VERSION_NAME = "1.4.2"
     }
 }
 

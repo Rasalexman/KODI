@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Aleksandr Minkin (sphc@yandex.ru)
+// Copyright (c) 2020 Aleksandr Minkin aka Rasalexman (sphc@yandex.ru)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -23,6 +23,8 @@ import com.rasalexman.kodi.core.throwKodiException
 interface IImmutableDelegate<T> {
     /**
      * Get the value for property
+     * @param thisRef - current reference
+     * @param property - property
      */
     operator fun getValue(thisRef: Any?, property: Any): T
 }
@@ -33,6 +35,9 @@ interface IImmutableDelegate<T> {
 interface IMutableDelegate<T> : IImmutableDelegate<T> {
     /**
      * Set the value to the property
+     * @param thisRef - current reference
+     * @param property - property
+     * @param value - any generic value
      */
     operator fun setValue(thisRef: Any?, property: Any, value: T)
 }
@@ -52,6 +57,8 @@ open class ImmutableDelegate<T>(private val init: () -> T) : IImmutableDelegate<
 
     /**
      * Value getter
+     * @param thisRef - current reference
+     * @param property - property
      */
     override fun getValue(thisRef: Any?, property: Any): T {
         if (value is Optional.None) {

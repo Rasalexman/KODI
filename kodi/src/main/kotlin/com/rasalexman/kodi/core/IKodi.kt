@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Aleksandr Minkin (sphc@yandex.ru)
+// Copyright (c) 2020 Aleksandr Minkin aka Rasalexman (sphc@yandex.ru)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -60,7 +60,7 @@ inline fun <reified T : Any> kodi(block: IKodi.() -> T): T {
 inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
     val receiver = this
     return (tag ?: "${T::class.java}").asTag().also {
-        if (receiver is KodiModule) {
+        if (receiver is IKodiModule) {
             receiver.moduleInstancesSet.add(it)
         }
     }

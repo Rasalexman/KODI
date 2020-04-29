@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Aleksandr Minkin (sphc@yandex.ru)
+// Copyright (c) 2020 Aleksandr Minkin aka Rasalexman (sphc@yandex.ru)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -17,12 +17,12 @@ package com.rasalexman.kodi.core
 /**
  * Typealias for simplification
  */
-typealias InstanceInitializer<T> = IKodi.() -> T
+internal typealias InstanceInitializer<T> = IKodi.() -> T
 
 /**
  *  Typealias for simplification with params
  */
-typealias InstanceInitializerWithParam<T, R> = IKodi.(R?) -> T
+internal typealias InstanceInitializerWithParam<T, R> = IKodi.(R?) -> T
 
 /**
  * Available classes for binding
@@ -130,7 +130,8 @@ sealed class KodiHolder {
         override fun get(kodiImpl: IKodi): T = singleInstance
                 ?: singleInstanceProvider?.invoke(Kodi)?.apply {
                     singleInstance = this
-                } ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
+                }
+                ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
 
         /**
          * Clear current Single Holder
@@ -153,7 +154,8 @@ sealed class KodiHolder {
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T {
-            return providerLiteral?.invoke(kodiImpl) ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
+            return providerLiteral?.invoke(kodiImpl)
+                    ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
         }
 
         /**
@@ -176,7 +178,8 @@ sealed class KodiHolder {
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T {
-            return providerLiteral?.invoke(kodiImpl, null) ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
+            return providerLiteral?.invoke(kodiImpl, null)
+                    ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
         }
 
         /**
@@ -196,7 +199,8 @@ sealed class KodiHolder {
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T {
-            return constantValue ?: throwKodiException<NoSuchElementException>("There is no instance in [KodiConstant]")
+            return constantValue
+                    ?: throwKodiException<NoSuchElementException>("There is no instance in [KodiConstant]")
         }
 
         /**

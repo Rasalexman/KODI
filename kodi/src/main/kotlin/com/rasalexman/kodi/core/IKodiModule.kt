@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Aleksandr Minkin (sphc@yandex.ru)
+// Copyright (c) 2020 Aleksandr Minkin aka Rasalexman (sphc@yandex.ru)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -20,7 +20,7 @@ import com.rasalexman.kodi.delegates.mutableGetter
 /**
  * Module Initializer
  */
-typealias ModuleInitializer = InstanceInitializer<Unit>
+internal typealias ModuleInitializer = InstanceInitializer<Unit>
 
 /**
  * Support Kodi Module
@@ -46,7 +46,7 @@ interface IKodiModule : IKodi {
  *
  * @param instanceInitializer - initializer [ModuleInitializer]
  */
-data class KodiModule(
+internal data class KodiModule(
         override val instanceInitializer: ModuleInitializer
 ) : IKodiModule {
     /**
@@ -58,17 +58,6 @@ data class KodiModule(
      * Set of all instances that includes in this module
      */
     override val moduleInstancesSet: MutableSet<KodiTagWrapper> by immutableGetter { mutableSetOf<KodiTagWrapper>() }
-}
-
-/**
- * Set scope for all bindings in module
- *
- * @param scopeWrapper - [KodiScopeWrapper] for module
- */
-@Deprecated("Will be removed in future releases", ReplaceWith("withScope(scopeName: String)"))
-infix fun IKodiModule.withScope(scopeWrapper: KodiScopeWrapper): IKodiModule {
-    scope = scopeWrapper
-    return this
 }
 
 /**

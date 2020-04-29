@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Aleksandr Minkin (sphc@yandex.ru)
+// Copyright (c) 2020 Aleksandr Minkin aka Rasalexman (sphc@yandex.ru)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software
 // and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -19,12 +19,12 @@ import com.rasalexman.kodi.delegates.immutableGetter
 /**
  * Lambda wrapper withScope generic return Type
  */
-typealias LambdaWithReturn<T> = () -> T
+internal typealias LambdaWithReturn<T> = () -> T
 
 /**
  * Main scoped instance map
  */
-typealias KodiInstanceMap = MutableMap<KodiTagWrapper, KodiHolder>
+internal typealias KodiInstanceMap = MutableMap<KodiTagWrapper, KodiHolder>
 
 /**
  * Main storage abstraction
@@ -165,7 +165,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * Check if given [KodiTagWrapper] has been added to any [IKodiModule]
      *
      * @param - [KodiTagWrapper] to check
-     * @return [Boolean]
+     * @return [Boolean] - does module set has instance with given [KodiTagWrapper]
      */
     override fun hasModuleByTag(instanceTag: KodiTagWrapper): Boolean {
         return if (instanceTag.isNotEmpty()) {
@@ -206,6 +206,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * Remove current instance from storage by given key
      *
      * @param key - [KodiTagWrapper] to remove value if it's exist
+     * @param scope - [KodiScopeWrapper] current scope data
      *
      * @return - optional [KodiHolder]
      */
@@ -229,6 +230,8 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * Remove moduleScope and all it's instances from storage
      *
      * @param scope - moduleScope tag for remove
+     *
+     * @return [Boolean] - is reference deleted
      */
     override fun removeAllScope(scope: KodiScopeWrapper): Boolean {
         return if (scope.isNotEmpty()) {
