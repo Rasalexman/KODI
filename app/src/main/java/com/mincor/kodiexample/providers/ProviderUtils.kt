@@ -1,21 +1,17 @@
-package com.mincor.kodiexample.providers.network
+package com.mincor.kodiexample.providers
 
 import android.content.Context
-import androidx.room.Room
 import coil.ImageLoader
 import coil.util.CoilUtils
 import com.mincor.kodiexample.common.Consts
-import com.mincor.kodiexample.providers.database.MoviesDatabase
-import com.mincor.kodiexample.providers.database.dao.IGenresDao
-import com.mincor.kodiexample.providers.database.dao.IMoviesDao
 import com.mincor.kodiexample.providers.network.api.IMovieApi
+import com.mincor.kodiexample.providers.network.createWebServiceApi
 import com.rasalexman.kodi.annotations.BindProvider
 import com.rasalexman.kodi.annotations.BindSingle
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 
 object ProviderUtils {
-
 
     @BindSingle(
             toClass = Cache::class,
@@ -40,25 +36,4 @@ object ProviderUtils {
         crossfade(true)
         okHttpClient(client)
     }
-
-    @BindSingle(
-            toClass = MoviesDatabase::class,
-            toModule = Consts.Modules.ProvidersName
-    )
-    fun createDatabase(context: Context) = Room.databaseBuilder(
-            context,
-            MoviesDatabase::class.java, "kodiMoviesDB"
-    ).fallbackToDestructiveMigration().build()
-
-    @BindProvider(
-            toClass = IGenresDao::class,
-            toModule = Consts.Modules.ProvidersName
-    )
-    fun getGenresDao(database: MoviesDatabase) = database.getGenresDao()
-
-    @BindProvider(
-            toClass = IMoviesDao::class,
-            toModule = Consts.Modules.ProvidersName
-    )
-    fun getMoviesDao(database: MoviesDatabase) = database.getMoviesDao()
 }

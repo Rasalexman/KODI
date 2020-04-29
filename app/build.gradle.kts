@@ -164,7 +164,10 @@ dependencies {
     androidTestImplementation(Libs.Tests.runner)
     androidTestImplementation(Libs.Tests.espresso)
 
+    //implementation("com.rasalexman.kodigen:kodigen:1.4.1")
+
     kapt(project(":kodigen"))
+    //kapt("com.rasalexman.kodigen:kodigen:1.4.1")
     kapt(appdependencies.Libs.Room.kapt)
 }
 /*

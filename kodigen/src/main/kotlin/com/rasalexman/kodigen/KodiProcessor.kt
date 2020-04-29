@@ -1,9 +1,10 @@
 package com.rasalexman.kodigen
 
 import com.google.auto.service.AutoService
-import com.rasalexman.kodi.annotations.*
-import com.rasalexman.kodi.core.IKodiModule
-import com.rasalexman.kodi.core.KodiHolder
+import com.rasalexman.kodi.annotations.BindProvider
+import com.rasalexman.kodi.annotations.BindSingle
+import com.rasalexman.kodi.annotations.IgnoreInstance
+import com.rasalexman.kodi.annotations.WithInstance
 import com.rasalexman.kodi.core.throwKodiException
 import com.squareup.kotlinpoet.*
 import java.io.File
@@ -22,11 +23,18 @@ import kotlin.reflect.KClass
 class KodiAnnotationProcessor : AbstractProcessor() {
 
     companion object {
+
+        private const val INSTANCE_TYPE_SINGLE = "single"
+        private const val INSTANCE_TYPE_PROVIDER = "provider"
+
         const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
-        private const val DEFAULT_MODULE_NAME = "Module"
-        private const val KODI_DEFAULT_MODULE_NAME = "kodi"
         private const val KODI_PACKAGE_PATH = "com.rasalexman.kodi.core"
         private const val KODI_GENERATED_PATH = "com.kodi.generated.modules."
+
+        private const val DEFAULT_MODULE_NAME = "Module"
+        private const val KODI_DEFAULT_MODULE_NAME = "kodi"
+        private const val KODI_MODULE_PROPERTY_TYPE = "IKodiModule"
+
         private const val KODI_MEMBER_MODULE = "kodiModule"
         private const val KODI_MEMBER_BIND = "bind"
         private const val KODI_MEMBER_AT = "at"
@@ -37,6 +45,10 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         private const val KODI_SCOPE_PATTERN = "scope = %S"
 
         private const val KODI_ERROR_PACKAGE_NAME = "java."
+
+
+        private const val ERROR_ANNOTATION_WITHOUT_PROPERTY_WITH =
+                "You cannot use `@%s` annotation property `toClass: KClass<out Any>` to bind on method %s with java classes. Please specify it with `T::class`"
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
@@ -78,9 +90,7 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                 val scope = bindingData.scope
                 val tag = bindingData.tag
 
-                if(instanceType != KodiHolder.TYPE_SINGLE && instanceType != KodiHolder.TYPE_PROVIDER && instanceType != KodiHolder.TYPE_CONSTANT) {
-                    throwKodiException<IllegalStateException>("You cannot use this type as annotation processing. Allowed types in KodiHolder.Companion.*")
-                } else if(toClass.contains(KODI_ERROR_PACKAGE_NAME)) {
+                if(toClass.contains(KODI_ERROR_PACKAGE_NAME)) {
                     throwKodiException<IllegalStateException>("You cannot use java class $toClass as binding class cause it's goes to unexpected graph.")
                 }
 
@@ -113,7 +123,9 @@ class KodiAnnotationProcessor : AbstractProcessor() {
             add("}")
         }
 
-        val moduleProperty = PropertySpec.builder("$lowerModuleName$DEFAULT_MODULE_NAME", IKodiModule::class)
+        val typeName = ClassName(KODI_PACKAGE_PATH, KODI_MODULE_PROPERTY_TYPE)
+        val moduleProperty = PropertySpec
+                .builder("$lowerModuleName$DEFAULT_MODULE_NAME", typeName)
                 .initializer(codeInitializer).build()
         fileBuilder.addProperty(moduleProperty)
         val file = fileBuilder.build()
@@ -123,14 +135,14 @@ class KodiAnnotationProcessor : AbstractProcessor() {
 
     private fun getDataFromBindSingle(element: Element): KodiBindData {
         val annotation = element.getAnnotation(BindSingle::class.java)
-        val packageAndClass = element.getAnnotationClassValue<BindSingle> { toClass }.toString()
-        val (packName, className) = packageAndClass.getPackAndClass()
+        val toClassPackageAndClass = element.getAnnotationClassValue<BindSingle> { toClass }.toString()
+        val (packName, className) = toClassPackageAndClass.getPackAndClass()
         return KodiBindData(
                 element = element,
                 toModule = annotation.toModule,
                 toPack = packName,
                 toClass = className,
-                instanceType = KodiHolder.TYPE_SINGLE,
+                instanceType =INSTANCE_TYPE_SINGLE,
                 scope = annotation.atScope,
                 tag = annotation.toTag
         )
@@ -145,7 +157,7 @@ class KodiAnnotationProcessor : AbstractProcessor() {
                 toModule = annotation.toModule,
                 toPack = packName,
                 toClass = className,
-                instanceType = KodiHolder.TYPE_PROVIDER,
+                instanceType = INSTANCE_TYPE_PROVIDER,
                 scope = annotation.atScope,
                 tag = annotation.toTag
         )
@@ -173,13 +185,35 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         val packageOf = processingEnv.elementUtils.getPackageOf(element).toString()
         val parentElement = processingEnv.typeUtils.asElement(element.enclosingElement.asType())
         val methodName = element.simpleName.toString()
-        val parentPackageOf = parentElement.asType().toString()
         val parentName = parentElement.simpleName.toString()
 
-        if(element.modifiers.contains(Modifier.STATIC)) {
-            add("%M(", MemberName(packageOf, methodName))
-        } else {
-            add("%T.%M(", ClassName(packageOf, parentName), MemberName(parentPackageOf, methodName))
+        if(packageOf.contains(KODI_ERROR_PACKAGE_NAME)) {
+            val error = ERROR_ANNOTATION_WITHOUT_PROPERTY_WITH.format(methodName)
+            processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, error)
+            throwKodiException<IllegalArgumentException>(error)
+        }
+
+        val isAbstract = element.modifiers.contains(Modifier.ABSTRACT) || parentElement.modifiers.contains(Modifier.ABSTRACT)
+
+        when {
+            isAbstract -> {
+                addInstance(packName = packageOf, className = parentName)
+                add(".$methodName(")
+            }
+            element.modifiers.contains(Modifier.STATIC) -> {
+                add("%M(", MemberName(packageOf, methodName))
+            }
+            parentElement.modifiers.contains(Modifier.STATIC) -> {
+                val parentPackageOf = parentElement.asType().toString()
+                val companionElement = processingEnv.typeUtils.asElement(parentElement.enclosingElement.asType())
+                val companionName = companionElement.simpleName.toString()
+                val companionPackageOf = processingEnv.elementUtils.getPackageOf(element).toString()
+                add("%T.%M(", ClassName(companionPackageOf, companionName), MemberName(parentPackageOf, methodName))
+            }
+            else -> {
+                val parentPackageOf = parentElement.asType().toString()
+                add("%T.%M(", ClassName(packageOf, parentName), MemberName(parentPackageOf, methodName))
+            }
         }
 
         var propCount = 0
@@ -196,7 +230,6 @@ class KodiAnnotationProcessor : AbstractProcessor() {
         val parameterType = property.asType().asTypeName().toString()
         return if (!parameterType.contains(KODI_ERROR_PACKAGE_NAME) && property.getAnnotation(IgnoreInstance::class.java) == null) {
             val propertyName = property.simpleName.toString()
-            val instanceMember = MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_INSTANCE)
             if(propCount > 0) {
                 add(",")
             }
@@ -205,17 +238,42 @@ class KodiAnnotationProcessor : AbstractProcessor() {
             property.getAnnotation(WithInstance::class.java)?.let {
                 val tag = it.tag
                 val scope = it.scope
-                val propertyPattern = "$propertyName = %M($KODI_TAG_PATTERN"
-                if(scope.isEmpty()) add("$propertyPattern)", instanceMember, tag)
-                else add("$propertyPattern, $KODI_SCOPE_PATTERN)", instanceMember, tag, scope)
+                val packageAndClass = property.getAnnotationClassValue<WithInstance> { with }.toString()
+                val (packName, className) = packageAndClass.getPackAndClass()
+                add("$propertyName = ")
+                addInstance(tag, scope, packName, className)
             } ?: apply {
                 val propertyElement = processingEnv.typeUtils.asElement(property.asType())
                 val propertyPackName = processingEnv.elementUtils.getPackageOf(propertyElement).toString()
                 val propertyClassName = propertyElement.simpleName.toString()
-                add("$propertyName = %M<%T>()", instanceMember, ClassName(propertyPackName, propertyClassName))
+                add("$propertyName = ")
+                addInstance(packName = propertyPackName, className = propertyClassName)
             }
             true
         } else false
+    }
+
+    private fun CodeBlock.Builder.addInstance(
+            tag: String = "",
+            scope: String = "",
+            packName: String = "",
+            className: String = ""
+    ) {
+        val instanceMember = MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_INSTANCE)
+        add("%M", instanceMember)
+        if(packName.isNotEmpty() && className.isNotEmpty() && !packName.contains(KODI_ERROR_PACKAGE_NAME)) {
+            add("<%T>", ClassName(packName, className))
+        }
+
+        if(tag.isNotEmpty() && scope.isNotEmpty()) {
+            add("($KODI_TAG_PATTERN, $KODI_SCOPE_PATTERN)", instanceMember, tag, scope)
+        } else if(tag.isNotEmpty()) {
+            add("($KODI_TAG_PATTERN)", instanceMember, tag)
+        } else if(scope.isNotEmpty()) {
+            add("($KODI_SCOPE_PATTERN)", instanceMember, scope)
+        } else {
+            add("()")
+        }
     }
 
     private fun collectAnnotationData(
