@@ -88,10 +88,8 @@ sealed class KodiHolder {
      */
     private fun addToGraph() {
         if (tag.isNotEmpty()) {
-            Kodi.createOrGet(tag, defaultScope, ::getCurrentHolder)
-            if (scope.isNotEmpty() && scope != defaultScope) {
-                Kodi.createOrGet(tag, scope, ::getCurrentHolder)
-            }
+            val selectedScope = scope.takeIf { it.isNotEmpty() && it != defaultScope }.or { defaultScope }
+            Kodi.createOrGet(tag, selectedScope, ::getCurrentHolder)
         }
     }
 
@@ -127,11 +125,13 @@ sealed class KodiHolder {
          * Get holder value
          * @param kodiImpl - implemented [IKodi] instance
          */
-        override fun get(kodiImpl: IKodi): T = singleInstance
-                ?: singleInstanceProvider?.invoke(Kodi)?.apply {
-                    singleInstance = this
-                }
-                ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
+        override fun get(kodiImpl: IKodi): T = singleInstance.or {
+            singleInstanceProvider?.invoke(Kodi)?.also {
+                singleInstance = it
+            }
+        }.or {
+            throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
+        }
 
         /**
          * Clear current Single Holder
@@ -154,8 +154,11 @@ sealed class KodiHolder {
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T {
-            return providerLiteral?.invoke(kodiImpl)
-                    ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
+            return providerLiteral
+                    ?.invoke(kodiImpl)
+                    .or {
+                        throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
+                    }
         }
 
         /**
@@ -178,8 +181,9 @@ sealed class KodiHolder {
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T {
-            return providerLiteral?.invoke(kodiImpl, null)
-                    ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
+            return providerLiteral?.invoke(kodiImpl, null).or {
+                throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
+            }
         }
 
         /**
@@ -199,8 +203,9 @@ sealed class KodiHolder {
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T {
-            return constantValue
-                    ?: throwKodiException<NoSuchElementException>("There is no instance in [KodiConstant]")
+            return constantValue.or {
+                throwKodiException<NoSuchElementException>("There is no instance in [KodiConstant]")
+            }
         }
 
         /**
@@ -248,6 +253,6 @@ inline fun <reified R : KodiHolder, reified T : Any> IKodi.createHolder(noinline
         KodiHolder.KodiSingle::class.java -> KodiHolder.KodiSingle(init)
         KodiHolder.KodiProvider::class.java -> KodiHolder.KodiProvider(init)
         KodiHolder.KodiConstant::class.java -> KodiHolder.KodiConstant(init())
-        else -> throwKodiException<ClassCastException>("There is no type holder like ${T::class.java}")
+        else -> throwKodiException<ClassCastException>("There is no type holder like ${genericName<T>()}")
     }.holderAs(this as? IKodiModule) { module -> this at module.scope } as R
 }

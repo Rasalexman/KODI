@@ -136,14 +136,12 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      */
     override fun removeModule(module: IKodiModule) {
         if (modulesSet.remove(module)) {
-            module.apply {
-                moduleInstancesSet.apply {
-                    asSequence().forEach { tag ->
-                        removeInstance(tag, module.scope)
-                    }
-                    clear()
-                }
+            val moduleScope = module.scope
+            val moduleInstanceSet = module.moduleInstancesSet
+            moduleInstanceSet.asSequence().forEach { tag ->
+                removeInstance(tag, moduleScope)
             }
+            moduleInstanceSet.clear()
         }
     }
 
@@ -215,14 +213,29 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
             it.isNotEmpty()
         }?.let {
             scope.takeIf { it != defaultScope }?.let {
-                scopedInstanceSet[defaultScope]?.get(key)?.scope?.
-                        takeIf { it == scope }?.
-                        let { scopedInstanceSet[defaultScope]?.remove(key)?.apply { clear() } }
-                scopedInstanceSet[scope]?.remove(key)?.apply { clear() }
-            } ?: scopedInstanceSet[defaultScope]?.
-                    remove(key)?.scope?.
-                    takeIf { it != defaultScope }?.
-                    let { scopedInstanceSet[it]?.remove(key)?.apply { clear() } }
+                scopedInstanceSet[defaultScope]
+                        ?.get(key)
+                        ?.scope
+                        ?.takeIf { it == scope }
+                        ?.let {
+                            scopedInstanceSet[defaultScope]
+                                    ?.remove(key)
+                                    ?.apply { clear() }
+                        }
+                scopedInstanceSet[scope]
+                        ?.remove(key)
+                        ?.apply { clear() }
+            }.or {
+                scopedInstanceSet[defaultScope]
+                        ?.remove(key)
+                        ?.scope
+                        ?.takeIf { it != defaultScope }
+                        ?.let {
+                            scopedInstanceSet[it]
+                                    ?.remove(key)
+                                    ?.apply { clear() }
+                        }
+            }
         }
     }
 

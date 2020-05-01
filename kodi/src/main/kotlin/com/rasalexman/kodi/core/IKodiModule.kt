@@ -92,7 +92,7 @@ fun IKodi.import(module: IKodiModule) {
  * @param tag [String] - string representation of instance must be unique
  */
 inline fun <reified T : Any> IKodiModule.hasInstance(tag: String? = null): Boolean {
-    return this.moduleInstancesSet.contains((tag ?: "${T::class.java}").asTag())
+    return this.moduleInstancesSet.contains(tag.or { genericName<T>() }.asTag())
 }
 
 /**
@@ -101,7 +101,7 @@ inline fun <reified T : Any> IKodiModule.hasInstance(tag: String? = null): Boole
  * @param tag [KodiTagWrapper] - string representation of instance must be unique
  */
 inline fun <reified T : Any> IKodiModule.hasInstance(tag: KodiTagWrapper? = null): Boolean {
-    return this.moduleInstancesSet.contains(tag ?: "${T::class.java}".asTag())
+    return this.moduleInstancesSet.contains(tag.or { genericName<T>().asTag() })
 }
 
 /**

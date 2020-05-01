@@ -59,7 +59,7 @@ inline fun <reified T : Any> kodi(block: IKodi.() -> T): T {
  */
 inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
     val receiver = this
-    return (tag ?: "${T::class.java}").asTag().also {
+    return tag.or { genericName<T>() }.asTag().also {
         if (receiver is IKodiModule) {
             receiver.moduleInstancesSet.add(it)
         }
@@ -90,8 +90,8 @@ inline fun <reified T : Any, reified R : T> IKodi.bindType(tag: String? = null):
  * @return [Boolean] - is instance removed
  */
 inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = null): Boolean {
-    val tagToWrapper = (tag ?: "${T::class.java}").asTag()
-    val scopeToWrap = scope?.asScope() ?: defaultScope
+    val tagToWrapper = tag.or { genericName<T>() }.asTag()
+    val scopeToWrap = scope?.asScope().or { defaultScope }
     return Kodi.removeInstance(tagToWrapper, scopeToWrap) != null
 }
 
@@ -104,7 +104,7 @@ inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = 
  * @return [Boolean]
  */
 inline fun <reified T : Any> IKodi.hasModule(tag: String? = null): Boolean {
-    val tagToWrap = (tag ?: "${T::class.java}").asTag()
+    val tagToWrap = tag.or { genericName<T>() }.asTag()
     return Kodi.hasModuleByTag(tagToWrap)
 }
 
@@ -114,7 +114,7 @@ inline fun <reified T : Any> IKodi.hasModule(tag: String? = null): Boolean {
  * @return [Boolean]
  */
 inline fun <reified T : Any> IKodi.hasInstance(tag: String? = null): Boolean {
-    val tagToWrap = (tag ?: "${T::class.java}").asTag()
+    val tagToWrap = tag.or { genericName<T>() }.asTag()
     return Kodi.hasInstance(tagToWrap)
 }
 
@@ -130,7 +130,7 @@ inline fun <reified T : Any> IKodi.hasInstance(tag: String? = null): Boolean {
 fun IKodi.bindTag(tag: String): KodiTagWrapper {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.bind<Any>(it)
-    } ?: throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
+    }.or { throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY") }
 }
 
 /**
@@ -147,7 +147,7 @@ fun IKodi.bindTag(tag: String): KodiTagWrapper {
 fun IKodi.unbindTag(tag: String, scope: String? = null): Boolean {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.unbind<Any>(tag, scope)
-    } ?: throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
+    }.or { throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY") }
 }
 
 /**
@@ -175,8 +175,9 @@ fun IKodi.unbindAll() {
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? = null): T {
     val inst = holder<T>(tag, scope).get(this)
-    return inst as? T
-            ?: throwKodiException<ClassCastException>("Cannot cast instance = $inst to Generic type ${T::class.java}")
+    return (inst as? T).or {
+        throwKodiException<ClassCastException>("Cannot cast instance = $inst to Generic type ${genericName<T>()}")
+    }
 }
 
 /**
@@ -188,9 +189,8 @@ inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? 
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 inline fun <reified T : Any> IKodi.holder(tag: String? = null, scope: String? = null): KodiHolder {
     val instance = this
-    val tagToWrap = (tag ?: "${T::class.java}").asTag()
-
-    val scopeToWrap = scope?.asScope() ?: defaultScope
+    val tagToWrap = tag.or { genericName<T>() }.asTag()
+    val scopeToWrap = scope?.asScope().or { defaultScope }
     return Kodi.createOrGet(tagToWrap, scopeToWrap) {
         throwKodiException<IllegalAccessException>("There is no tag `$tagToWrap` in dependency graph with scope `$scopeToWrap` injected into IKodi instance [$instance]")
     }

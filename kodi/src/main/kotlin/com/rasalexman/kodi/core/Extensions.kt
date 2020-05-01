@@ -44,7 +44,7 @@ fun String.asTag() = KodiTagWrapper(this)
 /**
  * Inline fun to convert any to [KodiTagWrapper]
  */
-inline fun <reified T : Any> T.asTag() = KodiTagWrapper("${T::class.java}")
+inline fun <reified T : Any> T.asTag() = KodiTagWrapper(genericName<T>())
 
 
 /**
@@ -59,6 +59,20 @@ fun <T : IKodi> KodiHolder.holderAs(prediction: T?, action: KodiHolder.(T) -> Un
         this.action(kodiInstance)
     }
     return this
+}
+
+/**
+ * Another elvis comparision high-order function
+ */
+fun <T> T?.or(block: () -> T): T {
+    return this ?: block()
+}
+
+/**
+ * Take generic `qualifiedName` from class
+ */
+inline fun <reified T> Any.genericName(): String {
+    return T::class.qualifiedName.toString()
 }
 
 /**
