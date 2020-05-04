@@ -22,7 +22,6 @@ const val FIRST_SCOPE = "FIRST_SCOPE"
 const val SECOND_SCOPE = "SECOND_SCOPE"
 
 @ExperimentalCoroutinesApi
-@UseExperimental(InternalCoroutinesApi::class)
 fun main() {
 
     val kodiModule = kodiModule {

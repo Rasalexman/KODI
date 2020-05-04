@@ -45,7 +45,6 @@ internal typealias KodiTagScopeWrappers = Pair<KodiTagWrapper, KodiScopeWrapper>
  * Bind instanceTag withScope available instance holders
  *
  * @param instance - [KodiHolder] instance for store
- * @return [KodiHolder] instance
  */
 inline infix fun <reified T : KodiHolder> KodiTagWrapper.with(instance: T) {
     instance tag this
