@@ -11,69 +11,6 @@ plugins {
     id("maven-publish")
 }
 
-
-/*
-android {
-    compileSdkVersion(COMPILE_VERSION)
-    defaultConfig {
-        minSdkVersion(MIN_VERSION)
-        targetSdkVersion(TARGET_VERSION)
-        versionCode = appdependencies.Builds.Kodi.VERSION_CODE
-        versionName = appdependencies.Builds.Kodi.VERSION_NAME
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
-        getByName("debug") {
-            isMinifyEnabled = false
-            isDebuggable = true
-        }
-
-        getByName("release") {
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-        }
-    }
-
-    sourceSets {
-        getByName("main") {
-            java.setSrcDirs(codeDirs)
-            res.setSrcDirs(resDirs)
-        }
-    }
-
-    dexOptions {
-        javaMaxHeapSize = "4g"
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    packagingOptions {
-        exclude("META-INF/notice.txt")
-    }
-
-    // Declare the task that will monitor all configurations.
-    configurations.all {
-        // 2 Define the resolution strategy in case of conflicts.
-        resolutionStrategy {
-            // Fail eagerly on version conflict (includes transitive dependencies),
-            // e.g., multiple different versions of the same dependency (group and name are equal).
-            failOnVersionConflict()
-
-            // Prefer modules that are part of this build (multi-project or composite build) over external modules.
-            preferProjectModules()
-        }
-    }
-
-    androidExtensions {
-        isExperimental = true
-        defaultCacheImplementation = org.jetbrains.kotlin.gradle.internal.CacheImplementation.HASH_MAP
-    }
-}
-*/
-
 // Declare the task that will monitor all configurations.
 configurations.all {
     // 2 Define the resolution strategy in case of conflicts.
@@ -119,6 +56,6 @@ repositories {
     mavenCentral()
 }
 
-apply {
+/*apply {
     from("deploy.gradle")
-}
+}*/

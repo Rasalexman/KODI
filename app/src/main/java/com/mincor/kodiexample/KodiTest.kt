@@ -36,7 +36,7 @@ fun main() {
         bind<ISingleInterface>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
         bind<ISingleInterface>() at MY_EXCLUSIV_SCOPE_NAME with single { SingleClass(UUID.randomUUID().toString()) }
 
-
+        bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) }
         bind<IClass>() at SECOND_SCOPE with single { SecondClass(instance(), instance()) }
         bind<IClass>() at FIRST_SCOPE with single { FirstClass(instance()) }
     } //withScope MY_ANOTHER_SCOPE_NAME
@@ -56,7 +56,7 @@ fun main() {
         val firstInstance: IClass = instance(scope = FIRST_SCOPE)
         val secondInstance: IClass = instance(scope = SECOND_SCOPE)
 
-        val coroutineManager = CoroutinesManager()
+        /*val coroutineManager = CoroutinesManager()
         coroutineManager.launch {
             val result = firstInstance("true", "true")
             log { "firstInstance id = $result" }
@@ -65,7 +65,7 @@ fun main() {
         coroutineManager.launch {
             val result = secondInstance("true", "true")
             log { "secondInstance id = $result" }
-        }
+        }*/
 
         unbind<ISingleInterface>(scope = MY_ANOTHER_SCOPE_NAME)
         //val removedInterface: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)

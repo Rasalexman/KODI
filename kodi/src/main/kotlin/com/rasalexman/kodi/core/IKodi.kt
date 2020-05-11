@@ -91,8 +91,8 @@ inline fun <reified T : Any, reified R : T> IKodi.bindType(tag: String? = null):
  */
 inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = null): Boolean {
     val tagToWrapper = tag.or { genericName<T>() }.asTag()
-    val scopeToWrap = scope?.asScope().or { defaultScope }
-    return Kodi.removeInstance(tagToWrapper, scopeToWrap) != null
+    val scopeToWrap = scope?.asScope()
+    return Kodi.removeInstance(tagToWrapper, scopeToWrap.or { defaultScope }) != null
 }
 
 /**
@@ -190,8 +190,8 @@ inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? 
 inline fun <reified T : Any> IKodi.holder(tag: String? = null, scope: String? = null): KodiHolder {
     val instance = this
     val tagToWrap = tag.or { genericName<T>() }.asTag()
-    val scopeToWrap = scope?.asScope().or { defaultScope }
-    return Kodi.createOrGet(tagToWrap, scopeToWrap) {
+    val scopeToWrap = scope?.asScope()
+    return Kodi.createOrGet(tagToWrap, scopeToWrap.or { defaultScope }) {
         throwKodiException<IllegalAccessException>("There is no tag `$tagToWrap` in dependency graph with scope `$scopeToWrap` injected into IKodi instance [$instance]")
     }
 }

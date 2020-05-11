@@ -5,6 +5,7 @@ import appdependencies.Libs
 import appdependencies.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
+import org.jetbrains.dokka.gradle.DokkaTask
 import resources.Resources.codeDirs
 import resources.Resources.resDirs
 
@@ -91,7 +92,7 @@ dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", Versions.kotlin))
 
-    implementation(appdependencies.Libs.Core.coreKtx)
+    implementation(Libs.Core.coreKtx)
     api(project(":kodi"))
 
     testImplementation(Libs.Tests.junit)
@@ -100,7 +101,7 @@ dependencies {
 }
 
 tasks {
-    val dokka by getting(org.jetbrains.dokka.gradle.DokkaTask::class) {
+    val dokka by getting(DokkaTask::class) {
         outputFormat = "html"
         outputDirectory = "$buildDir/dokka"
         configuration {
@@ -118,6 +119,6 @@ repositories {
     mavenCentral()
 }
 
-apply {
+/*apply {
     from("deploy.gradle")
-}
+}*/
