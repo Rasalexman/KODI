@@ -130,7 +130,7 @@ inline fun <reified T : Any> IKodi.hasInstance(tag: String? = null): Boolean {
 fun IKodi.bindTag(tag: String): KodiTagWrapper {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.bind<Any>(it)
-    }.or { throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY") }
+    } ?: throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
 }
 
 /**
@@ -147,7 +147,7 @@ fun IKodi.bindTag(tag: String): KodiTagWrapper {
 fun IKodi.unbindTag(tag: String, scope: String? = null): Boolean {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.unbind<Any>(tag, scope)
-    }.or { throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY") }
+    } ?: throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
 }
 
 /**
@@ -175,9 +175,7 @@ fun IKodi.unbindAll() {
 @CanThrowException("There is no KodiHolder instance in dependency graph")
 inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? = null): T {
     val inst = holder<T>(tag, scope).get(this)
-    return (inst as? T).or {
-        throwKodiException<ClassCastException>("Cannot cast instance = $inst to Generic type ${genericName<T>()}")
-    }
+    return (inst as? T) ?: throwKodiException<ClassCastException>("Cannot cast instance = $inst to Generic type ${genericName<T>()}")
 }
 
 /**

@@ -36,6 +36,10 @@ fun main() {
         bind<ISingleInterface>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
         bind<ISingleInterface>() at MY_EXCLUSIV_SCOPE_NAME with single { SingleClass(UUID.randomUUID().toString()) }
 
+        bindTag("Hello") with single {
+            "Hello"
+        }
+
         bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) }
         bind<IClass>() at SECOND_SCOPE with single { SecondClass(instance(), instance()) }
         bind<IClass>() at FIRST_SCOPE with single { FirstClass(instance()) }

@@ -46,7 +46,7 @@ tasks {
 repositories {
     mavenCentral()
 }
-
+// comment it if you fork this project
 apply {
     from("deploy.gradle")
 }
