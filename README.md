@@ -1,7 +1,7 @@
 # KODI
 KOtlin Dependency Injection (KODI) 
 
-[ ![Kotlin 1.3.71](https://img.shields.io/badge/Kotlin-1.3.72-blue.svg)](http://kotlinlang.org) [ ![Download](https://api.bintray.com/packages/sphc/Kodi/kodi/images/download.svg) ](https://bintray.com/sphc/Kodi/kodi/_latestVersion) [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d298c3a2eb044d688f9a4b33bf352389)](https://www.codacy.com/manual/Rasalexman/KODI?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Rasalexman/KODI&amp;utm_campaign=Badge_Grade)
+[ ![Kotlin 1.3.72](https://img.shields.io/badge/Kotlin-1.3.72-blue.svg)](http://kotlinlang.org) [ ![Download](https://api.bintray.com/packages/sphc/Kodi/kodi/images/download.svg) ](https://bintray.com/sphc/Kodi/kodi/_latestVersion) [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d298c3a2eb044d688f9a4b33bf352389)](https://www.codacy.com/manual/Rasalexman/KODI?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Rasalexman/KODI&amp;utm_campaign=Badge_Grade)
 
 This is simple and useful dependency injection framework for work with your regular projects. It use standart Kotlin language construction like `literal function with recieve`, `infix function`, `hight-order function`, ets. to bind and inject dependencies into your objects. It has two packages:
 
@@ -311,7 +311,7 @@ License
 
 MIT License
 
-Copyright (c) 2018 Aleksandr Minkin (sphc@yandex.ru)
+Copyright (c) 2020 Aleksandr Minkin (sphc@yandex.ru)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

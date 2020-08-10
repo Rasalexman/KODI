@@ -31,6 +31,7 @@ class MoviesRepository(
                         hasLocalResults = data.size >= 19
                         this
                     }.applyIf(hasLocalResults) {
+                        remoteDataSource.clearPage()
                         remoteDataSource.upPage()
                     }
 

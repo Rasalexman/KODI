@@ -30,7 +30,6 @@ object Libs {
         const val livedataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycle}"
         // alternately - if using Java8, use the following instead of lifecycle-compiler
         const val common = "androidx.lifecycle:lifecycle-common-java8:${lifecycle}"
-
     }
 
     ///------ RECYCLER VIEW ADAPTER
@@ -40,6 +39,7 @@ object Libs {
         const val diff = "com.mikepenz:fastadapter-extensions-diff:${fastAdapterLib}"
         const val paged = "com.mikepenz:fastadapter-extensions-paged:${fastAdapterLib}"
         const val uiExt = "com.mikepenz:fastadapter-extensions-ui:${fastAdapterLib}"
+        const val scroll = "com.mikepenz:fastadapter-extensions-scroll:${fastAdapterLib}" // scroll helpers
     }
 
     //--- ROOM DB

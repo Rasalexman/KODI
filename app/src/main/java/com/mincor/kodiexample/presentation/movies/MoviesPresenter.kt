@@ -1,6 +1,7 @@
 package com.mincor.kodiexample.presentation.movies
 
 import com.mincor.kodiexample.common.Consts.Modules.PresentersName
+import com.mincor.kodiexample.common.applyIf
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.movies.IGetMoviesInOutUseCase
 import com.mincor.kodiexample.domain.usecases.movies.IGetNextMoviesUseCase
@@ -23,6 +24,8 @@ class MoviesPresenter constructor(
     private val getMoviesUseCase: IGetMoviesInOutUseCase by immutableInstance()
     private val getNextMoviesUseCase: IGetNextMoviesUseCase by immutableInstance()
 
+    private val allResults = mutableListOf<MovieUI>()
+
     private val catchBlock: SuspendCatch<Unit> = {
         view().showError(it.message.orEmpty())
         view().hideLoading()
@@ -31,6 +34,7 @@ class MoviesPresenter constructor(
     override var genreId: Int = 0
         set(value) {
             field = value
+            allResults.clear()
             onGenreIdChanged()
         }
 
@@ -38,9 +42,12 @@ class MoviesPresenter constructor(
             tryBlock = {
                 view().showLoading()
                 val result = getMoviesUseCase.invoke(genreId)
+                (result as? SResult.Success)?.let {
+                    allResults.addAll(result.data)
+                }
                 view().sticky {
                     when (result) {
-                        is SResult.Success -> showItems(result.data)
+                        is SResult.Success -> showItems(allResults)
                         is SResult.Error -> showError(result.message)
                     }
                 }
@@ -52,6 +59,9 @@ class MoviesPresenter constructor(
             tryBlock = {
                 view().showLoading()
                 val result = getNextMoviesUseCase.invoke(genreId)
+                (result as? SResult.Success)?.let {
+                    allResults.addAll(result.data)
+                }
                 view().singleSticky {
                     when (result) {
                         is SResult.Success -> addItems(result.data)
@@ -62,7 +72,6 @@ class MoviesPresenter constructor(
     )
 
     override fun onViewDestroyed() {
-        genreId = 0
         cleanup()
     }
 }

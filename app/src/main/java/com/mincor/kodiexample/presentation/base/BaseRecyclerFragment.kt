@@ -9,8 +9,8 @@ import com.mikepenz.fastadapter.adapters.GenericItemAdapter
 import com.mikepenz.fastadapter.diff.FastAdapterDiffUtil
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.items.BaseItem
+import com.mikepenz.fastadapter.scroll.EndlessRecyclerOnScrollListener
 import com.mikepenz.fastadapter.ui.items.ProgressItem
-import com.mincor.kodiexample.common.EndlessRecyclerViewScrollListener
 import com.mincor.kodiexample.common.ScrollPosition
 import com.mincor.kodiexample.common.unsafeLazy
 import com.rasalexman.sticky.core.IStickyPresenter
@@ -31,25 +31,32 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
 
     // layout manager for recycler
     protected open var recyclerLayoutManager: RecyclerView.LayoutManager? = null
+
     // направление размещения элементов в адаптере
     protected open val layoutManagerOrientation: Int = LinearLayoutManager.VERTICAL
+
     // бесконечный слушатель слушатель скролла
-    private var scrollListener: EndlessRecyclerViewScrollListener? = null
+    private var scrollListener: EndlessRecyclerOnScrollListener? = null
+
     // custom decorator
     protected open var itemDecoration: RecyclerView.ItemDecoration? = null
 
     // main adapter items holder
     private val itemAdapter by unsafeLazy { GenericItemAdapter() }
     private val footerAdapter by unsafeLazy { GenericItemAdapter() }
+
     // save our FastAdapter
     protected val mFastItemAdapter: FastAdapter<*> by unsafeLazy { FastAdapter.with(listOf(itemAdapter, footerAdapter)) }
 
     // последняя сохраненная позиция (index & offset) прокрутки ленты
     protected val previousPosition: ScrollPosition = ScrollPosition()
+
     // крутилка прогресса)
     private val progressItem by unsafeLazy { ProgressItem().apply { isEnabled = false } }
+
     // корличесвто элементов до того как пойдет запрос на скролл пагинацию
     protected open val visibleScrollCount = 5
+
     //
     protected open val needScroll: Boolean = false
 
@@ -60,6 +67,7 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mFastItemAdapter.withSavedInstanceState(savedInstanceState)
         recycler = view.findViewById(recyclerViewId)
 
         setRVLayoutManager()     // менеджер лайаута
@@ -70,6 +78,11 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
         if (needScroll) {
             setRVCScroll()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mFastItemAdapter.withSavedInstanceState(outState)
     }
 
     override fun onDestroyView() {
@@ -101,7 +114,6 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
         hideLoading()
         if (list.isNotEmpty()) {
             FastAdapterDiffUtil[itemAdapter] = list
-            scrollToTop()
         }
     }
 
@@ -109,7 +121,6 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
         hideLoading()
         if (list.isNotEmpty()) {
             FastAdapterDiffUtil[itemAdapter] = FastAdapterDiffUtil.calculateDiff(itemAdapter, list)
-            scrollToTop()
         }
     }
 
@@ -163,13 +174,14 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
 
     // слушатель бесконечная прокрутка
     protected open fun setRVCScroll() {
-        scrollListener = scrollListener
-                ?: object : EndlessRecyclerViewScrollListener(recyclerLayoutManager, visibleScrollCount) {
-                    override fun onLoadMore(page: Int, totalItemsCount: Int) {
-                        onLoadNextHandler?.invoke() ?: onLoadNextPageHandler?.invoke(page)
+        scrollListener =
+                object : EndlessRecyclerOnScrollListener(footerAdapter) {
+                    override fun onLoadMore(currentPage: Int) {
+                        onLoadNextHandler?.invoke() ?: onLoadNextPageHandler?.invoke(currentPage)
                     }
+                }.also {
+                    recycler?.addOnScrollListener(it)
                 }
-        recycler?.addOnScrollListener(scrollListener!!)
     }
 
     // если хотим сохранить последнюю проскролленную позицию
@@ -209,7 +221,6 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
     }
 
     private fun clearAdapter() {
-        scrollListener?.resetState()
         itemAdapter.clear()
         mFastItemAdapter.notifyAdapterDataSetChanged()
         mFastItemAdapter.notifyDataSetChanged()

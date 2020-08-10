@@ -129,9 +129,7 @@ sealed class KodiHolder {
             singleInstanceProvider?.invoke(Kodi)?.also {
                 singleInstance = it
             }
-        }.or {
-            throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
-        }
+        } ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
 
         /**
          * Clear current Single Holder
@@ -156,9 +154,7 @@ sealed class KodiHolder {
         override fun get(kodiImpl: IKodi): T {
             return providerLiteral
                     ?.invoke(kodiImpl)
-                    .or {
-                        throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
-                    }
+                    ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
         }
 
         /**
@@ -181,9 +177,9 @@ sealed class KodiHolder {
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T {
-            return providerLiteral?.invoke(kodiImpl, null).or {
-                throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
-            }
+            return providerLiteral
+                    ?.invoke(kodiImpl, null)
+                    ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
         }
 
         /**
@@ -203,9 +199,8 @@ sealed class KodiHolder {
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T {
-            return constantValue.or {
+            return constantValue ?:
                 throwKodiException<NoSuchElementException>("There is no instance in [KodiConstant]")
-            }
         }
 
         /**

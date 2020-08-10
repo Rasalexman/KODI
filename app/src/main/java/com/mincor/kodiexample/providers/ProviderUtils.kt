@@ -30,10 +30,10 @@ object ProviderUtils {
             toClass = ImageLoader::class,
             toModule = Consts.Modules.ProvidersName
     )
-    fun createImageLoader(context: Context, client: OkHttpClient) = ImageLoader(context) {
-        availableMemoryPercentage(0.5)
-        bitmapPoolPercentage(0.5)
-        crossfade(true)
-        okHttpClient(client)
-    }
+    fun createImageLoader(context: Context, client: OkHttpClient) =
+            ImageLoader.Builder(context)
+                    .availableMemoryPercentage(0.5)
+                    .bitmapPoolPercentage(0.5)
+                    .crossfade(true)
+                    .okHttpClient(client).build()
 }
