@@ -3,7 +3,7 @@ package appdependencies
 object Versions {
 
     const val gradle = "4.0.1"
-    const val kotlin = "1.3.72"
+    const val kotlin = "1.4.10"
     const val kotlinGradle = "1.3.6"
     const val google = "4.3.3"
     const val dokka = "0.10.0"
@@ -26,11 +26,11 @@ object Versions {
 
     const val fastAdapterLib = "5.2.2"
 
-    const val coil = "0.11.0"
+    const val coil = "0.13.0"
 
     const val room = "2.2.3"
 
-    const val kotPref = "2.10.0"
+    const val kotPref = "2.11.0"
     const val circleImageView = "3.0.1"
     const val coroutinesManager = "1.2.32"
     const val timber = "4.7.1"
