@@ -1,5 +1,6 @@
 import appdependencies.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.net.URL
 import org.jetbrains.dokka.gradle.DokkaTask
 import resources.Resources.codeDirs
 
@@ -44,11 +45,18 @@ dependencies {
     implementation(kotlin("stdlib-jdk8", Versions.kotlin))
 }
 
-
 tasks {
     val dokka by getting(DokkaTask::class) {
         outputFormat = "html"
         outputDirectory = "$buildDir/dokka"
+        configuration {
+            externalDocumentationLink {
+                noJdkLink = true
+                noAndroidSdkLink = true
+                noStdlibLink = true
+                packageListUrl = URL("https://kotlinlang.org/api/latest/jvm/stdlib/package-list")
+            }
+        }
     }
 }
 

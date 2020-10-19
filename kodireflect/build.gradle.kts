@@ -98,13 +98,13 @@ dependencies {
     androidTestImplementation(Libs.Tests.runner)
     androidTestImplementation(Libs.Tests.espresso)
 }
-
+/*
 tasks {
     val dokka by getting(org.jetbrains.dokka.gradle.DokkaTask::class) {
         outputFormat = "html"
         outputDirectory = "$buildDir/dokka"
     }
-}
+}*/
 
 repositories {
     mavenCentral()

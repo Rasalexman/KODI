@@ -35,13 +35,13 @@ tasks.withType<KotlinCompile>().all {
             "-XXLanguage:+InlineClasses"
     )
 }
-
+/*
 tasks {
     val dokka by getting(DokkaTask::class) {
         outputFormat = "html"
         outputDirectory = "$buildDir/dokka"
     }
-}
+}*/
 
 repositories {
     mavenCentral()
