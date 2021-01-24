@@ -6,7 +6,7 @@ import android.widget.ImageView
 import com.mincor.kodiexample.R
 
 
-class MovieImageView : ImageView {
+class MovieImageView : androidx.appcompat.widget.AppCompatImageView {
 
     private var heightProc: Float = DEFAULT_VALUE
     private var widthProc: Float = DEFAULT_VALUE

@@ -54,6 +54,10 @@ class KodiProcessor : AbstractProcessor() {
         private const val KODI_MEMBER_WITH = "with"
         private const val KODI_MEMBER_INSTANCE = "instance"
 
+        private const val TAG_MEMBER_NAME = "%M"
+        private const val TAG_PACKAGE_NAME = "%S"
+        private const val TAG_CLASS_NAME = "%T"
+
         private const val KODI_TAG_PATTERN = "tag = %S"
         private const val KODI_SCOPE_PATTERN = "scope = %S"
 
@@ -114,7 +118,7 @@ class KodiProcessor : AbstractProcessor() {
         val fileName = "${lowerModuleName.capitalize()}$DEFAULT_MODULE_NAME"
 
         val codeInitializer = buildCodeBlock {
-            add("%M {", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_MODULE))
+            add("$TAG_MEMBER_NAME {", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_MODULE))
             moduleElements.forEach { bindingData ->
 
                 val element = bindingData.element
@@ -129,8 +133,8 @@ class KodiProcessor : AbstractProcessor() {
                 }
 
                 add(" \n")
-                add("%M", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_BIND))
-                add("<%T>", ClassName(toPack, toClass))
+                add(TAG_MEMBER_NAME, MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_BIND))
+                add("<$TAG_CLASS_NAME>", ClassName(toPack, toClass))
                 if (tag.isNotEmpty()) {
                     add("($KODI_TAG_PATTERN) ", tag)
                 } else {
@@ -138,11 +142,11 @@ class KodiProcessor : AbstractProcessor() {
                 }
 
                 if (scope.isNotEmpty()) {
-                    add("%M %S ", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_AT), scope)
+                    add("$TAG_MEMBER_NAME $TAG_PACKAGE_NAME ", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_AT), scope)
                 }
 
-                add("%M ", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_WITH))
-                add("%M {", MemberName(KODI_PACKAGE_PATH, instanceType))
+                add("$TAG_MEMBER_NAME ", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_WITH))
+                add("$TAG_MEMBER_NAME {", MemberName(KODI_PACKAGE_PATH, instanceType))
                 add(" \n")
 
                 if (element.kind == ElementKind.METHOD) {
@@ -210,7 +214,7 @@ class KodiProcessor : AbstractProcessor() {
         if (isAbstract) {
             addInstance(packageName = packageName, className = className)
         } else {
-            add("%T(", ClassName(packageName, className))
+            add("$TAG_CLASS_NAME(", ClassName(packageName, className))
             val constructor = element.enclosedElements.find { enclosedElement ->
                 enclosedElement.kind == ElementKind.CONSTRUCTOR
             } as? ExecutableElement
@@ -246,18 +250,18 @@ class KodiProcessor : AbstractProcessor() {
                 add(".$methodName(")
             }
             element.modifiers.contains(Modifier.STATIC) -> {
-                add("%M(", MemberName(packageOf, methodName))
+                add("$TAG_MEMBER_NAME(", MemberName(packageOf, methodName))
             }
             parentElement.modifiers.contains(Modifier.STATIC) -> {
                 val parentPackageOf = parentElement.asType().toString()
                 val companionElement = TYPE_UTILS.asElement(parentElement.enclosingElement.asType())
                 val companionName = companionElement.simpleName.toString()
                 val companionPackageOf = ELEMENT_UTILS.getPackageOf(element).toString()
-                add("%T.%M(", ClassName(companionPackageOf, companionName), MemberName(parentPackageOf, methodName))
+                add("$TAG_CLASS_NAME.$TAG_MEMBER_NAME(", ClassName(companionPackageOf, companionName), MemberName(parentPackageOf, methodName))
             }
             else -> {
                 val parentPackageOf = parentElement.asType().toString()
-                add("%T.%M(", ClassName(packageOf, parentName), MemberName(parentPackageOf, methodName))
+                add("$TAG_CLASS_NAME.$TAG_MEMBER_NAME(", ClassName(packageOf, parentName), MemberName(parentPackageOf, methodName))
             }
         }
 
@@ -305,9 +309,9 @@ class KodiProcessor : AbstractProcessor() {
             className: String = ""
     ) {
         val instanceMember = MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_INSTANCE)
-        add("%M", instanceMember)
+        add(TAG_MEMBER_NAME, instanceMember)
         if (packageName.isNotEmpty() && className.isNotEmpty() && !packageName.contains(KODI_ERROR_PACKAGE_NAME)) {
-            add("<%T>", ClassName(packageName, className))
+            add("<$TAG_CLASS_NAME>", ClassName(packageName, className))
         }
 
         if (tag.isNotEmpty() && scope.isNotEmpty()) {
