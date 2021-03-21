@@ -12,7 +12,7 @@ import resources.Resources.resDirs
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("android.extensions")
+    //kotlin("android.extensions")
     id("androidx.navigation.safeargs.kotlin")
     id("com.jfrog.bintray")
     id("org.jetbrains.dokka")
@@ -47,9 +47,9 @@ android {
         }
     }
 
-    dexOptions {
+    /*dexOptions {
         javaMaxHeapSize = "4g"
-    }
+    }*/
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -60,9 +60,6 @@ android {
         kotlinOptions.suppressWarnings = true
         kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.noReflect = true
-        kotlinOptions.freeCompilerArgs += listOf(
-                "-XXLanguage:+InlineClasses"
-        )
     }
 
     packagingOptions {
@@ -82,10 +79,10 @@ android {
         }
     }
 
-    androidExtensions {
+    /*androidExtensions {
         isExperimental = true
         defaultCacheImplementation = org.jetbrains.kotlin.gradle.internal.CacheImplementation.HASH_MAP
-    }
+    }*/
 }
 
 dependencies {
