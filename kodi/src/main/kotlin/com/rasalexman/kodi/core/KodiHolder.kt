@@ -35,6 +35,11 @@ sealed class KodiHolder {
     abstract fun get(kodiImpl: IKodi): Any
 
     /**
+     *
+     */
+    abstract fun notifyInstanceWasBinded(kodiImpl: IKodi)
+
+    /**
      * Local Holder scope [KodiScopeWrapper]
      */
     var scope: KodiScopeWrapper = emptyScope()
@@ -90,6 +95,7 @@ sealed class KodiHolder {
         if (tag.isNotEmpty()) {
             val selectedScope = scope.takeIf { it.isNotEmpty() && it != defaultScope }.or { defaultScope }
             Kodi.createOrGet(tag, selectedScope, ::getCurrentHolder)
+            notifyInstanceWasBinded(Kodi)
         }
     }
 
@@ -107,6 +113,14 @@ sealed class KodiHolder {
      */
     private fun getCurrentHolder() = this
 
+    /**
+     *
+     */
+    protected fun<T : Any> notifyBindedListeners(currentInstance: T) {
+        if(Kodi.hasBindingListeners(tag, scope)) {
+            Kodi.notifyInstanceWasBinded(tag, scope, currentInstance)
+        }
+    }
 
     /**
      * Single Instance Holder withScope lazy initialization
@@ -126,10 +140,18 @@ sealed class KodiHolder {
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): T = singleInstance.or {
-            singleInstanceProvider?.invoke(Kodi)?.also {
+            singleInstanceProvider?.invoke(Kodi).also {
                 singleInstance = it
             }
         } ?: throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
+
+        /**
+         *
+         */
+        override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
+            val currentInstance = get(kodiImpl)
+            notifyBindedListeners(currentInstance)
+        }
 
         /**
          * Clear current Single Holder
@@ -158,6 +180,14 @@ sealed class KodiHolder {
         }
 
         /**
+         *
+         */
+        override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
+            val currentInstance = get(kodiImpl)
+            notifyBindedListeners(currentInstance)
+        }
+
+        /**
          * Clear current provider from literal
          */
         override fun clear() {
@@ -183,6 +213,14 @@ sealed class KodiHolder {
         }
 
         /**
+         *
+         */
+        override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
+            val currentInstance = get(kodiImpl)
+            notifyBindedListeners(currentInstance)
+        }
+
+        /**
          * Get value with params not implemented yet
          */
         fun getWithParam(kodiImpl: IKodi, param: R) = providerLiteral?.invoke(kodiImpl, param)
@@ -201,6 +239,14 @@ sealed class KodiHolder {
         override fun get(kodiImpl: IKodi): T {
             return constantValue ?:
                 throwKodiException<NoSuchElementException>("There is no instance in [KodiConstant]")
+        }
+
+        /**
+         *
+         */
+        override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
+            val currentInstance = get(kodiImpl)
+            notifyBindedListeners(currentInstance)
         }
 
         /**

@@ -27,6 +27,21 @@ internal typealias LambdaWithReturn<T> = () -> T
 internal typealias KodiInstanceMap = MutableMap<KodiTagWrapper, KodiHolder>
 
 /**
+ * Instance Listener function
+ */
+internal typealias InstanceHandler<T> = (T) -> Unit
+
+/**
+ *
+ */
+internal typealias AnyInstanceHandler = InstanceHandler<Any>
+
+/**
+ *
+ */
+internal typealias Handlers = MutableList<AnyInstanceHandler>
+
+/**
  * Main storage abstraction
  */
 interface IKodiStorage<V> {
@@ -94,11 +109,17 @@ interface IKodiStorage<V> {
     /**
      * Create or get [KodiHolder] instance from storage
      *
-     * @param key [KodiTagWrapper] - for retrieve instance by tag
+     * @param tag [KodiTagWrapper] - for retrieve instance by tag
      * @param scope [KodiScopeWrapper] - current scope or [defaultScope]
      * @param defaultValue [LambdaWithReturn] - lambda for create default value if it's not exist
      */
-    fun createOrGet(key: KodiTagWrapper, scope: KodiScopeWrapper, defaultValue: LambdaWithReturn<V>): V
+    fun createOrGet(tag: KodiTagWrapper, scope: KodiScopeWrapper, defaultValue: LambdaWithReturn<V>): V
+
+    fun hasBindingListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean
+    fun<T> addBindingListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>)
+    fun<T> removeInstanceBindedListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>): Boolean
+    fun removeAllInstanceListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper)
+    fun <T> notifyInstanceWasBinded(tag: KodiTagWrapper, scope: KodiScopeWrapper, instance: T)
 }
 
 /**
@@ -115,6 +136,12 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      *  Kodi modules set
      */
     private val modulesSet by immutableGetter { mutableSetOf<IKodiModule>() }
+
+    /**
+     *
+     */
+    private val instanceBindedListener by immutableGetter { mutableMapOf<Pair<KodiTagWrapper, KodiScopeWrapper>, Handlers>() }
+    //private val instanceUnBindedListener by immutableGetter { mutableMapOf<Pair<KodiTagWrapper, KodiScopeWrapper>, Handlers>() }
 
     /**
      * Add [IKodiModule] to Kodi Module Storage set
@@ -253,6 +280,40 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
             defaultMap != null && defaultMap.isNotEmpty()
         } else {
             false
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> addBindingListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>) {
+        val listeners = instanceBindedListener.getOrPut(tag to scope) { mutableListOf() }
+        val anyLocalListener = listener as AnyInstanceHandler
+        if(listeners.indexOf(listener) < 0) {
+            listeners.add(anyLocalListener)
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> removeInstanceBindedListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>): Boolean {
+        val listeners = instanceBindedListener[tag to scope]
+        return listeners?.remove(listener as AnyInstanceHandler) ?: false
+    }
+
+    override fun removeAllInstanceListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper) {
+        val listeners = instanceBindedListener[tag to scope]
+        listeners?.clear()
+    }
+
+    override fun hasBindingListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean {
+        val listeners = instanceBindedListener[tag to scope]
+        return listeners?.isNotEmpty() ?: false
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun<T> notifyInstanceWasBinded(tag: KodiTagWrapper, scope: KodiScopeWrapper, instance: T) {
+        val listeners = instanceBindedListener[tag to scope]
+        val localListeners = listeners.orEmpty()
+        localListeners.forEach {
+            (it as? InstanceHandler<T>)?.invoke(instance)
         }
     }
 

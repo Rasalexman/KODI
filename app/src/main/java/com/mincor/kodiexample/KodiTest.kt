@@ -47,6 +47,11 @@ fun main() {
 
 
     kodi {
+        addInstanceBindedListener<ISingleInterface>(scope = MY_SINGLE_SCOPE_NAME) { iSingleInterface ->
+            println("$TAG instance $iSingleInterface is added to graph")
+        }
+
+
         import(kodiModule)
         import(anotherModule)
 

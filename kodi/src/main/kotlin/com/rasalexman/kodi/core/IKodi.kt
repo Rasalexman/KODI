@@ -228,6 +228,19 @@ inline fun <reified T : Any> IKodi.constant(noinline init: InstanceInitializer<T
 }
 
 /**
+ *
+ */
+inline fun <reified T : Any> IKodi.addInstanceBindedListener(
+        tag: String? = null,
+        scope: String? = null,
+        noinline listener: InstanceHandler<T>
+) {
+    val tagToWrap = tag.or { genericName<T>() }.asTag()
+    val scopeToWrap = scope?.asScope()
+    Kodi.addBindingListener(tagToWrap, scopeToWrap.or { defaultScope }, listener)
+}
+
+/**
  * Lazy immutable property initializer wrapper for injection
  * Example: `val someValue by immutableInstance<ISomeValueClass>()`
  * It cannot be change
