@@ -311,7 +311,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
     override fun removeAllScope(scope: KodiScopeWrapper): Boolean {
         val scopedList = takeFilteredKeys(scope.toString())
         scopedList.forEach {
-            instancesStore.remove(it)
+            instancesStore.remove(it)?.clear()
         }
         return scopedList.isNotEmpty()
     }
