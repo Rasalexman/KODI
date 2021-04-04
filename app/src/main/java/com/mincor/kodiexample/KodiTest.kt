@@ -76,7 +76,7 @@ fun main() {
             log { "secondInstance id = $result" }
         }*/
 
-        unbind<ISingleInterface>(scope = MY_ANOTHER_SCOPE_NAME)
+        unbind<ISingleInterface>()
         //val removedInterface: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
 
         //log { "Is instance equals = ${firstModuleInstance == secondModuleInstance}" }

@@ -21,7 +21,7 @@ object Versions {
     const val swipeRefresh = "1.0.0"
     const val paging = "2.1.1"
 
-    const val retrofit = "2.7.1"
+    const val retrofit = "2.9.0"
     const val retrofitLogging = "3.0.0"
 
     const val fastAdapterLib = "5.2.2"

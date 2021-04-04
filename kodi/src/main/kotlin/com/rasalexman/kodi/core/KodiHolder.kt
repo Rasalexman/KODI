@@ -35,11 +35,6 @@ sealed class KodiHolder {
     abstract fun get(kodiImpl: IKodi): Any
 
     /**
-     *
-     */
-    //abstract fun notifyInstanceWasBinded(kodiImpl: IKodi)
-
-    /**
      * Local Holder scope [KodiScopeWrapper]
      */
     var scope: KodiScopeWrapper = emptyScope()
@@ -108,6 +103,10 @@ sealed class KodiHolder {
         }
     }
 
+    /**
+     * Notify all binding listener that instance is added to dependency graph
+     * @param kodiImpl - implemented [IKodi] instance
+     */
     private fun notifyInstanceWasBinded(kodiImpl: IKodi) {
         if(Kodi.hasBindingListeners(tag, scope)) {
             val currentInstance = get(kodiImpl)
