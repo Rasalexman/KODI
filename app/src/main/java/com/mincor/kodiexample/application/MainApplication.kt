@@ -18,7 +18,7 @@ import com.rasalexman.coroutinesmanager.IAsyncTasksManager
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
 import com.rasalexman.kodi.core.*
 
-class MainApplication : Application() {
+class MainApplication : Application(), IKodi {
 
     val kodi = kodi {
         bind<Context>() with provider { applicationContext }
@@ -39,7 +39,7 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Coil.setImageLoader(kodi { instance<ImageLoader>() })
+        Coil.setImageLoader(instance<ImageLoader>())
     }
 
     override fun onTerminate() {

@@ -37,7 +37,7 @@ sealed class KodiHolder {
     /**
      *
      */
-    abstract fun notifyInstanceWasBinded(kodiImpl: IKodi)
+    //abstract fun notifyInstanceWasBinded(kodiImpl: IKodi)
 
     /**
      * Local Holder scope [KodiScopeWrapper]
@@ -108,19 +108,17 @@ sealed class KodiHolder {
         }
     }
 
+    private fun notifyInstanceWasBinded(kodiImpl: IKodi) {
+        if(Kodi.hasBindingListeners(tag, scope)) {
+            val currentInstance = get(kodiImpl)
+            Kodi.notifyInstanceWasBinded(tag, scope, currentInstance)
+        }
+    }
+
     /**
      * Take current holder for delegation in graph
      */
     private fun getCurrentHolder() = this
-
-    /**
-     *
-     */
-    protected fun<T : Any> notifyBindedListeners(currentInstance: T) {
-        if(Kodi.hasBindingListeners(tag, scope)) {
-            Kodi.notifyInstanceWasBinded(tag, scope, currentInstance)
-        }
-    }
 
     /**
      * Single Instance Holder withScope lazy initialization
@@ -148,10 +146,12 @@ sealed class KodiHolder {
         /**
          *
          */
-        override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
-            val currentInstance = get(kodiImpl)
-            notifyBindedListeners(currentInstance)
-        }
+        /*override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
+            if(Kodi.hasBindingListeners(tag, scope)) {
+                val currentInstance = get(kodiImpl)
+                Kodi.notifyInstanceWasBinded(tag, scope, currentInstance)
+            }
+        }*/
 
         /**
          * Clear current Single Holder
@@ -182,10 +182,10 @@ sealed class KodiHolder {
         /**
          *
          */
-        override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
+        /*override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
             val currentInstance = get(kodiImpl)
             notifyBindedListeners(currentInstance)
-        }
+        }*/
 
         /**
          * Clear current provider from literal
@@ -215,10 +215,10 @@ sealed class KodiHolder {
         /**
          *
          */
-        override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
+        /*override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
             val currentInstance = get(kodiImpl)
             notifyBindedListeners(currentInstance)
-        }
+        }*/
 
         /**
          * Get value with params not implemented yet
@@ -244,10 +244,10 @@ sealed class KodiHolder {
         /**
          *
          */
-        override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
+        /*override fun notifyInstanceWasBinded(kodiImpl: IKodi) {
             val currentInstance = get(kodiImpl)
             notifyBindedListeners(currentInstance)
-        }
+        }*/
 
         /**
          * Clear KodiConstant value
