@@ -419,14 +419,15 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
     }
 
     /**
-     *
+     * Filter [instanceStore] by some params
+     * @param filter - current filter text
      */
     private fun takeFilteredKeys(filter: String): List<String> {
         return instancesStore.filterKeys { it.contains(filter) }.keys.toList()
     }
 
     /**
-     *
+     * Take listeners from input event type
      */
     private fun takeListeners(event: BindingEvent): ListenersMap {
         return bindingListeners.takeIf { event == BindingEvent.BIND }
