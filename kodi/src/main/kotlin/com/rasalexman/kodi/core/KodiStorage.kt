@@ -37,6 +37,11 @@ internal typealias AnyInstanceHandler = InstanceHandler<Any>
 internal typealias Handlers = MutableList<AnyInstanceHandler>
 
 /**
+ *
+ */
+internal typealias ListenersMap = MutableMap<String, Handlers>
+
+/**
  * Main storage abstraction
  */
 interface IKodiStorage<V> {
@@ -118,7 +123,7 @@ interface IKodiStorage<V> {
      * @param listener - [InstanceHandler] function for handle binding event
      *
      */
-    fun<T> addBindingListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>)
+    fun<T> addListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>, event: BindingEvent = BindingEvent.BIND)
 
     /**
      * Check if instance has binding listeners
@@ -127,7 +132,7 @@ interface IKodiStorage<V> {
      * @param scope - [KodiScopeWrapper] current scope data
      *
      */
-    fun hasBindingListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean
+    fun hasListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper, event: BindingEvent = BindingEvent.BIND): Boolean
 
     /**
      * Remove instance from binding listeners list
@@ -137,7 +142,7 @@ interface IKodiStorage<V> {
      * @param listener - [InstanceHandler] binding handler
      *
      */
-    fun<T> removeInstanceBindedListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>): Boolean
+    fun<T> removeListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>, event: BindingEvent = BindingEvent.BIND): Boolean
 
     /**
      * Clear all binding listeners by input parameters
@@ -146,17 +151,17 @@ interface IKodiStorage<V> {
      * @param scope - [KodiScopeWrapper] current scope data
      *
      */
-    fun removeAllInstanceListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper)
+    fun removeAllListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper)
 
     /**
-     * Notify all binding listeners that instance is already binding to dependency scope
+     * Notify all binding listeners that instance is already added to dependency graph
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
      * @param scope - [KodiScopeWrapper] current scope data
      * @param instance - current instance of listening
      *
      */
-    fun <T> notifyInstanceWasBinded(tag: KodiTagWrapper, scope: KodiScopeWrapper, instance: T)
+    fun <T> notifyListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper, instance: T, event: BindingEvent = BindingEvent.BIND)
 }
 
 /**
@@ -164,6 +169,9 @@ interface IKodiStorage<V> {
  */
 abstract class KodiStorage : IKodiStorage<KodiHolder> {
 
+    /**
+     * All instances holders storage
+     */
     private val instancesStore by immutableGetter { mutableMapOf<String, KodiHolder>() }
 
     /**
@@ -174,12 +182,12 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
     /**
      * Instance Binding Listeners
      */
-    private val instanceBindedListener by immutableGetter { mutableMapOf<String, Handlers>() }
+    private val bindingListeners by immutableGetter { mutableMapOf<String, Handlers>() }
 
     /**
      * Instance Unbind listeners
      */
-    private val instanceUnBindedListener by immutableGetter { mutableMapOf<String, Handlers>() }
+    private val unbindingListeners by immutableGetter { mutableMapOf<String, Handlers>() }
 
     /**
      * Add [IKodiModule] to Kodi Module Storage set
@@ -262,7 +270,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * The instance [KodiTagWrapper] to retrieve
      */
     override fun hasInstance(tag: KodiTagWrapper): Boolean {
-        return instancesStore.filterKeys { it.contains(tag.asString()) }.isNotEmpty()
+        return takeFilteredKeys(tag.asString()).isNotEmpty()
     }
 
     /**
@@ -280,11 +288,13 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
             // if we has scope to delete instance, create key and remove current instance
             if(scope.isNotEmpty() && scope != defaultScope) {
                 val key = createKey(tag, scope)
-                instancesStore.remove(key) != null
+                instancesStore.remove(key)?.apply {
+                    clear()
+                } != null
             } else {
-                val allInstances = instancesStore.filterKeys { it.contains(tag.asString()) }.keys.toList()
+                val allInstances = takeFilteredKeys(tag.asString())
                 allInstances.forEach {
-                    instancesStore.remove(it)
+                    instancesStore.remove(it)?.clear()
                 }
                 allInstances.isNotEmpty()
             }
@@ -299,7 +309,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * @return [Boolean] - is references deleted
      */
     override fun removeAllScope(scope: KodiScopeWrapper): Boolean {
-        val scopedList = instancesStore.filterKeys { it.contains(scope.toString()) }.keys.toList()
+        val scopedList = takeFilteredKeys(scope.toString())
         scopedList.forEach {
             instancesStore.remove(it)
         }
@@ -315,9 +325,14 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      *
      */
     @Suppress("UNCHECKED_CAST")
-    override fun <T> addBindingListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>) {
+    override fun <T> addListener(
+            tag: KodiTagWrapper,
+            scope: KodiScopeWrapper,
+            listener: InstanceHandler<T>,
+            event: BindingEvent
+    ) {
         val key = createKey(tag, scope)
-        val listeners = instanceBindedListener.getOrPut(key) { mutableListOf() }
+        val listeners = takeListeners(event).getOrPut(key) { mutableListOf() }
         val anyLocalListener = listener as AnyInstanceHandler
         if(listeners.indexOf(listener) < 0) {
             listeners.add(anyLocalListener)
@@ -332,9 +347,14 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      *
      */
     @Suppress("UNCHECKED_CAST")
-    override fun <T> removeInstanceBindedListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>): Boolean {
+    override fun <T> removeListener(
+            tag: KodiTagWrapper,
+            scope: KodiScopeWrapper,
+            listener: InstanceHandler<T>,
+            event: BindingEvent
+    ): Boolean {
         val key = createKey(tag, scope)
-        val listeners = instanceBindedListener[key]
+        val listeners = takeListeners(event)[key]
         return listeners?.remove(listener as AnyInstanceHandler) ?: false
     }
 
@@ -345,10 +365,10 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * @param scope - [KodiScopeWrapper] current scope data
      *
      */
-    override fun removeAllInstanceListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper) {
+    override fun removeAllListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper) {
         val key = createKey(tag, scope)
-        val listeners = instanceBindedListener[key]
-        listeners?.clear()
+        bindingListeners[key]?.clear()
+        unbindingListeners[key]?.clear()
     }
 
     /**
@@ -358,9 +378,9 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      * @param scope - [KodiScopeWrapper] current scope data
      *
      */
-    override fun hasBindingListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean {
+    override fun hasListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper, event: BindingEvent): Boolean {
         val key = createKey(tag, scope)
-        val listeners = instanceBindedListener[key]
+        val listeners = takeListeners(event)[key]
         return listeners?.isNotEmpty() ?: false
     }
 
@@ -373,9 +393,14 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
      *
      */
     @Suppress("UNCHECKED_CAST")
-    override fun<T> notifyInstanceWasBinded(tag: KodiTagWrapper, scope: KodiScopeWrapper, instance: T) {
+    override fun<T> notifyListeners(
+            tag: KodiTagWrapper,
+            scope: KodiScopeWrapper,
+            instance: T,
+            event: BindingEvent
+    ) {
         val key = createKey(tag, scope)
-        val listeners = instanceBindedListener[key]
+        val listeners = takeListeners(event)[key]
         val localListeners = listeners?.toList().orEmpty()
         localListeners.forEach {
             (it as? InstanceHandler<T>)?.invoke(instance)
@@ -389,7 +414,23 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
     override fun clearAll() {
         instancesStore.clear()
         modulesSet.clear()
-        instanceBindedListener.clear()
+        bindingListeners.clear()
+        unbindingListeners.clear()
+    }
+
+    /**
+     *
+     */
+    private fun takeFilteredKeys(filter: String): List<String> {
+        return instancesStore.filterKeys { it.contains(filter) }.keys.toList()
+    }
+
+    /**
+     *
+     */
+    private fun takeListeners(event: BindingEvent): ListenersMap {
+        return bindingListeners.takeIf { event == BindingEvent.BIND }
+                .or { unbindingListeners }
     }
 
     /**

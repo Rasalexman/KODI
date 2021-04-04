@@ -111,6 +111,9 @@ inline fun <reified T : Any> IKodi.hasModule(tag: String? = null): Boolean {
 /**
  * Check if tag or generic class has been added into Kodi dependency graph
  *
+ * @param tag - optional parameter for custom manipulating withScope instance tag
+ * if there is no tag provided the generic class name will be used as `T::class.java.toString()`
+ *
  * @return [Boolean]
  */
 inline fun <reified T : Any> IKodi.hasInstance(tag: String? = null): Boolean {
@@ -170,6 +173,7 @@ fun IKodi.unbindAll() {
  * Take current instance for injection
  *
  * @param tag - String instance tag (Optional)
+ * @param scope - String of instance scope
  * @throws IllegalAccessException - if there is no tag in dependency graph
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
@@ -182,6 +186,7 @@ inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? 
  * Take current [KodiHolder] instance for injection or throw an Exception if it's does't exist
  *
  * @param tag - String instance tag (Optional)
+ * @param scope - String of instance scope
  * @throws IllegalAccessException - if there is no tag in dependency graph it's crash
  */
 @CanThrowException("There is no KodiHolder instance in dependency graph")
@@ -228,16 +233,55 @@ inline fun <reified T : Any> IKodi.constant(noinline init: InstanceInitializer<T
 }
 
 /**
+ * Add listener for event when instance is already binded to dependency graph
+ *
+ * @param tag - String instance tag (Optional)
+ * @param scope - String of instance scope (Optional)
+ * @param listener - event handling function
  *
  */
-inline fun <reified T : Any> IKodi.addInstanceBindedListener(
+inline fun <reified T : Any> IKodi.addBindingListener(
         tag: String? = null,
         scope: String? = null,
         noinline listener: InstanceHandler<T>
 ) {
+    addListener(tag, scope, listener, BindingEvent.BIND)
+}
+
+/**
+ * Add listener for event when instance is already unbinded(removed) from dependency graph
+ *
+ * @param tag - String instance tag (Optional)
+ * @param scope - String of instance scope (Optional)
+ * @param listener - event handling function
+ *
+ */
+inline fun <reified T : Any> IKodi.addUnbindingListener(
+        tag: String? = null,
+        scope: String? = null,
+        noinline listener: InstanceHandler<T>
+) {
+    addListener(tag, scope, listener, BindingEvent.UNBIND)
+}
+
+/**
+ * Add listener for bind or unbind event for instance
+ *
+ * @param tag - String instance tag (Optional)
+ * @param scope - String of instance scope (Optional)
+ * @param listener - event handling function
+ * @param event - [BindingEvent]
+ *
+ */
+inline fun <reified T : Any> IKodi.addListener(
+        tag: String? = null,
+        scope: String? = null,
+        noinline listener: InstanceHandler<T>,
+        event: BindingEvent
+) {
     val tagToWrap = tag.or { genericName<T>() }.asTag()
     val scopeToWrap = scope?.asScope()
-    Kodi.addBindingListener(tagToWrap, scopeToWrap.or { defaultScope }, listener)
+    Kodi.addListener(tagToWrap, scopeToWrap.or { defaultScope }, listener, event)
 }
 
 /**

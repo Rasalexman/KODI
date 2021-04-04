@@ -1,12 +1,8 @@
 package com.mincor.kodiexample
 
-import com.mincor.kodiexample.activity.log
 import com.mincor.kodiexample.domain.usecases.base.IUseCase
-import com.rasalexman.coroutinesmanager.CoroutinesManager
 import com.rasalexman.kodi.core.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.launch
 import java.util.*
 
 const val SOME_CONSTANT_TAG = "SOME_CONSTANT_TAG"
@@ -47,8 +43,11 @@ fun main() {
 
 
     kodi {
-        addInstanceBindedListener<ISingleInterface>(scope = MY_SINGLE_SCOPE_NAME) { iSingleInterface ->
+        addBindingListener<ISingleInterface>(scope = MY_SINGLE_SCOPE_NAME) { iSingleInterface ->
             println("$TAG instance $iSingleInterface is added to graph")
+        }
+        addUnbindingListener<ISingleInterface>  {  iSingleInterface ->
+            println("$TAG instance $iSingleInterface was removed from graph")
         }
 
 
