@@ -419,8 +419,8 @@ abstract class KodiStorage : IKodiStorage<KodiHolder> {
     }
 
     /**
-     * Filter [instanceStore] by some params
-     * @param filter - current filter text
+     * Filter keys by some params
+     * @param filter - current filter text for keys
      */
     private fun takeFilteredKeys(filter: String): List<String> {
         return instancesStore.filterKeys { it.contains(filter) }.keys.toList()
