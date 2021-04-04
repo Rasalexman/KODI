@@ -110,10 +110,52 @@ interface IKodiStorage<V> {
      */
     fun createOrGet(tag: KodiTagWrapper, scope: KodiScopeWrapper, defaultValue: LambdaWithReturn<V>): V
 
-    fun hasBindingListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean
+    /**
+     * Add binding listeners to the list
+     *
+     * @param tag - [KodiTagWrapper] to remove value if it's exist
+     * @param scope - [KodiScopeWrapper] current scope data
+     * @param listener - [InstanceHandler] function for handle binding event
+     *
+     */
     fun<T> addBindingListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>)
+
+    /**
+     * Check if instance has binding listeners
+     *
+     * @param tag - [KodiTagWrapper] to remove value if it's exist
+     * @param scope - [KodiScopeWrapper] current scope data
+     *
+     */
+    fun hasBindingListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean
+
+    /**
+     * Remove instance from binding listeners list
+     *
+     * @param tag - [KodiTagWrapper] to remove value if it's exist
+     * @param scope - [KodiScopeWrapper] current scope data
+     * @param listener - [InstanceHandler] binding handler
+     *
+     */
     fun<T> removeInstanceBindedListener(tag: KodiTagWrapper, scope: KodiScopeWrapper, listener: InstanceHandler<T>): Boolean
+
+    /**
+     * Clear all binding listeners by input parameters
+     *
+     * @param tag - [KodiTagWrapper] to remove value if it's exist
+     * @param scope - [KodiScopeWrapper] current scope data
+     *
+     */
     fun removeAllInstanceListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper)
+
+    /**
+     * Notify all binding listeners that instance is already binding to dependency scope
+     *
+     * @param tag - [KodiTagWrapper] to remove value if it's exist
+     * @param scope - [KodiScopeWrapper] current scope data
+     * @param instance - current instance of listening
+     *
+     */
     fun <T> notifyInstanceWasBinded(tag: KodiTagWrapper, scope: KodiScopeWrapper, instance: T)
 }
 
