@@ -7,7 +7,7 @@ import resources.Resources.codeDirs
 plugins {
     id("java-library")
     id("kotlin")
-    id("org.jetbrains.dokka")
+    //id("org.jetbrains.dokka")
 }
 
 // Declare the task that will monitor all configurations.
@@ -43,7 +43,7 @@ dependencies {
     implementation(kotlin("stdlib", Versions.kotlin))
 }
 
-tasks {
+/*tasks {
     val dokka by getting(DokkaTask::class) {
         outputFormat = "html"
         outputDirectory = "$buildDir/dokka"
@@ -56,7 +56,7 @@ tasks {
             }
         }
     }
-}
+}*/
 
 // comment this apply function if you fork this project
 apply {

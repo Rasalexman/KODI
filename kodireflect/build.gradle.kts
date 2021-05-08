@@ -38,7 +38,7 @@ android {
         }
     }
 
-    sourceSets {
+    /*sourceSets {
         getByName("main") {
             java.setSrcDirs(javaDirs)
             res.setSrcDirs(dirs)
@@ -47,7 +47,7 @@ android {
 
     dexOptions {
         javaMaxHeapSize = "4g"
-    }
+    }*/
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

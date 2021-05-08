@@ -13,7 +13,7 @@ plugins {
     //kotlin("android.extensions")
     //id("androidx.navigation.safeargs.kotlin")
     //id("com.jfrog.bintray")
-    id("org.jetbrains.dokka")
+    //id("org.jetbrains.dokka")
 }
 
 android {
@@ -88,10 +88,6 @@ dependencies {
 
     implementation(Libs.Core.coreKtx)
     api(project(":kodi"))
-
-    testImplementation(Libs.Tests.junit)
-    androidTestImplementation(Libs.Tests.runner)
-    androidTestImplementation(Libs.Tests.espresso)
 }
 
 /*tasks {

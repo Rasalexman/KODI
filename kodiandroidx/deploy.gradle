@@ -1,5 +1,5 @@
 import appdependencies.Builds
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'android-maven'
 
 group = 'com.rasalexman.kodiandroidx' // package name of the project
 version = Builds.KodiAndroidX.VERSION_NAME
@@ -14,8 +14,11 @@ if (project.hasProperty("kotlin")) { //Kotlin libraries
         from android.sourceSets.main.java.srcDirs
     }
 
-    task javadoc(type: Javadoc, dependsOn: dokka) {
-
+    task javadoc(type: Javadoc) {
+        failOnError false
+        source = android.sourceSets.main.java.sourceFiles
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        classpath += configurations.compile
     }
 } else if (project.hasProperty("android")) {
     task sourcesJar(type: Jar) {
@@ -26,6 +29,7 @@ if (project.hasProperty("kotlin")) { //Kotlin libraries
     task javadoc(type: Javadoc) {
         source = android.sourceSets.main.java.srcDirs
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        classpath += configurations.compile
     }
 } else { // Java libraries
     task sourcesJar(type: Jar, dependsOn: classes) {

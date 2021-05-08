@@ -19,7 +19,7 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar, dependsOn: dokka) {
+task javadocJar(type: Jar, dependsOn: javadoc) {
     archiveClassifier = 'javadoc'
     from javadoc.destinationDir
     // options.encoding = 'UTF-8'
