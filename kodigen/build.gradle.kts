@@ -18,9 +18,9 @@ dependencies {
     implementation(kotlin("stdlib", appdependencies.Versions.kotlin))
     implementation(project(":kodi"))
 
-    implementation("com.squareup:kotlinpoet:1.6.0")
-    implementation("com.google.auto.service:auto-service:1.0-rc7")
-    kapt("com.google.auto.service:auto-service:1.0-rc7")
+    implementation("com.squareup:kotlinpoet:1.8.0")
+    implementation("com.google.auto.service:auto-service:1.0")
+    kapt("com.google.auto.service:auto-service:1.0")
 }
 
 tasks.withType<KotlinCompile>().all {

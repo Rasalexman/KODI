@@ -2,12 +2,11 @@ package appdependencies
 
 object Versions {
 
-    const val gradle = "4.1.2"
+    const val gradle = "4.1.3"
     const val kotlin = "1.4.32"
     const val kotlinGradle = "2.1.4"
     const val google = "4.3.3"
     const val dokka = "0.10.0"
-    const val bintray = "1.8.4"
     const val maven = "2.0"
 
     //const val appCompatX = "1.1.0"
