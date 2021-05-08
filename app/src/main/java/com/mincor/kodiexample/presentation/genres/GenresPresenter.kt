@@ -8,6 +8,8 @@ import com.rasalexman.coroutinesmanager.launchOnUITryCatch
 import com.rasalexman.kodi.annotations.BindSingle
 import com.rasalexman.kodi.annotations.IgnoreInstance
 import com.rasalexman.sticky.core.IStickyPresenter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @BindSingle(
         toClass = GenresContract.IPresenter::class,
@@ -25,7 +27,7 @@ class GenresPresenter constructor(
     override fun onViewCreated(view: GenresContract.IView) = launchOnUITryCatch(
             tryBlock = {
                 view().showLoading()
-                val result = getGenresUseCase.invoke()
+                val result = withContext(Dispatchers.IO) { getGenresUseCase.invoke() }
                 view().sticky {
                     when(result) {
                         is SResult.Success -> showItems(result.data)
@@ -34,6 +36,7 @@ class GenresPresenter constructor(
                 }
             },
             catchBlock = {
+                println("----> ERROR = $it")
                 view().hideLoading()
             }
     )

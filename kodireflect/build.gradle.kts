@@ -2,7 +2,6 @@ import appdependencies.Builds.COMPILE_VERSION
 import appdependencies.Builds.MIN_VERSION
 import appdependencies.Builds.TARGET_VERSION
 import appdependencies.Versions
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.android.library")
@@ -47,15 +46,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    tasks.withType<KotlinCompile>().all {
-        kotlinOptions.suppressWarnings = true
-        kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.noReflect = true
-        kotlinOptions.freeCompilerArgs += listOf(
-                "-XXLanguage:+InlineClasses"
-        )
-    }
-
     packagingOptions {
         exclude("META-INF/notice.txt")
     }
@@ -72,31 +62,53 @@ android {
             preferProjectModules()
         }
     }
-
-    /*androidExtensions {
-        isExperimental = true
-        defaultCacheImplementation = org.jetbrains.kotlin.gradle.internal.CacheImplementation.HASH_MAP
-    }*/
 }
 
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib", Versions.kotlin))
     implementation(kotlin("reflect", Versions.kotlin))
-
-    /*testImplementation(Libs.Tests.junit)
-    androidTestImplementation(Libs.Tests.runner)
-    androidTestImplementation(Libs.Tests.espresso)*/
 }
-/*
-tasks {
-    val dokka by getting(org.jetbrains.dokka.gradle.DokkaTask::class) {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/dokka"
-    }
+
+group = "com.rasalexman.kodireflect"
+version = appdependencies.Builds.KodiReflect.VERSION_NAME
+
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+/*val javaComponent = components["java"] as AdhocComponentWithVariants
+javaComponent.withVariantsFromConfiguration(configurations["sourcesElements"]) {
+    skip()
 }*/
 
-// comment this if you fork this project
-apply {
-    from("deploy.gradle")
+afterEvaluate {
+
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = "com.rasalexman.kodireflect"
+                artifactId = "kodireflect"
+                version = appdependencies.Builds.KodiReflect.VERSION_NAME
+            }
+            create<MavenPublication>("debug") {
+                from(components["debug"])
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = "com.rasalexman.kodireflect"
+                artifactId = "kodireflect-debug"
+                version = appdependencies.Builds.KodiReflect.VERSION_NAME
+            }
+        }
+
+        repositories {
+            maven {
+                url = uri("${buildDir}/publishing-repository")
+            }
+        }
+    }
 }

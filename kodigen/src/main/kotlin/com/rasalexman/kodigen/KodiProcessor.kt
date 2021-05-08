@@ -113,9 +113,13 @@ class KodiProcessor : AbstractProcessor() {
     }
 
     private fun processModules(moduleName: String, moduleElements: List<KodiBindData>) {
-        val lowerModuleName = moduleName.apply { this[0].toLowerCase() }
-        val packageName = "$KODI_GENERATED_PATH${moduleName.toLowerCase()}"
-        val fileName = "${lowerModuleName.capitalize()}$DEFAULT_MODULE_NAME"
+        val lowerModuleName = moduleName.apply { this[0].lowercaseChar() }
+        val packageName = "$KODI_GENERATED_PATH${moduleName.lowercase(Locale.ENGLISH)}"
+        val fileName = "${lowerModuleName.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                Locale.ENGLISH
+            ) else it.toString()
+        }}$DEFAULT_MODULE_NAME"
 
         val codeInitializer = buildCodeBlock {
             add("$TAG_MEMBER_NAME {", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_MODULE))

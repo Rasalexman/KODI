@@ -47,15 +47,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
-        kotlinOptions.suppressWarnings = true
-        kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.noReflect = true
-        kotlinOptions.freeCompilerArgs += listOf(
-                "-XXLanguage:+InlineClasses"
-        )
-    }
-
     packagingOptions {
         exclude("META-INF/notice.txt")
     }
@@ -82,24 +73,36 @@ dependencies {
     api(project(":kodi"))
 }
 
-/*tasks {
-    val dokka by getting(DokkaTask::class) {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/dokka"
-        configuration {
-            externalDocumentationLink {
-                noJdkLink = true
-                noAndroidSdkLink = true
-                noStdlibLink = true
-                packageListUrl = URL("https://kotlinlang.org/api/latest/jvm/stdlib/package-list")
+group = "com.rasalexman.kodiandroidx"
+version = appdependencies.Builds.KodiAndroidX.VERSION_NAME
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = "com.rasalexman.kodiandroidx"
+                artifactId = "kodiandroidx"
+                version = appdependencies.Builds.KodiAndroidX.VERSION_NAME
+            }
+            create<MavenPublication>("debug") {
+                from(components["debug"])
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = "com.rasalexman.kodiandroidx"
+                artifactId = "kodiandroidx-debug"
+                version = appdependencies.Builds.KodiAndroidX.VERSION_NAME
+            }
+        }
+
+        repositories {
+            maven {
+                name = "kodiandroidx"
+                url = uri(layout.buildDirectory.dir("repo"))
             }
         }
     }
 }
 
-*/
-
-// comment it if you fork this project
-apply {
-    from("deploy.gradle")
-}

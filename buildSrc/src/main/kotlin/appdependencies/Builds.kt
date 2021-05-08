@@ -4,7 +4,7 @@ object Builds {
     const val MIN_VERSION = 19
     const val COMPILE_VERSION = 30
     const val TARGET_VERSION = 30
-    const val BUILD_TOOLS = "29.0.3"
+    const val BUILD_TOOLS = "30.0.2"
     const val APP_ID = "com.mincor.kodiexample"
 
     object App {
@@ -13,17 +13,17 @@ object Builds {
     }
 
     object Kodi {
-        const val VERSION_NAME = "1.5.13"
+        const val VERSION_NAME = "1.5.14"
     }
 
     object KodiAndroidX {
-        const val VERSION_CODE = 105013
-        const val VERSION_NAME = "1.5.13"
+        const val VERSION_CODE = 105014
+        const val VERSION_NAME = "1.5.14"
     }
 
     object KodiReflect {
-        const val VERSION_CODE = 10130
-        const val VERSION_NAME = "1.1.30"
+        const val VERSION_CODE = 10131
+        const val VERSION_NAME = "1.1.31"
     }
 }
 

@@ -1,16 +1,15 @@
 package com.mincor.kodiexample.presentation.movies
 
 import android.view.View
-import coil.api.load
+import coil.load
 import com.mikepenz.fastadapter.FastAdapter
 import com.mincor.kodiexample.BuildConfig
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.common.clear
 import com.mincor.kodiexample.common.hide
 import com.mincor.kodiexample.common.show
+import com.mincor.kodiexample.databinding.LayoutMoviesItemBinding
 import com.mincor.kodiexample.presentation.base.BaseRecyclerUI
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.layout_movies_item.view.*
 
 data class MovieUI(
         val id: Int,
@@ -40,14 +39,16 @@ data class MovieUI(
     val fullPosterUrl: String
         get() = "${BuildConfig.IMAGES_URL}$posterPath"
 
-    class MovieViewHolder(override val containerView: View) : FastAdapter.ViewHolder<MovieUI>(containerView), LayoutContainer {
+    class MovieViewHolder(containerView: View) : FastAdapter.ViewHolder<MovieUI>(containerView) {
+
+        private val movieBinding: LayoutMoviesItemBinding = LayoutMoviesItemBinding.bind(containerView)
 
         override fun bindView(item: MovieUI, payloads: List<Any>) {
-            with(containerView) {
+            with(movieBinding) {
                 titleTextView.text = item.title
                 releaseTextView.text = item.releaseDate
                 overviewTextView.text = item.overview
-                setVoteAverage(item)
+                movieBinding.setVoteAverage(item)
 
                 movieImageView.load(item.fullPosterUrl) {
                     placeholder(R.drawable.ic_cloud_off_black_24dp)
@@ -65,7 +66,7 @@ data class MovieUI(
         }
 
         override fun unbindView(item: MovieUI) {
-            with(containerView) {
+            with(movieBinding) {
                 titleTextView.clear()
                 releaseTextView.clear()
                 overviewTextView.clear()
@@ -75,7 +76,7 @@ data class MovieUI(
             }
         }
 
-        private fun View.setVoteAverage(item: MovieUI) {
+        private fun LayoutMoviesItemBinding.setVoteAverage(item: MovieUI) {
             if(item.voteAverage > 0.0) {
                 voteAverageTextView.show()
                 voteAverageTextView.text = item.voteAverage.toString()

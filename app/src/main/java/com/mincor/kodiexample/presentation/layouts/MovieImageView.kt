@@ -2,7 +2,6 @@ package com.mincor.kodiexample.presentation.layouts
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.ImageView
 import com.mincor.kodiexample.R
 
 

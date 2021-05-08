@@ -1,9 +1,9 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import resources.Resources.codeDirs
 
 plugins {
     id("java-library")
     id("kotlin")
+    id("maven-publish")
     kotlin("kapt")
 }
 
@@ -13,13 +13,20 @@ sourceSets {
     }
 }
 
-tasks.withType<KotlinCompile>().all {
-    kotlinOptions.suppressWarnings = true
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.noReflect = true
-    kotlinOptions.freeCompilerArgs += listOf(
-            "-XXLanguage:+InlineClasses"
-    )
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    withJavadocJar()
+    withSourcesJar()
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "org.jetbrains.kotlin") {
+            this.useVersion(appdependencies.Versions.kotlin)
+        }
+    }
 }
 
 dependencies {
@@ -32,7 +39,29 @@ dependencies {
     kapt("com.google.auto.service:auto-service:1.0")
 }
 
-// comment this apply function if you fork this project
-apply {
-    from("deploy.gradle")
+group = "com.rasalexman.kodigen"
+version = appdependencies.Builds.Kodi.VERSION_NAME
+
+publishing {
+    publications {
+        create<MavenPublication>("kodigen") {
+            from(components["kotlin"])
+            // You can then customize attributes of the publication as shown below.
+            groupId = "com.rasalexman.kodigen"
+            artifactId = "kodigen"
+            version = appdependencies.Builds.Kodi.VERSION_NAME
+
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
+        }
+    }
+
+    repositories {
+        maven {
+            name = "kodigen"
+            url = uri("${buildDir}/publishing-repository")
+        }
+    }
 }
+
+

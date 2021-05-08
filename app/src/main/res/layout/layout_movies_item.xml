@@ -1,92 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
-        android:id="@+id/imageFrameLayout"
-        android:layout_width="wrap_content"
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/size_8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:orientation="vertical">
 
-        <ProgressBar
-            android:id="@+id/imageProgressBar"
+        <FrameLayout
+            android:id="@+id/imageFrameLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:indeterminateDrawable="@drawable/spinner_ring"/>
-
-        <com.mincor.kodiexample.presentation.layouts.MovieImageView
-            android:id="@+id/movieImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            app:widthProc="0.4"
-            app:widthAspect="fourToThree"
+            android:layout_margin="@dimen/size_8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ProgressBar
+                android:id="@+id/imageProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:indeterminateDrawable="@drawable/spinner_ring" />
+
+            <com.mincor.kodiexample.presentation.layouts.MovieImageView
+                android:id="@+id/movieImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                app:widthProc="0.4"
+                app:widthAspect="fourToThree"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/voteAverageTextView"
+                android:textColor="@color/text_white"
+                android:padding="@dimen/size_8dp"
+                android:textSize="@dimen/text_size_14sp"
+                android:layout_gravity="top|start"
+                android:background="@color/gray_alpha_60"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="7.6" />
+        </FrameLayout>
+
 
         <TextView
-            android:id="@+id/voteAverageTextView"
-            android:textColor="@color/text_white"
-            android:padding="@dimen/size_8dp"
-            android:textSize="@dimen/text_size_14sp"
-            android:layout_gravity="top|start"
-            android:background="@color/gray_alpha_60"
-            android:layout_width="wrap_content"
+            android:id="@+id/titleTextView"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:text="7.6"/>
-    </FrameLayout>
+            android:layout_margin="@dimen/size_8dp"
+            android:textSize="@dimen/text_size_18sp"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageFrameLayout"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="MovieImageView Title" />
 
+        <TextView
+            android:id="@+id/releaseTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8dp"
+            android:layout_marginEnd="@dimen/size_8dp"
+            android:textSize="@dimen/text_size_14sp"
+            android:textColor="@color/text_secondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageFrameLayout"
+            app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+            tools:text="MovieImageView Title" />
 
-    <TextView
-        android:id="@+id/titleTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/size_8dp"
-        android:textSize="@dimen/text_size_18sp"
-        android:textColor="@color/text_primary"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageFrameLayout"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="MovieImageView Title"/>
+        <TextView
+            android:id="@+id/overviewTextView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/size_8dp"
+            android:layout_marginBottom="@dimen/size_16dp"
+            android:textSize="@dimen/text_size_16sp"
+            android:textColor="@color/text_secondary"
+            android:ellipsize="end"
+            android:maxLines="7"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageFrameLayout"
+            app:layout_constraintTop_toBottomOf="@+id/releaseTextView"
+            tools:text="MovieImageView Title" />
 
-    <TextView
-        android:id="@+id/releaseTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/size_8dp"
-        android:layout_marginEnd="@dimen/size_8dp"
-        android:textSize="@dimen/text_size_14sp"
-        android:textColor="@color/text_secondary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageFrameLayout"
-        app:layout_constraintTop_toBottomOf="@+id/titleTextView"
-        tools:text="MovieImageView Title"/>
-
-    <TextView
-        android:id="@+id/overviewTextView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/size_8dp"
-        android:layout_marginBottom="@dimen/size_16dp"
-        android:textSize="@dimen/text_size_16sp"
-        android:textColor="@color/text_secondary"
-        android:ellipsize="end"
-        android:maxLines="7"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageFrameLayout"
-        app:layout_constraintTop_toBottomOf="@+id/releaseTextView"
-        tools:text="MovieImageView Title"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

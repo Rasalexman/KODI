@@ -6,16 +6,13 @@ import appdependencies.Builds.TARGET_VERSION
 import appdependencies.Libs
 import appdependencies.Versions
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import resources.Resources.App.dirs
-import resources.Resources.App.javaDirs
 
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("android.extensions")
-    kotlin("kapt")
     id("androidx.navigation.safeargs.kotlin")
+    kotlin("kapt")
 }
 
 android {
@@ -46,7 +43,7 @@ android {
         }
     }
 
-    sourceSets {
+    /*sourceSets {
         getByName("main") {
             java.setSrcDirs(arrayListOf(
                     "${buildDir.absolutePath}/generated/source/kaptKotlin/",
@@ -54,7 +51,7 @@ android {
             ))
             res.setSrcDirs(dirs)
         }
-    }
+    }*/
 
     dexOptions {
         javaMaxHeapSize = "4g"
@@ -79,15 +76,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    tasks.withType<KotlinCompile>().all {
-        kotlinOptions.suppressWarnings = true
-        kotlinOptions.jvmTarget = "1.8"
-        kotlinOptions.noReflect = true
-        kotlinOptions.freeCompilerArgs += listOf(
-                "-XXLanguage:+InlineClasses"
-        )
-    }
-
     packagingOptions {
         exclude("META-INF/notice.txt")
     }
@@ -105,9 +93,14 @@ android {
         }
     }
 
-    androidExtensions {
-        isExperimental = true
-        defaultCacheImplementation = org.jetbrains.kotlin.gradle.internal.CacheImplementation.HASH_MAP
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
+
+    kotlinOptions {
+        languageVersion = "1.5"
+        apiVersion = "1.5"
     }
 }
 
@@ -167,8 +160,8 @@ dependencies {
 
     //implementation("com.rasalexman.kodigen:kodigen:1.4.92")
 
-    kapt(project(":kodigen"))
-    //kapt("com.rasalexman.kodigen:kodigen:1.4.92")
+    //kapt(project(":kodigen"))
+    kapt("com.github.Rasalexman.KODI:kodigen:1.5.13")
     kapt(appdependencies.Libs.Room.kapt)
 }
 /*

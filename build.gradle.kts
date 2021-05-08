@@ -5,7 +5,6 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
-        //maven { url = uri("https://plugins.gradle.org/m2/") }
         //maven { url = uri("https://dl.bintray.com/kotlin/dokka") }
 
     }
@@ -28,7 +27,6 @@ allprojects {
         jcenter()
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
-        //maven { url = uri("https://plugins.gradle.org/m2/") }
         //maven { url = uri("https://dl.bintray.com/kotlin/dokka") }
     }
 }

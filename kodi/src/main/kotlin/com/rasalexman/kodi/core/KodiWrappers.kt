@@ -19,7 +19,8 @@ package com.rasalexman.kodi.core
  *
  * @param instanceTag - String tag for instance `key` storage
  */
-inline class KodiTagWrapper(private val instanceTag: String) {
+@JvmInline
+value class KodiTagWrapper(private val instanceTag: String) {
 
     /**
      * Check instanceTag is not empty
@@ -85,7 +86,8 @@ infix fun KodiTagWrapper.at(scopeName: String): KodiTagScopeWrappers {
  *
  * @param scopeTag - String tag for moduleScope `key` storage
  */
-inline class KodiScopeWrapper(private val scopeTag: String) {
+@JvmInline
+value class KodiScopeWrapper(private val scopeTag: String) {
     /**
      * Is Wrapper [scopeTag] empty
      *

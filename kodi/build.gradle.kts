@@ -1,11 +1,11 @@
 //import org.jetbrains.dokka.gradle.DokkaTask
 import appdependencies.Versions
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import resources.Resources.codeDirs
 
 plugins {
     id("java-library")
     id("kotlin")
+    id("maven-publish")
     //id("org.jetbrains.dokka")
 }
 
@@ -22,13 +22,12 @@ configurations.all {
     }
 }
 
-tasks.withType<KotlinCompile>().all {
-    kotlinOptions.suppressWarnings = true
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.noReflect = true
-    kotlinOptions.freeCompilerArgs += listOf(
-            "-XXLanguage:+InlineClasses"
-    )
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
 sourceSets {
@@ -42,23 +41,29 @@ dependencies {
     implementation(kotlin("stdlib", Versions.kotlin))
 }
 
-/*tasks {
-    val dokka by getting(DokkaTask::class) {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/dokka"
-        configuration {
-            externalDocumentationLink {
-                noJdkLink = true
-                noAndroidSdkLink = true
-                noStdlibLink = true
-                packageListUrl = URL("https://kotlinlang.org/api/latest/jvm/stdlib/package-list")
-            }
+group = "com.rasalexman.kodi"
+version = appdependencies.Builds.Kodi.VERSION_NAME
+
+
+publishing {
+    publications {
+        create<MavenPublication>("kodi") {
+            from(components["kotlin"])
+
+            // You can then customize attributes of the publication as shown below.
+            groupId = "com.rasalexman.kodi"
+            artifactId = "kodi"
+            version = appdependencies.Builds.Kodi.VERSION_NAME
+
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
         }
     }
-}*/
 
-// comment this apply function if you fork this project
-apply {
-    from("deploy.gradle")
+    repositories {
+        maven {
+            name = "kodi"
+            url = uri("${buildDir}/publishing-repository")
+        }
+    }
 }
-

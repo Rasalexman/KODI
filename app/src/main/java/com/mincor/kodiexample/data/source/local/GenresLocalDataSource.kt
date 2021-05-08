@@ -14,6 +14,9 @@ import com.rasalexman.kodi.annotations.BindSingle
 class GenresLocalDataSource(
     private val genresDao: IGenresDao
 ) : IGenresLocalDataSource {
-    override suspend fun getGenresList(): SResult.Success<List<GenreEntity>> = successResult(genresDao.getAll())
+    override suspend fun getGenresList(): SResult.Success<List<GenreEntity>> {
+        val allItems = genresDao.getAll()
+        return successResult(allItems)
+    }
     override suspend fun insertGenres(data: List<GenreEntity>) = genresDao.insertAll(data)
 }

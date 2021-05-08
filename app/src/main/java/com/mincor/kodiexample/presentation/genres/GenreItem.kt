@@ -4,18 +4,17 @@ import android.view.View
 import android.widget.ImageView
 import androidx.annotation.Keep
 import androidx.core.view.forEachIndexed
-import coil.api.clear
 import coil.api.load
+import coil.clear
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IItemVHFactory
 import com.mikepenz.fastadapter.items.BaseItem
 import com.mikepenz.fastadapter.items.BaseItemFactory
 import com.mincor.kodiexample.BuildConfig
 import com.mincor.kodiexample.R
+import com.mincor.kodiexample.databinding.LayoutGenreItemBinding
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
 import com.rasalexman.coroutinesmanager.launchOnUI
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.layout_genre_item.view.*
 
 @Keep
 data class GenreItem(
@@ -33,18 +32,19 @@ data class GenreItem(
         override fun getViewHolder(v: View) = GenreViewHolder(v)
     }
 
-    class GenreViewHolder(override val containerView: View) : FastAdapter.ViewHolder<GenreItem>(containerView),
-            LayoutContainer, ICoroutinesManager {
+    class GenreViewHolder(containerView: View) : FastAdapter.ViewHolder<GenreItem>(containerView), ICoroutinesManager {
+
+        private val itemBinding = LayoutGenreItemBinding.bind(containerView)
 
         override fun bindView(item: GenreItem, payloads: List<Any>) {
-            with(containerView) {
+            with(itemBinding) {
                 titleTextView.text = item.name
-                val urlList = item.images
+                val urlList = item.images.toList()
 
                 launchOnUI {
                     imagesLayout.forEachIndexed { index, view ->
                         val imageView = view as ImageView
-                        val imageUrl = "${BuildConfig.IMAGES_URL}${urlList[index]}"
+                        val imageUrl = "${BuildConfig.IMAGES_URL}${urlList.getOrNull(index)}"
                         imageView.load(imageUrl)
                     }
                 }
@@ -52,7 +52,7 @@ data class GenreItem(
         }
 
         override fun unbindView(item: GenreItem) {
-            with(containerView) {
+            with(itemBinding) {
                 titleTextView.text = null
                 imageView1.clear()
                 imageView2.clear()

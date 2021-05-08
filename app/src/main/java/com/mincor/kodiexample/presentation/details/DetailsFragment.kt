@@ -1,18 +1,23 @@
 package com.mincor.kodiexample.presentation.details
 
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import coil.api.load
-import com.rasalexman.kodi.core.IKodi
-import com.rasalexman.kodi.core.throwKodiException
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.common.Consts
 import com.mincor.kodiexample.data.model.local.MovieEntity
+import com.mincor.kodiexample.databinding.FragmentDetailsBinding
 import com.mincor.kodiexample.presentation.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_details.*
+import com.rasalexman.kodi.core.IKodi
+import com.rasalexman.kodi.core.throwKodiException
 
 class DetailsFragment : BaseFragment<DetailsPresenter>(),
         IDetailsView, IKodi {
+
+    private lateinit var detailsBinding: FragmentDetailsBinding
 
     override val needBackButton: Boolean
         get() = true
@@ -20,28 +25,39 @@ class DetailsFragment : BaseFragment<DetailsPresenter>(),
     override val layoutId: Int
         get() = R.layout.fragment_details
 
-    override val toolbarView: Toolbar?
-        get() = toolBarView
+    override val toolbarView: Toolbar
+        get() = detailsBinding.toolBarView
 
-    override val contentLayout: View?
-        get() = detailsContentLayout
+    override val contentLayout: View
+        get() = detailsBinding.detailsContentLayout
 
-    override val loadingLayout: View?
-        get() = contentProgressBar
+    override val loadingLayout: View
+        get() = detailsBinding.contentProgressBar
 
     override val presenter: DetailsPresenter get() = DetailsPresenter().apply {
         movieId = arguments?.getInt(KEY_MOVIE_ID) ?: throwKodiException<IllegalAccessException>("Movie Id can't be null")
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return super.onCreateView(inflater, container, savedInstanceState)?.also {
+            detailsBinding = FragmentDetailsBinding.bind(it)
+        }
+    }
+
     override fun showDetails(movieEntity: MovieEntity) {
         hideLoading()
 
-        backdropImageView.load(movieEntity.getBackDropImageUrl())
-        posterImageView.load(movieEntity.getImageUrl())
-        titleTextView.text = movieEntity.title
-        releaseTextView.text = Consts.UI_DATE_FORMATTER.format(movieEntity.releaseDate)
-        ratingTextView.text = getString(R.string.title_rating, movieEntity.voteAverage.toString())
-        overviewTextView.text = movieEntity.overview
+        detailsBinding.backdropImageView.load(movieEntity.getBackDropImageUrl())
+        detailsBinding.posterImageView.load(movieEntity.getImageUrl())
+        detailsBinding.titleTextView.text = movieEntity.title
+        detailsBinding.releaseTextView.text = Consts.UI_DATE_FORMATTER.format(movieEntity.releaseDate)
+        detailsBinding.ratingTextView.text = getString(R.string.title_rating, movieEntity.voteAverage.toString())
+        detailsBinding.overviewTextView.text = movieEntity.overview
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        detailsBinding.unbind()
     }
 
     companion object {
