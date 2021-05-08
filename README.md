@@ -265,6 +265,10 @@ class MainActivity : AppCompatActivity(), IKodi {
 
 Gradle:
 ```
+build.gradle {
+maven { url "https://dl.bintray.com/sphc/Kodi" }
+}
+
 // Standart Library
 implementation 'com.rasalexman.kodi:kodi:x.y.z'
 
