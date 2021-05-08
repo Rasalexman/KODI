@@ -1,5 +1,6 @@
 import appdependencies.Builds
-apply plugin: 'android-maven'
+//apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 group = 'com.rasalexman.kodiandroidx' // package name of the project
 version = Builds.KodiAndroidX.VERSION_NAME
@@ -7,6 +8,7 @@ version = Builds.KodiAndroidX.VERSION_NAME
 repositories {
     mavenCentral()
 }
+/*
 //just copy paste the lines below
 if (project.hasProperty("kotlin")) { //Kotlin libraries
     task sourcesJar(type: Jar) {
@@ -46,10 +48,38 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives javadocJar
     archives sourcesJar
+}*/
+
+// Because the components are created only during the afterEvaluate phase, you must
+// configure your publications using the afterEvaluate() lifecycle method.
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = 'com.rasalexman.kodiandroidx'
+                artifactId = 'kodiandroidx'
+                version = Builds.KodiAndroidX.VERSION_NAME
+            }
+            // Creates a Maven publication called “debug”.
+            debug(MavenPublication) {
+                // Applies the component for the debug build variant.
+                from components.debug
+
+                groupId = 'com.rasalexman.kodiandroidx'
+                artifactId = 'kodiandroidx-debug'
+                version = Builds.KodiAndroidX.VERSION_NAME
+            }
+        }
+    }
 }
 
 
-install {
+/*install {
     repositories.mavenInstaller {
         pom.project {
             packaging 'aar'
@@ -77,4 +107,4 @@ install {
             }
         }
     }
-}
+}*/
