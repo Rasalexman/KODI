@@ -1,6 +1,5 @@
 import appdependencies.Builds
 
-//apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 version = Builds.KodiReflect.VERSION_NAME
@@ -8,6 +7,7 @@ group = 'com.rasalexman.kodireflect'
 
 repositories {
     mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 //just copy paste the lines below

@@ -3,17 +3,12 @@ import appdependencies.Builds.MIN_VERSION
 import appdependencies.Builds.TARGET_VERSION
 import appdependencies.Libs
 import appdependencies.Versions
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import resources.Resources.codeDirs
-import resources.Resources.resDirs
 
 plugins {
     id("com.android.library")
     kotlin("android")
-    //kotlin("android.extensions")
-    //id("androidx.navigation.safeargs.kotlin")
-    //id("com.jfrog.bintray")
-    //id("org.jetbrains.dokka")
+    id("maven-publish")
 }
 
 android {
@@ -52,10 +47,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    tasks.withType<KotlinCompile>().all {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
         kotlinOptions.suppressWarnings = true
         kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.noReflect = true
+        kotlinOptions.freeCompilerArgs += listOf(
+                "-XXLanguage:+InlineClasses"
+        )
     }
 
     packagingOptions {
@@ -74,11 +72,6 @@ android {
             preferProjectModules()
         }
     }
-
-    /*androidExtensions {
-        isExperimental = true
-        defaultCacheImplementation = org.jetbrains.kotlin.gradle.internal.CacheImplementation.HASH_MAP
-    }*/
 }
 
 dependencies {

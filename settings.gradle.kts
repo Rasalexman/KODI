@@ -1,3 +1,3 @@
 rootProject.buildFileName = "build.gradle.kts"
-include(":app", ":kodi", ":kodireflect", ":kodigen", ":kodiandroidx")
+include(":app", ":kodi", ":kodigen", ":kodiandroidx", ":kodireflect")
 rootProject.name= "KODI"

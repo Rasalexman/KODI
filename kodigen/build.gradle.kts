@@ -13,6 +13,15 @@ sourceSets {
     }
 }
 
+tasks.withType<KotlinCompile>().all {
+    kotlinOptions.suppressWarnings = true
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.noReflect = true
+    kotlinOptions.freeCompilerArgs += listOf(
+            "-XXLanguage:+InlineClasses"
+    )
+}
+
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib", appdependencies.Versions.kotlin))
@@ -21,15 +30,6 @@ dependencies {
     implementation("com.squareup:kotlinpoet:1.8.0")
     implementation("com.google.auto.service:auto-service:1.0")
     kapt("com.google.auto.service:auto-service:1.0")
-}
-
-tasks.withType<KotlinCompile>().all {
-    kotlinOptions.suppressWarnings = true
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.noReflect = true
-    kotlinOptions.freeCompilerArgs += listOf(
-            "-XXLanguage:+InlineClasses"
-    )
 }
 
 // comment this apply function if you fork this project

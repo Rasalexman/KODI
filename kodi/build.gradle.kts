@@ -1,7 +1,6 @@
+//import org.jetbrains.dokka.gradle.DokkaTask
 import appdependencies.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URL
-import org.jetbrains.dokka.gradle.DokkaTask
 import resources.Resources.codeDirs
 
 plugins {

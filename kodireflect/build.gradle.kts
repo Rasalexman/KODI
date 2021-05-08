@@ -1,19 +1,12 @@
 import appdependencies.Builds.COMPILE_VERSION
 import appdependencies.Builds.MIN_VERSION
 import appdependencies.Builds.TARGET_VERSION
-import appdependencies.Libs
 import appdependencies.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import resources.Resources.KodiReflect.dirs
-import resources.Resources.KodiReflect.javaDirs
 
 plugins {
     id("com.android.library")
     kotlin("android")
-    //kotlin("android.extensions")
-    id("androidx.navigation.safeargs.kotlin")
-    //id("com.jfrog.bintray")
-    id("org.jetbrains.dokka")
     id("maven-publish")
 }
 
@@ -91,9 +84,9 @@ dependencies {
     implementation(kotlin("stdlib", Versions.kotlin))
     implementation(kotlin("reflect", Versions.kotlin))
 
-    testImplementation(Libs.Tests.junit)
+    /*testImplementation(Libs.Tests.junit)
     androidTestImplementation(Libs.Tests.runner)
-    androidTestImplementation(Libs.Tests.espresso)
+    androidTestImplementation(Libs.Tests.espresso)*/
 }
 /*
 tasks {
