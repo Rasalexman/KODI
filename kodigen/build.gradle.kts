@@ -1,13 +1,9 @@
-import resources.Resources.codeDirs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.dokka.gradle.DokkaTask
+import resources.Resources.codeDirs
 
 plugins {
     id("java-library")
     id("kotlin")
-    id("com.jfrog.bintray")
-    id("org.jetbrains.dokka")
-    id("maven-publish")
     kotlin("kapt")
 }
 
@@ -18,8 +14,8 @@ sourceSets {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin("stdlib-jdk8", appdependencies.Versions.kotlin))
+    //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
+    implementation(kotlin("stdlib", appdependencies.Versions.kotlin))
     implementation(project(":kodi"))
 
     implementation("com.squareup:kotlinpoet:1.6.0")
@@ -35,18 +31,8 @@ tasks.withType<KotlinCompile>().all {
             "-XXLanguage:+InlineClasses"
     )
 }
-/*
-tasks {
-    val dokka by getting(DokkaTask::class) {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/dokka"
-    }
-}*/
 
-repositories {
-    mavenCentral()
-}
-// comment it if you fork this project
+// comment this apply function if you fork this project
 apply {
     from("deploy.gradle")
 }

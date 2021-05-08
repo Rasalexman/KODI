@@ -77,7 +77,7 @@ object Libs {
         //---- LOGGING TIMER =)
         const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 
-        const val sticky = "com.rasalexman.sticky:sticky:${Versions.sticky}"
+        const val sticky = "com.github.Rasalexman:Sticky:${Versions.sticky}"
     }
 
     object Tests {

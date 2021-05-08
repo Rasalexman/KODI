@@ -1,11 +1,8 @@
-import appdependencies.Builds.APP_ID
-import appdependencies.Builds.BUILD_TOOLS
 import appdependencies.Builds.COMPILE_VERSION
 import appdependencies.Builds.MIN_VERSION
 import appdependencies.Builds.TARGET_VERSION
 import appdependencies.Libs
 import appdependencies.Versions
-import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import resources.Resources.KodiReflect.dirs
 import resources.Resources.KodiReflect.javaDirs
@@ -13,9 +10,9 @@ import resources.Resources.KodiReflect.javaDirs
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("android.extensions")
+    //kotlin("android.extensions")
     id("androidx.navigation.safeargs.kotlin")
-    id("com.jfrog.bintray")
+    //id("com.jfrog.bintray")
     id("org.jetbrains.dokka")
     id("maven-publish")
 }
@@ -83,15 +80,15 @@ android {
         }
     }
 
-    androidExtensions {
+    /*androidExtensions {
         isExperimental = true
         defaultCacheImplementation = org.jetbrains.kotlin.gradle.internal.CacheImplementation.HASH_MAP
-    }
+    }*/
 }
 
 dependencies {
-    implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin("stdlib-jdk8", Versions.kotlin))
+    //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
+    implementation(kotlin("stdlib", Versions.kotlin))
     implementation(kotlin("reflect", Versions.kotlin))
 
     testImplementation(Libs.Tests.junit)
@@ -106,9 +103,6 @@ tasks {
     }
 }*/
 
-repositories {
-    mavenCentral()
-}
 // comment this if you fork this project
 apply {
     from("deploy.gradle")

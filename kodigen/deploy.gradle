@@ -1,0 +1,61 @@
+import appdependencies.Builds
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.rasalexman.kodigen' // package name of the project
+version = Builds.Kodi.VERSION_NAME
+
+sourceCompatibility = 1.8 // java 8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.kotlin
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+    // options.encoding = 'UTF-8'
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            packaging 'aar'
+            groupId 'com.rasalexman.kodigen' // package name of the project
+            artifactId 'kodigen'
+            version Builds.Kodi.VERSION_NAME
+            name 'kodigen' // pom.project.name must be same as bintray.pkg.name
+
+            description 'A light-weight KOtlin Dependency Injection (KODI)'
+            url 'https://github.com/Rasalexman/KODI'
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            developers {
+                developer {
+                    id = 'Rasalexman'
+                    name = 'Alexandr Minkin'
+                    email = 'sphc@yandex.ru'
+                }
+            }
+        }
+    }
+}

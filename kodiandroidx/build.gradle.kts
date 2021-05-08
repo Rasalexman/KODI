@@ -4,8 +4,6 @@ import appdependencies.Builds.TARGET_VERSION
 import appdependencies.Libs
 import appdependencies.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.net.URL
-import org.jetbrains.dokka.gradle.DokkaTask
 import resources.Resources.codeDirs
 import resources.Resources.resDirs
 
@@ -13,10 +11,9 @@ plugins {
     id("com.android.library")
     kotlin("android")
     //kotlin("android.extensions")
-    id("androidx.navigation.safeargs.kotlin")
-    id("com.jfrog.bintray")
+    //id("androidx.navigation.safeargs.kotlin")
+    //id("com.jfrog.bintray")
     id("org.jetbrains.dokka")
-    id("maven-publish")
 }
 
 android {
@@ -87,7 +84,7 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin("stdlib-jdk8", Versions.kotlin))
+    implementation(kotlin("stdlib", Versions.kotlin))
 
     implementation(Libs.Core.coreKtx)
     api(project(":kodi"))
@@ -97,7 +94,7 @@ dependencies {
     androidTestImplementation(Libs.Tests.espresso)
 }
 
-tasks {
+/*tasks {
     val dokka by getting(DokkaTask::class) {
         outputFormat = "html"
         outputDirectory = "$buildDir/dokka"
@@ -112,9 +109,8 @@ tasks {
     }
 }
 
-repositories {
-    mavenCentral()
-}
+*/
+
 // comment it if you fork this project
 apply {
     from("deploy.gradle")

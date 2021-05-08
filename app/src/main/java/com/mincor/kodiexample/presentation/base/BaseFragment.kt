@@ -13,11 +13,11 @@ import com.mincor.kodiexample.common.UnitHandler
 import com.mincor.kodiexample.common.hide
 import com.mincor.kodiexample.common.show
 import com.mincor.sticky.presentation.base.INavigationHandler
-import com.rasalexman.sticky.base.BaseStickyFragment
+import com.rasalexman.sticky.base.StickyFragment
 import com.rasalexman.sticky.core.IStickyPresenter
 import com.rasalexman.sticky.core.IStickyView
 
-abstract class BaseFragment<P : IStickyPresenter<out IStickyView>> : BaseStickyFragment<P>(), INavigationHandler {
+abstract class BaseFragment<P : IStickyPresenter<out IStickyView>> : StickyFragment<P>(), INavigationHandler {
 
     private var alertDialog: Dialog? = null
 

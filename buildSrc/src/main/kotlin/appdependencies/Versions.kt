@@ -3,8 +3,8 @@ package appdependencies
 object Versions {
 
     const val gradle = "4.1.2"
-    const val kotlin = "1.4.31"
-    const val kotlinGradle = "1.3.6"
+    const val kotlin = "1.4.32"
+    const val kotlinGradle = "2.1.4"
     const val google = "4.3.3"
     const val dokka = "0.10.0"
     const val bintray = "1.8.4"
@@ -34,7 +34,7 @@ object Versions {
     const val circleImageView = "3.0.1"
     const val coroutinesManager = "1.2.32"
     const val timber = "4.7.1"
-    const val sticky = "1.0.6"
+    const val sticky = "1.0.9"
 
     object Navigation {
         const val fragment = "2.2.0"
