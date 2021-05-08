@@ -40,7 +40,6 @@ android {
     sourceSets {
         getByName("main") {
             java.setSrcDirs(codeDirs)
-            res.setSrcDirs(resDirs)
         }
     }
 
