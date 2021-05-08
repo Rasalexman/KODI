@@ -20,7 +20,6 @@ if (project.hasProperty("kotlin")) { //Kotlin libraries
         failOnError false
         source = android.sourceSets.main.java.sourceFiles
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-        classpath += configurations.compile
     }
 } else if (project.hasProperty("android")) {
     task sourcesJar(type: Jar) {
@@ -29,9 +28,9 @@ if (project.hasProperty("kotlin")) { //Kotlin libraries
     }
 
     task javadoc(type: Javadoc) {
+        failOnError false
         source = android.sourceSets.main.java.srcDirs
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-        classpath += configurations.compile
     }
 } else { // Java libraries
     task sourcesJar(type: Jar, dependsOn: classes) {
