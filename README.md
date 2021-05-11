@@ -276,7 +276,7 @@ implementation 'com.github.Rasalexman.KODI:kodi:x.y.z'
 implementation 'com.github.Rasalexman.KODI:kodiandroidx:x.y.z'
 
 // Annotation processing
-kapt 'om.github.Rasalexman.KODI:kodigen:x.y.z'
+kapt 'com.github.Rasalexman.KODI:kodigen:x.y.z'
 
 // Old Reflection Library. It's a final version and i don't have any plans to support it in the future.
 implementation 'com.github.Rasalexman.KODI:kodireflect:x.y.z'
