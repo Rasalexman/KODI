@@ -266,47 +266,20 @@ class MainActivity : AppCompatActivity(), IKodi {
 Gradle:
 ```
 build.gradle {
-maven { url "https://dl.bintray.com/sphc/Kodi" }
+maven { url = "https://jitpack.io" }
 }
 
 // Standart Library
-implementation 'com.rasalexman.kodi:kodi:x.y.z'
+implementation 'com.github.Rasalexman.KODI:kodi:x.y.z'
 
 // AndroidX Module
-implementation 'com.rasalexman.kodiandroidx:kodiandroidx:x.y.z'
+implementation 'com.github.Rasalexman.KODI:kodiandroidx:x.y.z'
 
 // Annotation processing
-implementation 'com.rasalexman.kodigen:kodigen:x.y.z'
+implementation 'om.github.Rasalexman.KODI:kodigen:x.y.z'
 
 // Old Reflection Library. It's a final version and i don't have any plans to support it in the future.
-implementation 'com.rasalexman.kodireflect:kodireflect:1.1.5'
-```
-
-Maven:
-```
-// Main Library
-<dependency>
-  <groupId>com.rasalexman.kodi</groupId>
-  <artifactId>kodi</artifactId>
-  <version>x.y.z</version>
-  <type>pom</type>
-</dependency>
-
-// AndroidX Module
-<dependency>
-	<groupId>com.rasalexman.kodiandroidx</groupId>
-	<artifactId>kodiandroidx</artifactId>
-	<version>x.y.z</version>
-	<type>pom</type>
-</dependency>
-
-// Reflection Library
-<dependency>
-	<groupId>com.rasalexman.kodireflect</groupId>
-	<artifactId>kodireflect</artifactId>
-	<version>x.y.z</version>
-	<type>pom</type>
-</dependency>
+implementation 'com.github.Rasalexman.KODI:kodireflect:x.y.z'
 ```
 
 
@@ -315,7 +288,7 @@ License
 
 MIT License
 
-Copyright (c) 2020 Aleksandr Minkin (sphc@yandex.ru)
+Copyright (c) 2021 Aleksandr Minkin (sphc@yandex.ru)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
