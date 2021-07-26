@@ -2,8 +2,8 @@ package appdependencies
 
 object Versions {
 
-    const val gradle = "4.2.0"
-    const val kotlin = "1.5.0"
+    const val gradle = "4.2.2"
+    const val kotlin = "1.5.21"
     const val google = "4.3.3"
     const val dokka = "0.10.0"
     const val maven = "2.1"
@@ -29,7 +29,7 @@ object Versions {
 
     const val kotPref = "2.11.0"
     const val circleImageView = "3.0.1"
-    const val coroutinesManager = "1.2.32"
+    const val coroutinesManager = "1.3.2"
     const val timber = "4.7.1"
     const val sticky = "1.0.9"
 

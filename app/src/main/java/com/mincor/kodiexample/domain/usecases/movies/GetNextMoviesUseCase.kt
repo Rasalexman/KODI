@@ -7,17 +7,16 @@ import com.mincor.kodiexample.presentation.movies.MovieUI
 import com.rasalexman.coroutinesmanager.AsyncTasksManager
 import com.rasalexman.coroutinesmanager.doAsyncAwait
 import com.rasalexman.kodi.annotations.BindProvider
-import com.rasalexman.kodi.core.IKodi
-import com.rasalexman.kodi.core.instance
 
 @BindProvider(
-        toClass = IGetNextMoviesUseCase::class,
-        toModule = Consts.Modules.UCMoviesName
+    toClass = IGetNextMoviesUseCase::class,
+    toModule = Consts.Modules.UCMoviesName
 )
-class GetNextMoviesUseCase : AsyncTasksManager(), IKodi, IGetNextMoviesUseCase {
-
+class GetNextMoviesUseCase(
+    private val getRemoteMoviesUseCase: IGetRemoteMoviesUseCase
+) : AsyncTasksManager(), IGetNextMoviesUseCase {
     override suspend fun invoke(data: Int): SResult<List<MovieUI>> = doAsyncAwait {
-        instance<IGetRemoteMoviesUseCase>().invoke(data)
+        getRemoteMoviesUseCase.invoke(data)
     }
 }
 

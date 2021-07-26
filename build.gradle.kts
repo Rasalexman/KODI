@@ -3,7 +3,6 @@
 buildscript {
     repositories {
         google()
-        jcenter()
         mavenCentral()
         //maven { url = uri("https://dl.bintray.com/kotlin/dokka") }
 
@@ -24,7 +23,6 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
         //maven { url = uri("https://dl.bintray.com/kotlin/dokka") }

@@ -25,6 +25,22 @@ inline fun <reified O : Any, reified I : IConvertableTo<O>> SResult<List<I>>.map
     }
 }
 
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfSuccessSuspend(
+    crossinline block: suspend (I) -> SResult<O>
+): SResult<O> {
+    return if (this is SResult.Success) block(this.data)
+    else this as SResult<O>
+}
+
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any> SResult<I>.applyIfSuccessSuspend(
+    crossinline block: suspend (I) -> Unit
+): SResult<I> {
+    if (this is SResult.Success) block(this.data)
+    return this
+}
+
 inline fun <reified O : Any, reified I : IConvertableTo<O>> SResult<I>.mapTo(): SResult<O> {
     return when (this) {
         is SResult.Success -> {

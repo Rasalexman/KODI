@@ -68,14 +68,23 @@ class MoviesRepository(
     }
 }
 
-interface IMoviesRepository {
+interface IMoviesRepository : ILocalMoviesRepository, IRemoteMoviesRepository {
     fun clear()
-    suspend fun saveMovie(data: MovieEntity)
+}
+
+interface ILocalMoviesRepository : IBaseMoviesRepository {
     suspend fun getLocalMovieById(movieId: Int): SResult<MovieEntity>
+    suspend fun getLocalMovies(genreId: Int): SResult<List<MovieEntity>>
+}
+
+interface IRemoteMoviesRepository : IBaseMoviesRepository {
     suspend fun getRemoteMovieById(movieId: Int): SResult<MovieEntity>
+    suspend fun saveMovie(data: MovieEntity)
     suspend fun saveMovies(data: List<MovieEntity>)
     suspend fun getNewRemoteMovies(genreId: Int): SResult<List<MovieEntity>>
     suspend fun getRemoteMovies(genreId: Int): SResult<List<MovieEntity>>
-    suspend fun getLocalMovies(genreId: Int): SResult<List<MovieEntity>>
+}
+
+interface IBaseMoviesRepository {
     fun hasResults(): Boolean
 }

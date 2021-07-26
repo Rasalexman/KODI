@@ -160,8 +160,8 @@ dependencies {
 
     //implementation("com.rasalexman.kodigen:kodigen:1.4.92")
 
-    //kapt(project(":kodigen"))
-    kapt("com.github.Rasalexman.KODI:kodigen:1.5.13")
+    kapt(project(":kodigen"))
+    //kapt("com.github.Rasalexman.KODI:kodigen:1.5.13")
     kapt(appdependencies.Libs.Room.kapt)
 }
 /*

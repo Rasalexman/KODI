@@ -128,37 +128,14 @@ class KodiProcessor : AbstractProcessor() {
                 val element = bindingData.element
                 val toClass = bindingData.toClass
                 val toPack = bindingData.toPack
-                val instanceType = bindingData.instanceType
-                val scope = bindingData.scope
-                val tag = bindingData.tag
+                val isMethodElement = element.kind == ElementKind.METHOD
 
                 if (toClass.contains(KODI_ERROR_PACKAGE_NAME)) {
                     throwKodiException<IllegalStateException>("You cannot use java class $toClass as binding class cause it's goes to unexpected graph.")
                 }
 
-                add(" \n")
-                add(TAG_MEMBER_NAME, MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_BIND))
-                add("<$TAG_CLASS_NAME>", ClassName(toPack, toClass))
-                if (tag.isNotEmpty()) {
-                    add("($KODI_TAG_PATTERN) ", tag)
-                } else {
-                    add("() ")
-                }
-
-                if (scope.isNotEmpty()) {
-                    add("$TAG_MEMBER_NAME $TAG_PACKAGE_NAME ", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_AT), scope)
-                }
-
-                add("$TAG_MEMBER_NAME ", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_WITH))
-                add("$TAG_MEMBER_NAME {", MemberName(KODI_PACKAGE_PATH, instanceType))
-                add(" \n")
-
-                if (element.kind == ElementKind.METHOD) {
-                    this.bindMethodElement(element)
-                } else {
-                    this.bindInstanceElement(element)
-                }
-                add("\n}\n")
+                val toClassName = ClassName(toPack, toClass)
+                addModuleClassMember(isMethodElement, toClassName, bindingData)
             }
             add("}")
         }
@@ -178,6 +155,41 @@ class KodiProcessor : AbstractProcessor() {
             val message = java.lang.String.format("Unable to write file: %s", e.message)
             messager.printMessage(Diagnostic.Kind.ERROR, message)
         }
+    }
+
+    private fun CodeBlock.Builder.addModuleClassMember(
+        isMethodElement: Boolean,
+        toClassName: ClassName,
+        bindingData: KodiBindData
+    ) {
+        val element = bindingData.element
+        val instanceType = bindingData.instanceType
+        val scope = bindingData.scope
+        val tag = bindingData.tag
+
+        add(" \n")
+        add(TAG_MEMBER_NAME, MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_BIND))
+        add("<$TAG_CLASS_NAME>", toClassName)
+        if (tag.isNotEmpty()) {
+            add("($KODI_TAG_PATTERN) ", tag)
+        } else {
+            add("() ")
+        }
+
+        if (scope.isNotEmpty()) {
+            add("$TAG_MEMBER_NAME $TAG_PACKAGE_NAME ", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_AT), scope)
+        }
+
+        add("$TAG_MEMBER_NAME ", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_WITH))
+        add("$TAG_MEMBER_NAME {", MemberName(KODI_PACKAGE_PATH, instanceType))
+        add(" \n")
+
+        if (isMethodElement) {
+            this.bindMethodElement(element)
+        } else {
+            this.bindInstanceElement(element)
+        }
+        add("\n}\n")
     }
 
     private fun getDataFromBindSingle(element: Element): KodiBindData {

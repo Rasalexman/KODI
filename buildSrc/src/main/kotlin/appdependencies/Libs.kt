@@ -53,7 +53,7 @@ object Libs {
     object Retrofit {
         const val core = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
         const val moshi = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
-        const val logging = ("com.github.ihsanbal:LoggingInterceptor:${retrofitLogging}")
+        const val logging = "com.github.ihsanbal:LoggingInterceptor:${retrofitLogging}"
     }
 
     ///------ VIEWS
@@ -72,7 +72,7 @@ object Libs {
         const val circleimageview = "de.hdodenhof:circleimageview:${Versions.circleImageView}"
 
         // COROUTINES MANAGER
-        const val coroutinesmanager = "com.rasalexman.coroutinesmanager:coroutinesmanager:${Versions.coroutinesManager}"
+        const val coroutinesmanager = "com.github.Rasalexman:coroutinesmanager:${Versions.coroutinesManager}"
 
         //---- LOGGING TIMER =)
         const val timber = "com.jakewharton.timber:timber:${Versions.timber}"

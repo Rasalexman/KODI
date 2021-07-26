@@ -8,9 +8,9 @@ import com.mincor.kodiexample.data.dto.successResult
 import com.mincor.kodiexample.data.repository.IMoviesRepository
 import com.mincor.kodiexample.domain.usecases.base.IUseCase
 import com.mincor.kodiexample.presentation.movies.MovieUI
-import com.rasalexman.kodi.annotations.BindProvider
+import com.rasalexman.kodi.annotations.BindSingle
 
-@BindProvider(
+@BindSingle(
         toClass = IGetCachedMoviesUseCase::class,
         toModule = UCMoviesName
 )
