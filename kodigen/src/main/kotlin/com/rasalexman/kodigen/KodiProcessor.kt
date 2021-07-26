@@ -33,6 +33,7 @@ import javax.tools.Diagnostic
 import kotlin.properties.Delegates
 import kotlin.reflect.KClass
 
+@Suppress("PrivatePropertyName")
 @AutoService(Processor::class)
 class KodiProcessor : AbstractProcessor() {
 
@@ -95,20 +96,33 @@ class KodiProcessor : AbstractProcessor() {
     }
 
     override fun getSupportedOptions(): Set<String?>? {
-        return Collections.singleton("org.gradle.annotation.processing.aggregating")
-        //return Collections.singleton("org.gradle.annotation.processing.isolating")
+        //return Collections.singleton("org.gradle.annotation.processing.aggregating")
+        return Collections.singleton("org.gradle.annotation.processing.isolating")
     }
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latestSupported()
 
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
-        val startTime = System.currentTimeMillis()
-        println("KodiAnnotationProcessor started")
-        val modulesMap = mutableMapOf<String, MutableList<KodiBindData>>()
-        collectAnnotationData(roundEnv.getElementsAnnotatedWith(BindProvider::class.java), modulesMap, ::getDataFromBindProvider)
-        collectAnnotationData(roundEnv.getElementsAnnotatedWith(BindSingle::class.java), modulesMap, ::getDataFromBindSingle)
-        modulesMap.forEach(::processModules)
-        println("KodiAnnotationProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
+        if(annotations.isNotEmpty()) {
+            val isProvideRequested: Boolean
+            val isSingleRequested: Boolean
+            val startTime = System.currentTimeMillis()
+            println("KodiAnnotationProcessor started on ${annotations.size} annotations")
+            val modulesMap = mutableMapOf<String, MutableList<KodiBindData>>()
+            isProvideRequested = collectAnnotationData(
+                roundEnv.getElementsAnnotatedWith(BindProvider::class.java),
+                modulesMap,
+                ::getDataFromBindProvider
+            )
+            isSingleRequested = collectAnnotationData(
+                roundEnv.getElementsAnnotatedWith(BindSingle::class.java),
+                modulesMap,
+                ::getDataFromBindSingle
+            )
+            modulesMap.forEach(::processModules)
+            println("KodiAnnotationProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
+            return !isProvideRequested && !isSingleRequested
+        }
         return false
     }
 

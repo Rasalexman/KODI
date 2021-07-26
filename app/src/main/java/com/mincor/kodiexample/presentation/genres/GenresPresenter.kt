@@ -17,8 +17,7 @@ import kotlinx.coroutines.withContext
         toModule = PresentersName
 )
 class GenresPresenter constructor(
-        private val getGenresUseCase: IGenresOutUseCase,
-        @IgnoreInstance private val myType: String = ""
+        private val getGenresUseCase: IGenresOutUseCase
 ) : IStickyPresenter<GenresContract.IView>,
         GenresContract.IPresenter, ICoroutinesManager {
 

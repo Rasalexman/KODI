@@ -77,6 +77,7 @@ android {
 
     packagingOptions {
         exclude("META-INF/notice.txt")
+        exclude("META-INF/gradle/incremental.annotation.processors")
     }
 
     // Declare the task that will monitor all configurations.
@@ -149,7 +150,7 @@ dependencies {
     implementation(appdependencies.Libs.ImageLoading.coil)
 
     implementation(appdependencies.Libs.Common.coroutinesmanager)
-    implementation(appdependencies.Libs.Common.circleimageview)
+    //implementation(appdependencies.Libs.Common.circleimageview)
     implementation(appdependencies.Libs.Common.timber)
     implementation(appdependencies.Libs.Common.sticky)
 
