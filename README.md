@@ -130,21 +130,12 @@ It contains some functionality like:
 9) `singleProvider(block: () -> T): T` - to initilize instance by yourself (since version 0.1.9)
 
 You can initialize you instances, single, providers, binding and constants in just one place:
-`val kodi = initKODI { }`
+`val kodi = kodi { }`
 
 in every function you can pass params for injection and put a tag to get it later.
 You can use lazy instantiating by extension functions
 - singleLazy
 - providerLazy
-
-From version 0.1.7 you can use: 
-- instanceLazy
-- instanceLazyByTag
-
-From version 0.1.9 you can use mutable lazy initialization:
-- singleMutableLazy
-- instanceMutableLazy
-- providerMutableLazy
 
 
 ```kotlin
