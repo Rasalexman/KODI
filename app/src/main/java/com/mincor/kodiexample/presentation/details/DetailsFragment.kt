@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import coil.api.load
+import coil.load
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.common.Consts
 import com.mincor.kodiexample.data.model.local.MovieEntity
@@ -14,6 +14,7 @@ import com.mincor.kodiexample.presentation.base.BaseFragment
 import com.rasalexman.kodi.core.IKodi
 import com.rasalexman.kodi.core.throwKodiException
 
+@ExperimentalUnsignedTypes
 class DetailsFragment : BaseFragment<DetailsPresenter>(),
         IDetailsView, IKodi {
 

@@ -1,11 +1,11 @@
-package com.mincor.sticky.presentation.base
+package com.mincor.kodiexample.presentation.base
 
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.mincor.kodiexample.presentation.base.BaseFragment
 import com.rasalexman.sticky.core.IStickyPresenter
 import com.rasalexman.sticky.core.IStickyView
 
+@ExperimentalUnsignedTypes
 abstract class BaseHostFragment<P : IStickyPresenter<out IStickyView>> : BaseFragment<P>()  {
 
     open val navControllerId: Int = -1

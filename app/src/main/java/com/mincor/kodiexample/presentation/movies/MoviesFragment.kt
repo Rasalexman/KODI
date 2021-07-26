@@ -16,6 +16,7 @@ import com.rasalexman.kodi.core.IKodi
 import com.rasalexman.kodi.core.instance
 import com.rasalexman.kodi.core.throwKodiException
 
+@ExperimentalUnsignedTypes
 class MoviesFragment : BaseRecyclerFragment<MovieUI, MoviesContract.IPresenter>(),
         MoviesContract.IView, IKodi {
 

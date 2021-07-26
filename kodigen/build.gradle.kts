@@ -39,6 +39,10 @@ dependencies {
     kapt("com.google.auto.service:auto-service:1.0")
 }
 
+kapt {
+    includeCompileClasspath = false
+}
+
 group = "com.rasalexman.kodigen"
 version = appdependencies.Builds.Kodi.VERSION_NAME
 

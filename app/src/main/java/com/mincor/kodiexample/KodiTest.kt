@@ -1,16 +1,15 @@
 package com.mincor.kodiexample
 
 import com.mincor.kodiexample.domain.usecases.base.IUseCase
-import com.rasalexman.kodi.annotations.BindProvider
 import com.rasalexman.kodi.core.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 
-const val SOME_CONSTANT_TAG = "SOME_CONSTANT_TAG"
+//const val SOME_CONSTANT_TAG = "SOME_CONSTANT_TAG"
 
 const val MY_PROVIDER_SCOPE_NAME = "MY_PROVIDER_SCOPE_NAME"
 const val MY_SINGLE_SCOPE_NAME = "MY_SINGLE_SCOPE_NAME"
-const val MY_ANOTHER_SCOPE_NAME = "MY_ANOTHER_SCOPE_NAME"
+//const val MY_ANOTHER_SCOPE_NAME = "MY_ANOTHER_SCOPE_NAME"
 const val MY_EXCLUSIV_SCOPE_NAME = "MY_EXCLUSIV_SCOPE_NAME"
 
 const val TAG = "----->"
@@ -60,11 +59,11 @@ fun main() {
        // val secondModuleInstance: ISingleInterface = instance()
        // val exclusivModuleInstance: ISingleInterface = instance(scope = MY_EXCLUSIV_SCOPE_NAME)
 
-        val myProvider: IProviderInterface = instance()
-        val myProviderByScope: IProviderInterface = instance(scope = MY_PROVIDER_SCOPE_NAME)
-
-        val firstInstance: IClass = instance(scope = FIRST_SCOPE)
-        val secondInstance: IClass = instance(scope = SECOND_SCOPE)
+//        val myProvider: IProviderInterface = instance()
+//        val myProviderByScope: IProviderInterface = instance(scope = MY_PROVIDER_SCOPE_NAME)
+//
+//        val firstInstance: IClass = instance(scope = FIRST_SCOPE)
+//        val secondInstance: IClass = instance(scope = SECOND_SCOPE)
 
         /*val coroutineManager = CoroutinesManager()
         coroutineManager.launch {

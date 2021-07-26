@@ -17,7 +17,6 @@ import android.hardware.ConsumerIrManager
 import android.hardware.SensorManager
 import android.hardware.camera2.CameraManager
 import android.hardware.display.DisplayManager
-import android.hardware.fingerprint.FingerprintManager
 import android.hardware.input.InputManager
 import android.hardware.usb.UsbManager
 import android.location.LocationManager
@@ -146,7 +145,6 @@ val kodiAndroidXManagers23 by lazy {
     kodiModule {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             bind<CarrierConfigManager>() with provider { instance<Context>().getSystemService(Context.CARRIER_CONFIG_SERVICE) as CarrierConfigManager }
-            bind<FingerprintManager>() with provider { instance<Context>().getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager }
             bind<MidiManager>() with provider { instance<Context>().getSystemService(Context.MIDI_SERVICE) as MidiManager }
             bind<NetworkStatsManager>() with provider { instance<Context>().getSystemService(Context.NETWORK_STATS_SERVICE) as NetworkStatsManager }
         }

@@ -11,6 +11,7 @@ import com.rasalexman.sticky.core.IStickyPresenter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+@ExperimentalUnsignedTypes
 @BindSingle(
         toClass = GenresContract.IPresenter::class,
         toModule = PresentersName

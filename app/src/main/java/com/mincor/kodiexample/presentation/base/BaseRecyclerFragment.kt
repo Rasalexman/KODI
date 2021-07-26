@@ -16,6 +16,7 @@ import com.mincor.kodiexample.common.unsafeLazy
 import com.rasalexman.sticky.core.IStickyPresenter
 import com.rasalexman.sticky.core.IStickyView
 
+@ExperimentalUnsignedTypes
 abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
         where I : BaseItem<*>, P : IStickyPresenter<out IStickyView> {
 
@@ -156,7 +157,9 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
 
     protected open fun addClickListener() {
         mFastItemAdapter.onClickListener = { _, _, item, _ ->
-            onItemClickHandler?.invoke(item as I)
+            (item as? I)?.let {
+                onItemClickHandler?.invoke(it)
+            }
             false
         }
     }

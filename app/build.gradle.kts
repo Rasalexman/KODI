@@ -6,7 +6,6 @@ import appdependencies.Builds.TARGET_VERSION
 import appdependencies.Libs
 import appdependencies.Versions
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
-import resources.Resources.App.dirs
 
 plugins {
     id("com.android.application")
@@ -106,6 +105,7 @@ android {
 
 kapt {
     useBuildCache = true
+    generateStubs = false
 }
 
 dependencies {

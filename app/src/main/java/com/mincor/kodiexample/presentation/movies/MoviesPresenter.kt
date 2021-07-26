@@ -12,6 +12,7 @@ import com.rasalexman.kodi.core.IKodi
 import com.rasalexman.kodi.core.immutableInstance
 import com.rasalexman.kodi.annotations.BindSingle
 
+@ExperimentalUnsignedTypes
 @BindSingle(
         toClass = MoviesContract.IPresenter::class,
         toModule = PresentersName

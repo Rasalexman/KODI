@@ -4,7 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.annotation.Keep
 import androidx.core.view.forEachIndexed
-import coil.api.load
+import coil.load
 import coil.clear
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IItemVHFactory

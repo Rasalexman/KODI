@@ -113,7 +113,7 @@ class KodiProcessor : AbstractProcessor() {
     }
 
     private fun processModules(moduleName: String, moduleElements: List<KodiBindData>) {
-        val lowerModuleName = moduleName.apply { this[0].lowercaseChar() }
+        val lowerModuleName = moduleName.apply { this.first().lowercaseChar() }
         val packageName = "$KODI_GENERATED_PATH${moduleName.lowercase(Locale.ENGLISH)}"
         val fileName = "${lowerModuleName.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(
@@ -125,14 +125,15 @@ class KodiProcessor : AbstractProcessor() {
             add("$TAG_MEMBER_NAME {", MemberName(KODI_PACKAGE_PATH, KODI_MEMBER_MODULE))
             moduleElements.forEach { bindingData ->
 
-                val element = bindingData.element
                 val toClass = bindingData.toClass
-                val toPack = bindingData.toPack
-                val isMethodElement = element.kind == ElementKind.METHOD
 
                 if (toClass.contains(KODI_ERROR_PACKAGE_NAME)) {
                     throwKodiException<IllegalStateException>("You cannot use java class $toClass as binding class cause it's goes to unexpected graph.")
                 }
+
+                val element = bindingData.element
+                val toPack = bindingData.toPack
+                val isMethodElement = element.kind == ElementKind.METHOD
 
                 val toClassName = ClassName(toPack, toClass)
                 addModuleClassMember(isMethodElement, toClassName, bindingData)
@@ -231,26 +232,17 @@ class KodiProcessor : AbstractProcessor() {
             addInstance(packageName = packageName, className = className)
         } else {
             add("$TAG_CLASS_NAME(", ClassName(packageName, className))
-            val constructor = element.enclosedElements.find { enclosedElement ->
+            val constructor = element.enclosedElements.firstOrNull { enclosedElement ->
                 enclosedElement.kind == ElementKind.CONSTRUCTOR
             } as? ExecutableElement
 
-            var propertiesCount = 0
-            constructor?.parameters?.forEach { property ->
-                if (addProperty(property = property, count = propertiesCount)) {
-                    propertiesCount++
-                }
-            }
-            if (propertiesCount > 0) add("\n")
-            add(")")
+            collectAndCreateProperties(constructor?.parameters)
         }
     }
 
     private fun CodeBlock.Builder.bindMethodElement(element: Element) {
         val packageOf = ELEMENT_UTILS.getPackageOf(element).toString()
-        val parentElement = TYPE_UTILS.asElement(element.enclosingElement.asType())
         val methodName = element.simpleName.toString()
-        val parentName = parentElement.simpleName.toString()
 
         if (packageOf.contains(KODI_ERROR_PACKAGE_NAME)) {
             val error = ERROR_ANNOTATION_WITHOUT_PROPERTY_WITH.format(methodName)
@@ -258,6 +250,8 @@ class KodiProcessor : AbstractProcessor() {
             throwKodiException<IllegalArgumentException>(error)
         }
 
+        val parentElement = TYPE_UTILS.asElement(element.enclosingElement.asType())
+        val parentName = parentElement.simpleName.toString()
         val isAbstract = element.modifiers.contains(Modifier.ABSTRACT) || parentElement.modifiers.contains(Modifier.ABSTRACT)
 
         when {
@@ -281,8 +275,12 @@ class KodiProcessor : AbstractProcessor() {
             }
         }
 
+        collectAndCreateProperties((element as? ExecutableElement)?.parameters)
+    }
+
+    private fun CodeBlock.Builder.collectAndCreateProperties(properties: List<Element>?) {
         var propCount = 0
-        (element as? ExecutableElement)?.parameters?.forEach { variable ->
+        properties?.forEach { variable ->
             if (addProperty(variable, propCount)) {
                 propCount++
             }
@@ -299,21 +297,24 @@ class KodiProcessor : AbstractProcessor() {
                 add(",")
             }
 
+            var tag = ""
+            var scope = ""
+
             add("\n")
-            property.getAnnotation(WithInstance::class.java)?.let {
-                val tag = it.tag
-                val scope = it.scope
+            add("$propertyName = ")
+
+            val (packageName, className) = property.getAnnotation(WithInstance::class.java)?.let {
+                tag = it.tag
+                scope = it.scope
                 val packageAndClass = property.getAnnotationClassValue<WithInstance> { with }.toString()
-                val (packageName, className) = packageAndClass.getPackAndClass()
-                add("$propertyName = ")
-                addInstance(tag = tag, scope = scope, packageName = packageName, className = className)
-            } ?: apply {
+                packageAndClass.getPackAndClass()
+            } ?: run {
                 val propertyElement = TYPE_UTILS.asElement(property.asType())
                 val propertyPackName = ELEMENT_UTILS.getPackageOf(propertyElement).toString()
                 val propertyClassName = propertyElement.simpleName.toString()
-                add("$propertyName = ")
-                addInstance(packageName = propertyPackName, className = propertyClassName)
+                propertyPackName to propertyClassName
             }
+            addInstance(tag = tag, scope = scope, packageName = packageName, className = className)
             true
         } else false
     }
@@ -330,11 +331,14 @@ class KodiProcessor : AbstractProcessor() {
             add("<$TAG_CLASS_NAME>", ClassName(packageName, className))
         }
 
-        if (tag.isNotEmpty() && scope.isNotEmpty()) {
+        val tagExist = tag.isNotEmpty()
+        val scopeExist = scope.isNotEmpty()
+
+        if (tagExist && scopeExist) {
             add("($KODI_TAG_PATTERN, $KODI_SCOPE_PATTERN)", instanceMember, tag, scope)
-        } else if (tag.isNotEmpty()) {
+        } else if (tagExist) {
             add("($KODI_TAG_PATTERN)", instanceMember, tag)
-        } else if (scope.isNotEmpty()) {
+        } else if (scopeExist) {
             add("($KODI_SCOPE_PATTERN)", instanceMember, scope)
         } else {
             add("()")

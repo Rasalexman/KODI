@@ -9,6 +9,7 @@ import com.rasalexman.kodi.core.IKodi
 import com.rasalexman.kodi.core.instance
 import com.rasalexman.sticky.core.IStickyPresenter
 
+@ExperimentalUnsignedTypes
 class DetailsPresenter : IStickyPresenter<IDetailsView>, ICoroutinesManager, IKodi {
 
     var movieId: Int = 0

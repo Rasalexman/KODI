@@ -17,6 +17,7 @@ import com.rasalexman.sticky.base.StickyFragment
 import com.rasalexman.sticky.core.IStickyPresenter
 import com.rasalexman.sticky.core.IStickyView
 
+@ExperimentalUnsignedTypes
 abstract class BaseFragment<P : IStickyPresenter<out IStickyView>> : StickyFragment<P>(), INavigationHandler {
 
     private var alertDialog: Dialog? = null
@@ -106,6 +107,7 @@ abstract class BaseFragment<P : IStickyPresenter<out IStickyView>> : StickyFragm
     override val currentNavHandler: INavigationHandler?
         get() = this
 
+    @ExperimentalUnsignedTypes
     override fun onDestroyView() {
         toolbarView?.setNavigationOnClickListener(null)
         closeAlertDialog()
