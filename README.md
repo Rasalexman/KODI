@@ -1,7 +1,7 @@
 # KODI
 KOtlin Dependency Injection (KODI) 
 
-[ ![Kotlin 1.4.32](https://img.shields.io/badge/Kotlin-1.4.32-blue.svg)](http://kotlinlang.org) [![](https://jitpack.io/v/Rasalexman/KODI.svg)](https://jitpack.io/#Rasalexman/KODI) [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d298c3a2eb044d688f9a4b33bf352389)](https://www.codacy.com/manual/Rasalexman/KODI?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Rasalexman/KODI&amp;utm_campaign=Badge_Grade)
+[ ![Kotlin 1.5.0](https://img.shields.io/badge/Kotlin-1.5.0-blue.svg)](http://kotlinlang.org) [![](https://jitpack.io/v/Rasalexman/KODI.svg)](https://jitpack.io/#Rasalexman/KODI) [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d298c3a2eb044d688f9a4b33bf352389)](https://www.codacy.com/manual/Rasalexman/KODI?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Rasalexman/KODI&amp;utm_campaign=Badge_Grade)
 
 This is simple and useful dependency injection framework for work with your regular projects. It use standart Kotlin language construction like `literal function with recieve`, `infix function`, `hight-order function`, ets. to bind and inject dependencies into your objects. It has two packages:
 
@@ -266,47 +266,20 @@ class MainActivity : AppCompatActivity(), IKodi {
 Gradle:
 ```
 build.gradle {
-maven { url "https://dl.bintray.com/sphc/Kodi" }
+maven { url = "https://jitpack.io" }
 }
 
 // Standart Library
-implementation 'com.rasalexman.kodi:kodi:x.y.z'
+implementation 'com.github.Rasalexman.KODI:kodi:x.y.z'
 
 // AndroidX Module
-implementation 'com.rasalexman.kodiandroidx:kodiandroidx:x.y.z'
+implementation 'com.github.Rasalexman.KODI:kodiandroidx:x.y.z'
 
 // Annotation processing
-implementation 'com.rasalexman.kodigen:kodigen:x.y.z'
+kapt 'com.github.Rasalexman.KODI:kodigen:x.y.z'
 
 // Old Reflection Library. It's a final version and i don't have any plans to support it in the future.
-implementation 'com.rasalexman.kodireflect:kodireflect:1.1.5'
-```
-
-Maven:
-```
-// Main Library
-<dependency>
-  <groupId>com.rasalexman.kodi</groupId>
-  <artifactId>kodi</artifactId>
-  <version>x.y.z</version>
-  <type>pom</type>
-</dependency>
-
-// AndroidX Module
-<dependency>
-	<groupId>com.rasalexman.kodiandroidx</groupId>
-	<artifactId>kodiandroidx</artifactId>
-	<version>x.y.z</version>
-	<type>pom</type>
-</dependency>
-
-// Reflection Library
-<dependency>
-	<groupId>com.rasalexman.kodireflect</groupId>
-	<artifactId>kodireflect</artifactId>
-	<version>x.y.z</version>
-	<type>pom</type>
-</dependency>
+implementation 'com.github.Rasalexman.KODI:kodireflect:x.y.z'
 ```
 
 
@@ -315,7 +288,7 @@ License
 
 MIT License
 
-Copyright (c) 2020 Aleksandr Minkin (sphc@yandex.ru)
+Copyright (c) 2021 Aleksandr Minkin (sphc@yandex.ru)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
