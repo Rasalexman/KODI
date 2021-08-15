@@ -54,7 +54,7 @@ sealed class KodiHolder<T : Any> {
      *
      * @param instanceTag - tag for instance binding
      */
-    internal infix fun<T : Any> KodiHolder<T>.tagWith(instanceTag: KodiTagWrapper) {
+    internal infix fun <T : Any> KodiHolder<T>.tagWith(instanceTag: KodiTagWrapper) {
         if (instanceTag.isNotEmpty() && !tag.isNotEmpty()) {
             tag = instanceTag
             addToGraph()
@@ -72,7 +72,7 @@ sealed class KodiHolder<T : Any> {
      * @param scopeWrapper - [KodiScopeWrapper] to add instance tag
      * @return [KodiHolder]
      */
-    internal infix fun<T : Any> KodiHolder<T>.scopeWith(scopeWrapper: KodiScopeWrapper): KodiHolder<T> {
+    internal infix fun <T : Any> KodiHolder<T>.scopeWith(scopeWrapper: KodiScopeWrapper): KodiHolder<T> {
         scope = scopeWrapper
         return this
     }

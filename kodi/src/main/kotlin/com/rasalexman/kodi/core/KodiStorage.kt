@@ -26,6 +26,9 @@ internal typealias LambdaWithReturn<T> = () -> T
  */
 internal typealias Handler<I> = (I) -> Unit
 
+/**
+ *
+ */
 internal typealias AnyKodiHolder = KodiHolder<Any>
 
 /**
@@ -69,7 +72,8 @@ interface IKodiStorage<V> {
     /**
      * Remove current instance from storage by given key
      *
-     * @param tag - key to remove value if it's exist
+     * @param tag - [KodiTagWrapper] key to remove value if it's exist
+     * @param scope - [KodiScopeWrapper] String representing the moduleScope
      */
     fun removeInstance(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean
 
@@ -178,7 +182,6 @@ interface IKodiStorage<V> {
      * @param tag - [KodiTagWrapper] to remove value if it's exist
      * @param scope - [KodiScopeWrapper] current scope data
      * @param event - [KodiEvent] event type
-     *
      */
     fun removeAllListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper, event: KodiEvent)
 
