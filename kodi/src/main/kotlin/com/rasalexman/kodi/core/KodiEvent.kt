@@ -1,7 +1,10 @@
 package com.rasalexman.kodi.core
 
-enum class KodiEvent {
-    BIND,
-    UNBIND,
-    INSTANCE
+sealed class KodiEvent {
+
+    abstract class BaseEvent : KodiEvent()
+
+    object BIND : BaseEvent()
+    object UNBIND : BaseEvent()
+    object INSTANCE : BaseEvent()
 }

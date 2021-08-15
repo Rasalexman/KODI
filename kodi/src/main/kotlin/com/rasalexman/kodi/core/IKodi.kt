@@ -12,6 +12,8 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+@file:Suppress("unused")
+
 package com.rasalexman.kodi.core
 
 import com.rasalexman.kodi.delegates.IImmutableDelegate
@@ -39,10 +41,17 @@ private const val INITIALIZER_NULL_ERROR = "There is no typed initializer passed
  */
 object Kodi : KodiStorage(), IKodi
 
+object KodiListener : KodiEventStorage(), IKodiListener
+
 /**
  * Simple implementing interface for di functionality
  */
 interface IKodi
+
+/**
+ *
+ */
+interface IKodiListener : IKodi
 
 /**
  * Initialize KODI dependencies
@@ -225,7 +234,7 @@ inline fun <reified InstanceType : Any> IKodi.instanceWith(
     val paramsInst = parameter?.let {
         (holder as? KodiHolder.KodiWithParamProvider<Any>)?.getWithParam(
             kodiImpl = this,
-            param = parameter
+            param = it
         )
     } ?: holder.get(kodiImpl = this)
     return (paramsInst as? InstanceType).or {
@@ -329,14 +338,16 @@ inline fun <reified HolderType : KodiHolder<ReturnType>, reified ReturnType : An
         KodiHolder.KodiProvider::class.java -> KodiHolder.KodiProvider(init)
         KodiHolder.KodiConstant::class.java -> KodiHolder.KodiConstant(init())
         else -> throwKodiException<ClassCastException>("There is no type holder like \'${genericName<ReturnType>()}\'")
-    }.holderAs(this as? IKodiModule) { module -> this at module.scope } as HolderType
+    }.holderAs(this as? IKodiModule) { module ->
+        this at module.scope
+    } as HolderType
 }
 
 /**
  * Create [KodiHolder] with given [InstanceInitializerWithParam] and [ParamType]
  * It's also apply scope [KodiScopeWrapper] from [IKodiModule]
  *
- * @param defaultParameter - optional parameter instance
+ * @param defaultParameter - optional p/arameter instance
  * @param init - noinline [InstanceInitializerWithParam]
  *
  * @return [KodiHolder] implementation instance

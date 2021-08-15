@@ -11,7 +11,7 @@
 // IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+@file:Suppress("unchecked_cast")
 package com.mincor.kodireflect
 import com.mincor.kodireflect.ext.*
 import kotlin.reflect.KFunction
@@ -73,6 +73,7 @@ inline fun <reified T : Any> IMapper<T>.removeAll() {
  * @param key
  * Key to remove instance
  */
+
 inline fun <reified T : Any> KodiReflect.removeInstance(key: String) {
     if (hasInstance(key)) (this.instanceStorage.remove(key) as? ProviderHolder<T?>)?.clear()
 }

@@ -5,7 +5,6 @@ import appdependencies.Versions.fastAdapterLib
 import appdependencies.Versions.lifecycle
 import appdependencies.Versions.retrofitLogging
 import appdependencies.Versions.room
-import appdependencies.Versions.savedstate
 
 object Libs {
     object Core {
@@ -21,15 +20,15 @@ object Libs {
     }
 
     object Lifecycle {
-        const val extensions = "androidx.lifecycle:lifecycle-extensions:${lifecycle}"
+        //const val extensions = "androidx.lifecycle:lifecycle-extensions:${lifecycle}"
         //const val runtimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${lifecycle}"
         const val viewmodelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycle}"
         // view model saved state handler
-        const val savedStateViewModel = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${savedstate}"
+        //const val savedStateViewModel = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${savedstate}"
         // kotlin live data extensions
         const val livedataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycle}"
         // alternately - if using Java8, use the following instead of lifecycle-compiler
-        const val common = "androidx.lifecycle:lifecycle-common-java8:${lifecycle}"
+        //const val common = "androidx.lifecycle:lifecycle-common-java8:${lifecycle}"
     }
 
     ///------ RECYCLER VIEW ADAPTER

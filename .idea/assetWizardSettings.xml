@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/file/ic_cloud_off_black_24dp.xml" />
+                                      <entry key="url" value="file:$PROJECT_DIR$/../Library/Android/sdk/icons/material/materialicons/navigate_next/baseline_navigate_next_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,7 +28,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_cloud_off_black_24dp" />
+                            <entry key="color" value="ffffff" />
+                            <entry key="outputName" value="ic_navigate_next_24" />
                             <entry key="sourceFile" value="$PROJECT_DIR$/.." />
                           </map>
                         </option>

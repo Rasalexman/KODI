@@ -1,7 +1,11 @@
 package com.mincor.kodiexample.presentation.base
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -18,7 +22,8 @@ import com.rasalexman.sticky.core.IStickyPresenter
 import com.rasalexman.sticky.core.IStickyView
 
 @ExperimentalUnsignedTypes
-abstract class BaseFragment<P : IStickyPresenter<out IStickyView>> : StickyFragment<P>(), INavigationHandler {
+abstract class BaseFragment<P : IStickyPresenter<out IStickyView>> : StickyFragment<P>(),
+    INavigationHandler, Toolbar.OnMenuItemClickListener {
 
     private var alertDialog: Dialog? = null
 
@@ -27,24 +32,46 @@ abstract class BaseFragment<P : IStickyPresenter<out IStickyView>> : StickyFragm
 
     protected open val toolbarTitle: String = ""
     protected open val toolbarView: Toolbar? = null
+    protected open val toolBarMenuResId: Int? = null
 
     protected open val needBackButton: Boolean = false
+
+    override val currentNavHandler: INavigationHandler?
+        get() = this
+
+    @SuppressLint("MissingSuperCall")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        this.setHasOptionsMenu(toolBarMenuResId != null)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         toolbarView?.let { toolbar ->
+            // title
             if(toolbarTitle.isNotEmpty()) toolbar.title = toolbarTitle
-            (activity as? AppCompatActivity)?.let { activityCompat ->
-                activityCompat.setSupportActionBar(toolbar)
-                if(needBackButton) {
-                    activityCompat.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                    activityCompat.supportActionBar?.setHomeButtonEnabled(true)
-                    toolbar.setNavigationOnClickListener {
-                        onBackClicked()
-                    }
+
+            toolBarMenuResId?.let {
+                toolbar.menu?.clear()
+                toolbar.inflateMenu(it)
+                toolbar.setOnMenuItemClickListener(this)
+            }
+
+            if(needBackButton) {
+                toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24)
+                toolbar.setNavigationOnClickListener {
+                    onBackClicked()
                 }
             }
+
+            // activity
+            /*(activity as? AppCompatActivity)?.let { activityCompat ->
+                activityCompat.setSupportActionBar(toolbar)
+
+            }*/
+
+
         }
     }
 
@@ -104,8 +131,9 @@ abstract class BaseFragment<P : IStickyPresenter<out IStickyView>> : StickyFragm
         return true
     }
 
-    override val currentNavHandler: INavigationHandler?
-        get() = this
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        return true
+    }
 
     @ExperimentalUnsignedTypes
     override fun onDestroyView() {

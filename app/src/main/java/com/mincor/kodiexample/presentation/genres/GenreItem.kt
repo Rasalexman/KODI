@@ -4,8 +4,8 @@ import android.view.View
 import android.widget.ImageView
 import androidx.annotation.Keep
 import androidx.core.view.forEachIndexed
-import coil.load
 import coil.clear
+import coil.load
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IItemVHFactory
 import com.mikepenz.fastadapter.items.BaseItem
@@ -14,7 +14,6 @@ import com.mincor.kodiexample.BuildConfig
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.databinding.LayoutGenreItemBinding
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
-import com.rasalexman.coroutinesmanager.launchOnUI
 
 @Keep
 data class GenreItem(
@@ -34,17 +33,16 @@ data class GenreItem(
 
     class GenreViewHolder(containerView: View) : FastAdapter.ViewHolder<GenreItem>(containerView), ICoroutinesManager {
 
-        private val itemBinding = LayoutGenreItemBinding.bind(containerView)
+        private val itemBinding = LayoutGenreItemBinding.bind(itemView)
 
         override fun bindView(item: GenreItem, payloads: List<Any>) {
             with(itemBinding) {
                 titleTextView.text = item.name
                 val urlList = item.images.toList()
-
-                launchOnUI {
-                    imagesLayout.forEachIndexed { index, view ->
+                imagesLayout.forEachIndexed { index, view ->
+                    urlList.getOrNull(index)?.let { remoteUrl ->
                         val imageView = view as ImageView
-                        val imageUrl = "${BuildConfig.IMAGES_URL}${urlList.getOrNull(index)}"
+                        val imageUrl = "${BuildConfig.IMAGES_URL}${remoteUrl}"
                         imageView.load(imageUrl)
                     }
                 }
@@ -52,7 +50,7 @@ data class GenreItem(
         }
 
         override fun unbindView(item: GenreItem) {
-            with(itemBinding) {
+            itemBinding.apply {
                 titleTextView.text = null
                 imageView1.clear()
                 imageView2.clear()

@@ -25,3 +25,8 @@ class GenresCacheDataSource (
         return successResult(memoryGenresList)
     }
 }
+
+interface IGenresCacheDataSource {
+    suspend fun putGenresInCache(genresList: List<GenreEntity>)
+    suspend fun getGenresFromCache(): SResult.Success<List<GenreEntity>>
+}

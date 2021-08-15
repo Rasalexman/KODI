@@ -17,6 +17,15 @@ object Consts {
     // PAGES CONST
     const val PAGES_DEFAULT_MAX_COUNT = 1000
 
+    object Scopes {
+        const val GENRES = "GENRES"
+    }
+
+    object Tags {
+        const val GENRE_USE_CASE = "GENRE_USE_CASE"
+        const val GENRE_LOCAL_USE_CASE = "GENRE_LOCAL_USE_CASE"
+    }
+
     object Modules {
         const val UCDetailsName = "useCasesDetails"
         const val UCMoviesName = "useCasesMovies"

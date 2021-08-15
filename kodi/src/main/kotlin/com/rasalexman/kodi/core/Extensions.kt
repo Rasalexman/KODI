@@ -23,23 +23,31 @@ fun emptyScope() = KodiScopeWrapper("")
 /**
  * Default SCOPE name for all instances that doest have a scope name in bindings
  */
-val defaultScope = KodiScopeWrapper("DEFAULT_SCOPE")
+internal val defaultScope = KodiScopeWrapper("DEFAULT_SCOPE")
 
 /**
  * Empty instance tag holder.
  * This means that [KodiHolder] instance is no in dependency graph
  */
-fun emptyTag() = KodiTagWrapper("")
+fun emptyTag() = KodiTagWrapper("", "")
 
 /**
  * String moduleScope name to Scope Wrapper
  */
-fun String?.asScope() = this?.let { KodiScopeWrapper(it) }.or { defaultScope }
+fun String?.asScope() = this?.takeIf { it.isNotEmpty() }?.let {
+    KodiScopeWrapper(scopeTag = it)
+}.or { defaultScope }
 
 /**
  * Inline fun to convert any to [KodiTagWrapper]
  */
-inline fun <reified T : Any> String?.asTag(): KodiTagWrapper = KodiTagWrapper(this ?: genericName<T>())
+inline fun <reified T : Any> String?.asTag(): KodiTagWrapper {
+    val originalTag = genericName<T>()
+    return KodiTagWrapper(
+        instanceTag = this?.takeIf { it.isNotEmpty() }.or { originalTag },
+        originalTag = originalTag
+    )
+}
 
 
 /**
@@ -58,9 +66,7 @@ infix fun<T : Any> KodiHolder<T>.at(scopeWrapper: KodiScopeWrapper): KodiHolder<
  *
  * @param instanceTag - tag for instance binding
  */
-infix fun<T : Any> KodiHolder<T>.tag(instanceTag: KodiTagWrapper) {
-    this.tagWith(instanceTag)
-}
+infix fun<T : Any> KodiHolder<T>.tag(instanceTag: KodiTagWrapper) = this.tagWith(instanceTag)
 
 
 /**
@@ -87,7 +93,7 @@ fun <T> T?.or(block: () -> T): T {
 /**
  * Take generic `qualifiedName` from class
  */
-inline fun <reified T> genericName(): String {
+inline fun <reified T : Any> genericName(): String {
     return T::class.qualifiedName.toString()
 }
 

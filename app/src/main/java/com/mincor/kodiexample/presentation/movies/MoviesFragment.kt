@@ -44,7 +44,7 @@ class MoviesFragment : BaseRecyclerFragment<MovieUI, MoviesContract.IPresenter>(
     override val needBackButton: Boolean = true
     override val needScroll: Boolean = true
 
-    override val onLoadNextHandler: (() -> Unit)?
+    override val onLoadNextHandler: (() -> Unit)
             get() = presenter::getNextMoviesByGenreId
 
     override val onItemClickHandler: ((MovieUI) -> Unit) = { item ->

@@ -43,5 +43,5 @@ import kotlin.reflect.KClass
 annotation class WithInstance(
         val tag: String = "",
         val scope: String = "",
-        val with: KClass<out Any> = Any::class
+        val with: KClass<out Any>
 )

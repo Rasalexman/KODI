@@ -14,9 +14,9 @@ import com.rasalexman.kodi.annotations.BindSingle
         toModule = Consts.Modules.RepName
 )
 class GenresRepository(
-        private val remoteDataSource: IGenresRemoteDataSource,
-        private val localDataSource: IGenresLocalDataSource,
-        private val memoryDataSource: IGenresCacheDataSource
+    private val remoteDataSource: IGenresRemoteDataSource,
+    private val localDataSource: IGenresLocalDataSource,
+    private val memoryDataSource: IGenresCacheDataSource
 ) : IGenresRepository {
     override suspend fun getLocalGenreList(): SResult<List<GenreEntity>> =
         memoryDataSource.getGenresFromCache().takeIf { it.data.isNotEmpty() }

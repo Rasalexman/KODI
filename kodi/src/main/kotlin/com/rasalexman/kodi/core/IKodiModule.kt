@@ -53,7 +53,7 @@ internal data class KodiModule(
     /**
      * Module Scope. It's Lazy initializing
      */
-    override var scope: KodiScopeWrapper by mutableGetter { defaultScope }
+    override var scope: KodiScopeWrapper = defaultScope
 
     /**
      * Set of all instances that includes in this module
@@ -83,7 +83,7 @@ fun kodiModule(init: ModuleInitializer): IKodiModule = KodiModule(init)
  *
  * @param module - [IKodiModule]
  */
-fun IKodi.import(module: IKodiModule) {
+fun IKodi.import(module: IKodiModule)  {
     Kodi.addModule(module)
 }
 

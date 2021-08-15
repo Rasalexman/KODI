@@ -39,7 +39,7 @@ sealed class KodiHolder<T : Any> {
     /**
      * Local Holder scope [KodiScopeWrapper]
      */
-    var scope: KodiScopeWrapper = emptyScope()
+    var scope: KodiScopeWrapper = defaultScope
         private set
 
     /**
@@ -54,8 +54,8 @@ sealed class KodiHolder<T : Any> {
      *
      * @param instanceTag - tag for instance binding
      */
-    internal infix fun <T : Any> KodiHolder<T>.tagWith(instanceTag: KodiTagWrapper) {
-        if (instanceTag.isNotEmpty() && !tag.isNotEmpty()) {
+    internal infix fun <T : Any> KodiHolder<T>.tagWith(instanceTag: KodiTagWrapper): KodiHolder<T> {
+        if (instanceTag.isNotEmpty() && tag != instanceTag) {
             tag = instanceTag
             addToGraph()
         } else if (!instanceTag.isNotEmpty()) {
@@ -63,6 +63,7 @@ sealed class KodiHolder<T : Any> {
         } else {
             throwKodiException<IllegalStateException>("You can't change tag `$tag` on `$this`. Only set it to emptyTag()")
         }
+        return this
     }
 
     /**
@@ -73,7 +74,7 @@ sealed class KodiHolder<T : Any> {
      * @return [KodiHolder]
      */
     internal infix fun <T : Any> KodiHolder<T>.scopeWith(scopeWrapper: KodiScopeWrapper): KodiHolder<T> {
-        scope = scopeWrapper
+        if(scopeWrapper.isNotEmpty() && scope != scopeWrapper) scope = scopeWrapper
         return this
     }
 
@@ -91,11 +92,7 @@ sealed class KodiHolder<T : Any> {
      */
     private fun addToGraph() {
         if (tag.isNotEmpty()) {
-            val selectedScope = scope.takeIf {
-                it.isNotEmpty() && it != defaultScope
-            }.or { defaultScope }
-
-            Kodi.createOrGet(tag, selectedScope, ::getCurrentHolder)
+            Kodi.createOrGet(tag, scope, ::getCurrentHolder)
             notifyEventListeners(KodiEvent.BIND)
         }
     }
@@ -113,7 +110,9 @@ sealed class KodiHolder<T : Any> {
      * Notify all listener by event
      */
     protected fun notifyEventListeners(event: KodiEvent) {
-        Kodi.notifyListeners(tag, scope, this, event)
+        if(tag.isNotEmpty() && scope.isNotEmpty()) {
+            KodiListener.notifyListeners(tag, scope, this, event)
+        }
     }
 
     /**

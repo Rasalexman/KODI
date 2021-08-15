@@ -2,8 +2,6 @@ package com.mincor.kodiexample.application
 
 import android.app.Application
 import android.content.Context
-import coil.Coil
-import coil.ImageLoader
 import com.kodi.generated.modules.localdatasource.localDataSourceModule
 import com.kodi.generated.modules.presenters.presentersModule
 import com.kodi.generated.modules.providers.providersModule
@@ -20,26 +18,24 @@ import com.rasalexman.kodi.core.*
 
 class MainApplication : Application() {
 
-    val kodi = kodi {
-        bind<Context>() with provider { applicationContext }
-        bind<ICoroutinesManager>() with single { CoroutinesManager() }
-        bind<IAsyncTasksManager>() with provider { AsyncTasksManager() }
-
-        import(providersModule)
-
-        import(useCasesDetailsModule)
-        import(useCasesMoviesModule)
-        import(useCasesGenresModule)
-
-        import(remoteDataSourceModule)
-        import(localDataSourceModule)
-        import(repositoryModule)
-        import(presentersModule)
-    }
-
     override fun onCreate() {
         super.onCreate()
-        Coil.setImageLoader(kodi { instance<ImageLoader>() })
+        kodi {
+            bind<Context>() with provider { applicationContext }
+            bind<ICoroutinesManager>() with single { CoroutinesManager() }
+            bind<IAsyncTasksManager>() with provider { AsyncTasksManager() }
+
+            import(providersModule)
+
+            import(useCasesDetailsModule)
+            import(useCasesMoviesModule)
+            import(useCasesGenresModule)
+
+            import(remoteDataSourceModule)
+            import(localDataSourceModule)
+            import(repositoryModule)
+            import(presentersModule)
+        }
     }
 
     override fun onTerminate() {

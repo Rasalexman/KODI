@@ -96,8 +96,8 @@ class KodiProcessor : AbstractProcessor() {
     }
 
     override fun getSupportedOptions(): Set<String?>? {
-        //return Collections.singleton("org.gradle.annotation.processing.aggregating")
-        return Collections.singleton("org.gradle.annotation.processing.isolating")
+        return Collections.singleton("org.gradle.annotation.processing.aggregating")
+        //return Collections.singleton("org.gradle.annotation.processing.isolating")
     }
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latestSupported()
@@ -142,7 +142,7 @@ class KodiProcessor : AbstractProcessor() {
                 val toClass = bindingData.toClass
 
                 if (toClass.contains(KODI_ERROR_PACKAGE_NAME)) {
-                    throwKodiException<IllegalStateException>("You cannot use java class $toClass as binding class cause it's goes to unexpected graph.")
+                    throwKodiException<IllegalStateException>("You cannot use java class \'$toClass\' as binding class cause it's goes to unexpected graph.")
                 }
 
                 val element = bindingData.element
@@ -349,11 +349,11 @@ class KodiProcessor : AbstractProcessor() {
         val scopeExist = scope.isNotEmpty()
 
         if (tagExist && scopeExist) {
-            add("($KODI_TAG_PATTERN, $KODI_SCOPE_PATTERN)", instanceMember, tag, scope)
+            add("($KODI_TAG_PATTERN, $KODI_SCOPE_PATTERN)", tag, scope)
         } else if (tagExist) {
-            add("($KODI_TAG_PATTERN)", instanceMember, tag)
+            add("($KODI_TAG_PATTERN)", tag)
         } else if (scopeExist) {
-            add("($KODI_SCOPE_PATTERN)", instanceMember, scope)
+            add("($KODI_SCOPE_PATTERN)", scope) // instanceMember,
         } else {
             add("()")
         }

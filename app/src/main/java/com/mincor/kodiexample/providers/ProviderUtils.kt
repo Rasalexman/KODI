@@ -14,26 +14,30 @@ import okhttp3.OkHttpClient
 object ProviderUtils {
 
     @BindSingle(
-            toClass = Cache::class,
-            toModule = Consts.Modules.ProvidersName
+        toClass = Cache::class,
+        toModule = Consts.Modules.ProvidersName
     )
-    fun createCache(context: Context) = CoilUtils.createDefaultCache(context)
+    fun createCache(context: Context): Cache = CoilUtils.createDefaultCache(context)
 
     @BindProvider(
-            toClass = IMovieApi::class,
-            toModule = Consts.Modules.ProvidersName
+        toClass = IMovieApi::class,
+        toModule = Consts.Modules.ProvidersName
     )
     fun createMovieApi(client: OkHttpClient): IMovieApi = createWebServiceApi(client)
 
 
     @BindSingle(
-            toClass = ImageLoader::class,
-            toModule = Consts.Modules.ProvidersName
+        toClass = ImageLoader::class,
+        toModule = Consts.Modules.ProvidersName
     )
-    fun createImageLoader(context: Context, client: OkHttpClient) =
-            ImageLoader.Builder(context)
-                    .availableMemoryPercentage(0.5)
-                    .bitmapPoolPercentage(0.5)
-                    .crossfade(true)
-                    .okHttpClient(client).build()
+    fun createImageLoader(context: Context) =
+        ImageLoader.Builder(context)
+            .availableMemoryPercentage(0.5)
+            .bitmapPoolPercentage(0.5)
+            .crossfade(true)
+            .okHttpClient {
+                OkHttpClient.Builder()
+                    .cache(CoilUtils.createDefaultCache(context))
+                    .build()
+            }.build()
 }

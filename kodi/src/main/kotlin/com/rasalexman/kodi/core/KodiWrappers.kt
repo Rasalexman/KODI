@@ -19,8 +19,11 @@ package com.rasalexman.kodi.core
  *
  * @param instanceTag - String tag for instance `key` storage
  */
-@JvmInline
-value class KodiTagWrapper(private val instanceTag: String) {
+//@JvmInline
+data class KodiTagWrapper(
+    private val instanceTag: String,
+    private val originalTag: String = ""
+    ) {
 
     /**
      * Check instanceTag is not empty
@@ -35,6 +38,11 @@ value class KodiTagWrapper(private val instanceTag: String) {
      * Return a [String] representation of Wrapper
      */
     fun asString(): String = this.instanceTag
+
+    /**
+     * Return a [String] representation of Original Generic Class Name
+     */
+    fun asOriginal(): String = this.originalTag
 }
 
 /**
@@ -95,6 +103,11 @@ value class KodiScopeWrapper(private val scopeTag: String) {
      * @return [Boolean]
      */
     fun isNotEmpty(): Boolean = this.scopeTag.isNotEmpty()
+
+    /**
+     *
+     */
+    fun isNotDefault(): Boolean = this != defaultScope
 
     /**
      * Return a [String] representation of Wrapper

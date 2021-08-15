@@ -15,15 +15,16 @@ plugins {
 }
 
 android {
-    compileSdkVersion(COMPILE_VERSION)
+    compileSdk = COMPILE_VERSION
     buildToolsVersion = BUILD_TOOLS
     defaultConfig {
         applicationId = APP_ID
-        minSdkVersion(MIN_VERSION)
-        targetSdkVersion(TARGET_VERSION)
+        minSdk = MIN_VERSION
+        targetSdk = TARGET_VERSION
         versionCode = appdependencies.Builds.App.VERSION_CODE
         versionName = appdependencies.Builds.App.VERSION_NAME
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
 
         buildConfigField("String", "ApiKey", "\"026a257e7842ac9cac1fa627496b1468\"")
         buildConfigField("String", "IMAGES_URL", "\"https://image.tmdb.org/t/p/w500\"")
@@ -77,7 +78,7 @@ android {
 
     packagingOptions {
         exclude("META-INF/notice.txt")
-        exclude("META-INF/gradle/incremental.annotation.processors")
+        //exclude("META-INF/gradle/incremental.annotation.processors")
     }
 
     // Declare the task that will monitor all configurations.
@@ -99,6 +100,7 @@ android {
     }
 
     kotlinOptions {
+        jvmTarget = "1.8"
         languageVersion = "1.5"
         apiVersion = "1.5"
     }
@@ -113,7 +115,7 @@ dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", Versions.kotlin))
 
-    implementation(project(":kodiandroidx"))
+    implementation(project(":kodi"))
 
     implementation(appdependencies.Libs.Core.coreKtx)
     implementation(appdependencies.Libs.Core.constraintlayout)
@@ -133,9 +135,9 @@ dependencies {
 
     implementation(appdependencies.Libs.Lifecycle.livedataKtx)
     implementation(appdependencies.Libs.Lifecycle.viewmodelKtx)
-    implementation(appdependencies.Libs.Lifecycle.savedStateViewModel)
-    implementation(appdependencies.Libs.Lifecycle.extensions)
-    implementation(appdependencies.Libs.Lifecycle.common)
+    //implementation(appdependencies.Libs.Lifecycle.savedStateViewModel)
+    //implementation(appdependencies.Libs.Lifecycle.extensions)
+    //implementation(appdependencies.Libs.Lifecycle.common)
 
     implementation(appdependencies.Libs.FastAdapter.core)
     implementation(appdependencies.Libs.FastAdapter.ui)

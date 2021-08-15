@@ -52,7 +52,10 @@ fun main() {
         defaultParamsItem.printName()
         
         addBindingListener<ISingleInterface>(scope = MY_SINGLE_SCOPE_NAME) {
-            println("$TAG addBindingListener value = ${it.get(this).printName()}")
+            println("$TAG addBindingListener1 value = ${it.get(this).printName()}")
+        }
+        addBindingListener<ISingleInterface>(scope = MY_SINGLE_SCOPE_NAME) {
+            println("$TAG addBindingListener2 value = ${it.get(this).printName()}")
         }
         addUnbindingListener<ISingleInterface>  {
             println("$TAG addUnbindingListener value = ${it.tag.asString()} ")

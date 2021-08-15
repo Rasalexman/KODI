@@ -20,3 +20,8 @@ class GenresLocalDataSource(
     }
     override suspend fun insertGenres(data: List<GenreEntity>) = genresDao.insertAll(data)
 }
+
+interface IGenresLocalDataSource {
+    suspend fun getGenresList(): SResult.Success<List<GenreEntity>>
+    suspend fun insertGenres(data: List<GenreEntity>)
+}

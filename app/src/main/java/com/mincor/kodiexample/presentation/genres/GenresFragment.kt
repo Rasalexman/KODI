@@ -1,7 +1,10 @@
 package com.mincor.kodiexample.presentation.genres
 
 import android.graphics.Rect
+import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +24,12 @@ class GenresFragment : BaseRecyclerFragment<GenreItem, GenresContract.IPresenter
     override val layoutId: Int
         get() = R.layout.fragment_appbar_recycler
 
+    override val toolBarMenuResId: Int
+        get() = R.menu.menu_refresh
+
+    override val toolbarView: Toolbar?
+        get() = view?.findViewById(R.id.toolBarView)
+
     override val presenter: GenresContract.IPresenter by immutableInstance()
 
     override var itemDecoration: RecyclerView.ItemDecoration? = null
@@ -34,7 +43,7 @@ class GenresFragment : BaseRecyclerFragment<GenreItem, GenresContract.IPresenter
             field
         }
 
-    override val onItemClickHandler: ((GenreItem) -> Unit)? = { item ->
+    override val onItemClickHandler: ((GenreItem) -> Unit) = { item ->
         this.findNavController().navigate(
                 R.id.action_genresFragment_to_moviesFragment,
                 bundleOf(
@@ -42,5 +51,14 @@ class GenresFragment : BaseRecyclerFragment<GenreItem, GenresContract.IPresenter
                         MoviesFragment.KEY_GENRE_NAME to item.name
                 )
         )
+    }
+
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        if(item.itemId == R.id.actionRefresh) {
+            presenter.loadGenres()
+        } else if(item.itemId == R.id.actionNext) {
+            onItemClickHandler(GenreItem(1000, "Film", listOf()))
+        }
+        return super.onMenuItemClick(item)
     }
 }
