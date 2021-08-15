@@ -5,15 +5,15 @@ package com.rasalexman.kodi.core
  *
  * @param tag - String instance tag (Optional)
  * @param scope - String of instance scope (Optional)
- * @param listener - event handling function
+ * @param listener - event handling function [KodiHolderHandler]
  *
  */
 inline fun <reified T : Any> IKodi.addBindingListener(
         tag: String? = null,
         scope: String? = null,
-        noinline listener: InstanceHandler<T>
+        noinline listener: KodiHolderHandler<T>
 ) {
-    addListener(tag, scope, listener, BindingEvent.BIND)
+    addListener(tag, scope, listener, KodiEvent.BIND)
 }
 
 /**
@@ -22,15 +22,15 @@ inline fun <reified T : Any> IKodi.addBindingListener(
  * @param tag - String instance tag (Optional)
  * @param scope - String of instance scope (Optional)
  * @param listener - event handling function (Optional),
- * if there is a null, it remove all binding listeners for selected tad and scope
+ * if there is a null, it remove all binding listeners for selected tag and scope
  *
  */
 inline fun <reified T : Any> IKodi.removeBindingListener(
         tag: String? = null,
         scope: String? = null,
-        noinline listener: InstanceHandler<T>?
+        noinline listener: KodiHolderHandler<T>? = null
 ) {
-    removeListener(tag, scope, listener, BindingEvent.BIND)
+    removeListener(tag, scope, listener, KodiEvent.BIND)
 }
 
 /**
@@ -44,9 +44,9 @@ inline fun <reified T : Any> IKodi.removeBindingListener(
 inline fun <reified T : Any> IKodi.addUnbindingListener(
         tag: String? = null,
         scope: String? = null,
-        noinline listener: InstanceHandler<T>
+        noinline listener: KodiHolderHandler<T>
 ) {
-    addListener(tag, scope, listener, BindingEvent.UNBIND)
+    addListener(tag, scope, listener, KodiEvent.UNBIND)
 }
 
 /**
@@ -61,9 +61,41 @@ inline fun <reified T : Any> IKodi.addUnbindingListener(
 inline fun <reified T : Any> IKodi.removeUnbindingListener(
         tag: String? = null,
         scope: String? = null,
-        noinline listener: InstanceHandler<T>?
+        noinline listener: KodiHolderHandler<T>?
 ) {
-    removeListener(tag, scope, listener, BindingEvent.UNBIND)
+    removeListener(tag, scope, listener, KodiEvent.UNBIND)
+}
+
+/**
+ * Add listener for event when instance is invoke from dependency graph
+ *
+ * @param tag - String instance tag (Optional)
+ * @param scope - String of instance scope (Optional)
+ * @param listener - event handling function
+ *
+ */
+inline fun <reified T : Any> IKodi.addInstanceListener(
+    tag: String? = null,
+    scope: String? = null,
+    noinline listener: KodiHolderHandler<T>
+) {
+    addListener(tag, scope, listener, KodiEvent.INSTANCE)
+}
+
+/**
+ * Remove listener for event when instance is invoke from dependency graph
+ *
+ * @param tag - String instance tag (Optional)
+ * @param scope - String of instance scope (Optional)
+ * @param listener - event handling function
+ *
+ */
+inline fun <reified T : Any> IKodi.removeInstanceListener(
+    tag: String? = null,
+    scope: String? = null,
+    noinline listener: KodiHolderHandler<T>
+) {
+    removeListener(tag, scope, listener, KodiEvent.INSTANCE)
 }
 
 /**
@@ -72,18 +104,18 @@ inline fun <reified T : Any> IKodi.removeUnbindingListener(
  * @param tag - String instance tag (Optional)
  * @param scope - String of instance scope (Optional)
  * @param listener - event handling function
- * @param event - [BindingEvent]
+ * @param event - [KodiEvent]
  *
  */
 inline fun <reified T : Any> IKodi.addListener(
-        tag: String? = null,
-        scope: String? = null,
-        noinline listener: InstanceHandler<T>,
-        event: BindingEvent
+    tag: String? = null,
+    scope: String? = null,
+    noinline listener: KodiHolderHandler<T>,
+    event: KodiEvent
 ) {
-    val tagToWrap = tag.or { genericName<T>() }.asTag()
-    val scopeToWrap = scope?.asScope()
-    Kodi.addListener(tagToWrap, scopeToWrap.or { defaultScope }, listener, event)
+    val tagToWrap = tag.asTag<T>()
+    val scopeToWrap = scope.asScope()
+    Kodi.addListener(tagToWrap, scopeToWrap, listener, event)
 }
 
 /**
@@ -92,21 +124,21 @@ inline fun <reified T : Any> IKodi.addListener(
  * @param tag - String instance tag (Optional)
  * @param scope - String of instance scope (Optional)
  * @param listener - event handling function (Optional), that was listen the event
- * @param event - [BindingEvent]
+ * @param event - [KodiEvent]
  *
  */
 inline fun <reified T : Any> IKodi.removeListener(
-        tag: String? = null,
-        scope: String? = null,
-        noinline listener: InstanceHandler<T>?,
-        event: BindingEvent
+    tag: String? = null,
+    scope: String? = null,
+    noinline listener: KodiHolderHandler<T>? = null,
+    event: KodiEvent
 ) {
-    val tagToWrap = tag.or { genericName<T>() }.asTag()
-    val scopeToWrap = scope?.asScope()
+    val tagToWrap = tag.asTag<T>()
+    val scopeToWrap = scope.asScope()
     listener?.let {
-        Kodi.removeListener(tagToWrap, scopeToWrap.or { defaultScope }, listener, event)
+        Kodi.removeListener(tagToWrap, scopeToWrap, it, event)
     }.or {
-        Kodi.removeAllListeners(tagToWrap, scopeToWrap.or { defaultScope })
+        Kodi.removeAllListeners(tagToWrap, scopeToWrap, event)
     }
 }
 
@@ -121,7 +153,7 @@ inline fun <reified T : Any> IKodi.hasBindingListener(
         tag: String? = null,
         scope: String? = null
 ): Boolean {
-    return hasEventListener<T>(tag, scope, BindingEvent.BIND)
+    return hasEventListener<T>(tag, scope, KodiEvent.BIND)
 }
 
 /**
@@ -135,24 +167,39 @@ inline fun <reified T : Any> IKodi.hasUnbindingListener(
         tag: String? = null,
         scope: String? = null
 ): Boolean {
-    return hasEventListener<T>(tag, scope, BindingEvent.UNBIND)
+    return hasEventListener<T>(tag, scope, KodiEvent.UNBIND)
 }
 
 /**
- * Check has listeners for specific [BindingEvent]
+ * Check for binding listeners
  *
  * @param tag - String instance tag (Optional)
  * @param scope - String of instance scope (Optional)
- * @param event - [BindingEvent]
+ *
+ * @return [Boolean] told does it has active listener
+ */
+inline fun <reified T : Any> IKodi.hasInstanceListener(
+    tag: String? = null,
+    scope: String? = null
+): Boolean {
+    return hasEventListener<T>(tag, scope, KodiEvent.INSTANCE)
+}
+
+/**
+ * Check has listeners for specific [KodiEvent]
+ *
+ * @param tag - String instance tag (Optional)
+ * @param scope - String of instance scope (Optional)
+ * @param event - [KodiEvent]
  *
  */
 inline fun <reified T : Any> IKodi.hasEventListener(
         tag: String? = null,
         scope: String? = null,
-        event: BindingEvent
+        event: KodiEvent
 ): Boolean {
-    val tagToWrap = tag.or { genericName<T>() }.asTag()
-    val scopeToWrap = scope?.asScope()
-    return Kodi.hasListeners(tagToWrap, scopeToWrap.or { defaultScope }, event)
+    val tagToWrap = tag.asTag<T>()
+    val scopeToWrap = scope.asScope()
+    return Kodi.hasListeners(tagToWrap, scopeToWrap, event)
 }
 

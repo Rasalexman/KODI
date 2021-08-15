@@ -34,17 +34,33 @@ fun emptyTag() = KodiTagWrapper("")
 /**
  * String moduleScope name to Scope Wrapper
  */
-fun String.asScope() = KodiScopeWrapper(this)
-
-/**
- * String tag name to Tag Wrapper
- */
-fun String.asTag() = KodiTagWrapper(this)
+fun String?.asScope() = this?.let { KodiScopeWrapper(it) }.or { defaultScope }
 
 /**
  * Inline fun to convert any to [KodiTagWrapper]
  */
-inline fun <reified T : Any> T.asTag() = KodiTagWrapper(genericName<T>())
+inline fun <reified T : Any> String?.asTag(): KodiTagWrapper = KodiTagWrapper(this ?: genericName<T>())
+
+
+/**
+ * Add Instance Tag to moduleScope
+ * Or remove it if input [KodiScopeWrapper] is [emptyScope]
+ *
+ * @param scopeWrapper - [KodiScopeWrapper] to add instance tag
+ */
+infix fun<T : Any> KodiHolder<T>.at(scopeWrapper: KodiScopeWrapper): KodiHolder<T> {
+    return this.scopeWith(scopeWrapper)
+}
+
+/**
+ * Add [KodiTagWrapper] to current Holder
+ * And put it into dependency scope
+ *
+ * @param instanceTag - tag for instance binding
+ */
+infix fun<T : Any> KodiHolder<T>.tag(instanceTag: KodiTagWrapper) {
+    this.tagWith(instanceTag)
+}
 
 
 /**
@@ -54,7 +70,7 @@ inline fun <reified T : Any> T.asTag() = KodiTagWrapper(genericName<T>())
  *
  * @param action - some action with conditional
  */
-fun <T : IKodi> KodiHolder.holderAs(prediction: T?, action: KodiHolder.(T) -> Unit): KodiHolder {
+fun <T : IKodi, E : Any> KodiHolder<E>.holderAs(prediction: T?, action: KodiHolder<E>.(T) -> Unit): KodiHolder<E> {
     prediction?.let { kodiInstance ->
         this.action(kodiInstance)
     }
@@ -71,7 +87,7 @@ fun <T> T?.or(block: () -> T): T {
 /**
  * Take generic `qualifiedName` from class
  */
-inline fun <reified T> Any.genericName(): String {
+inline fun <reified T> genericName(): String {
     return T::class.qualifiedName.toString()
 }
 

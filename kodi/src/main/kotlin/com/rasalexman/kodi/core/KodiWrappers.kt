@@ -47,7 +47,7 @@ internal typealias KodiTagScopeWrappers = Pair<KodiTagWrapper, KodiScopeWrapper>
  *
  * @param instance - [KodiHolder] instance for store
  */
-inline infix fun <reified T : KodiHolder> KodiTagWrapper.with(instance: T) {
+inline infix fun <reified T : KodiHolder<*>> KodiTagWrapper.with(instance: T) {
     instance tag this
 }
 
@@ -56,7 +56,7 @@ inline infix fun <reified T : KodiHolder> KodiTagWrapper.with(instance: T) {
  *
  * @param instance - current [KodiHolder] instance for merge and store
  */
-inline infix fun <reified T : KodiHolder> KodiTagScopeWrappers.with(instance: T) {
+inline infix fun <reified T : KodiHolder<*>> KodiTagScopeWrappers.with(instance: T) {
     val (kodiTagWrapper, kodiScopeWrapper) = this
     (instance at kodiScopeWrapper) tag kodiTagWrapper
 }
@@ -76,6 +76,7 @@ infix fun KodiTagWrapper.at(scopeWrapper: KodiScopeWrapper): KodiTagScopeWrapper
  *
  * @param scopeName - String scope name
  */
+@CanThrowException("Parameter `scopeName: String` can't be empty")
 infix fun KodiTagWrapper.at(scopeName: String): KodiTagScopeWrappers {
     if(scopeName.isEmpty()) throwKodiException<IllegalStateException>("Parameter `scopeName: String` can't be empty")
     return this to scopeName.asScope()

@@ -26,8 +26,13 @@ import com.rasalexman.kodi.delegates.mutableGetter
  */
 @Target(AnnotationTarget.FUNCTION)
 annotation class CanThrowException(
-        val message: String = "Check that the tag is added to the dependency graph, otherwise it will fall withScope RuntimeException"
+    val message: String = "Check that the \'tag\' is added to the dependency graph, otherwise it will fall with RuntimeException"
 )
+
+private const val TAG_EMPTY_ERROR = "Parameter \'tag\' cannot be empty string"
+private const val SCOPE_EMPTY_ERROR = "Parameter \'scopeName\' cannot be empty string"
+private const val HOLDER_NULL_ERROR = "There is no \'KodiHolder\' instance in dependency graph"
+private const val INITIALIZER_NULL_ERROR = "There is no typed initializer passed throw an exception"
 
 /**
  * Main Singleton object for manipulate instances
@@ -44,7 +49,7 @@ interface IKodi
  *
  * @param block - main initialization block for binding instances
  */
-inline fun <reified T : Any> kodi(block: IKodi.() -> T): T {
+inline fun <reified ReturnType : Any> kodi(block: IKodi.() -> ReturnType): ReturnType {
     return Kodi.block()
 }
 
@@ -57,9 +62,9 @@ inline fun <reified T : Any> kodi(block: IKodi.() -> T): T {
  * @receiver [IKodi]
  * @return [KodiTagWrapper]
  */
-inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
+inline fun <reified BindType : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
     val receiver = this
-    return tag.or { genericName<T>() }.asTag().also {
+    return tag.asTag<BindType>().also {
         if (receiver is IKodiModule) {
             receiver.moduleInstancesSet.add(it)
         }
@@ -70,13 +75,13 @@ inline fun <reified T : Any> IKodi.bind(tag: String? = null): KodiTagWrapper {
  * Bind Typed Instance to inherits type like <ISimpleInterface, BaseSimpleInterfaceImplementation>
  *
  * @param tag - optional parameter for custom manipulating withScope instance tag
- * if there is no tag provided the generic class name will be used as `T::class.java.toString()`
+ * if there is no tag provided the generic class name will be used as `T::class.qualifiedName`
  *
  * @receiver [IKodi]
  * @return [KodiTagWrapper]
  */
-inline fun <reified T : Any, reified R : T> IKodi.bindType(tag: String? = null): KodiTagWrapper {
-    return this.bind<R>(tag)
+inline fun <reified ParentType : Any, reified ChildType : ParentType> IKodi.bindType(tag: String? = null): KodiTagWrapper {
+    return this.bind<ChildType>(tag)
 }
 
 /**
@@ -89,10 +94,13 @@ inline fun <reified T : Any, reified R : T> IKodi.bindType(tag: String? = null):
  *
  * @return [Boolean] - is instance removed
  */
-inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = null): Boolean {
-    val tagToWrapper = tag.or { genericName<T>() }.asTag()
-    val scopeToWrap = scope?.asScope()
-    return Kodi.removeInstance(tagToWrapper, scopeToWrap.or { defaultScope })
+inline fun <reified UnbindType : Any> IKodi.unbind(
+    tag: String? = null,
+    scope: String? = null
+): Boolean {
+    val tagToWrapper = tag.asTag<UnbindType>()
+    val scopeToWrap = scope.asScope()
+    return Kodi.removeInstance(tagToWrapper, scopeToWrap)
 }
 
 /**
@@ -103,8 +111,8 @@ inline fun <reified T : Any> IKodi.unbind(tag: String? = null, scope: String? = 
  *
  * @return [Boolean]
  */
-inline fun <reified T : Any> IKodi.hasModule(tag: String? = null): Boolean {
-    val tagToWrap = tag.or { genericName<T>() }.asTag()
+inline fun <reified InstanceType : Any> IKodi.hasModule(tag: String? = null): Boolean {
+    val tagToWrap = tag.asTag<InstanceType>()
     return Kodi.hasModuleByTag(tagToWrap)
 }
 
@@ -116,8 +124,8 @@ inline fun <reified T : Any> IKodi.hasModule(tag: String? = null): Boolean {
  *
  * @return [Boolean]
  */
-inline fun <reified T : Any> IKodi.hasInstance(tag: String? = null): Boolean {
-    val tagToWrap = tag.or { genericName<T>() }.asTag()
+inline fun <reified InstanceType : Any> IKodi.hasInstance(tag: String? = null): Boolean {
+    val tagToWrap = tag.asTag<InstanceType>()
     return Kodi.hasInstance(tagToWrap)
 }
 
@@ -129,11 +137,13 @@ inline fun <reified T : Any> IKodi.hasInstance(tag: String? = null): Boolean {
  * @receiver [IKodi]
  * @return [KodiTagWrapper]
  */
-@CanThrowException("Parameter tag cannot be empty string")
+@CanThrowException(TAG_EMPTY_ERROR)
 fun IKodi.bindTag(tag: String): KodiTagWrapper {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.bind<Any>(it)
-    } ?: throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
+    }.or {
+        throwKodiException<IllegalArgumentException>(TAG_EMPTY_ERROR)
+    }
 }
 
 /**
@@ -146,11 +156,13 @@ fun IKodi.bindTag(tag: String): KodiTagWrapper {
  * @receiver [IKodi]
  * @return [KodiTagWrapper]
  */
-@CanThrowException("Parameter tag cannot be empty string")
+@CanThrowException(TAG_EMPTY_ERROR)
 fun IKodi.unbindTag(tag: String, scope: String? = null): Boolean {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.unbind<Any>(tag, scope)
-    } ?: throwKodiException<IllegalArgumentException>("TAG CANNOT BE EMPTY")
+    }.or {
+        throwKodiException<IllegalArgumentException>(TAG_EMPTY_ERROR)
+    }
 }
 
 /**
@@ -158,7 +170,9 @@ fun IKodi.unbindTag(tag: String, scope: String? = null): Boolean {
  *
  * @param scopeName - [String] scope name to remove
  */
+@CanThrowException(SCOPE_EMPTY_ERROR)
 fun IKodi.unbindScope(scopeName: String): Boolean {
+    if (scopeName.isEmpty()) throwKodiException<IllegalArgumentException>(SCOPE_EMPTY_ERROR)
     return Kodi.removeAllScope(scopeName.asScope())
 }
 
@@ -176,10 +190,49 @@ fun IKodi.unbindAll() {
  * @param scope - String of instance scope
  * @throws IllegalAccessException - if there is no tag in dependency graph
  */
-@CanThrowException("There is no KodiHolder instance in dependency graph")
-inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? = null): T {
-    val inst = holder<T>(tag, scope).get(this)
-    return (inst as? T) ?: throwKodiException<ClassCastException>("Cannot cast instance = $inst to Generic type ${genericName<T>()}")
+@CanThrowException(HOLDER_NULL_ERROR)
+inline fun <reified InstanceType : Any> IKodi.instance(
+    tag: String? = null,
+    scope: String? = null
+): InstanceType {
+    val inst = holder<InstanceType>(tag, scope).get(this)
+    return (inst as? InstanceType).or {
+        throwKodiException<ClassCastException>(
+            message = "Cannot cast instance = $inst to Generic type ${genericName<InstanceType>()}"
+        )
+    }
+}
+
+/**
+ * Take current instance with given params for injection
+ *
+ * @param parameter - parameter to hold into bind scope function
+ * @param tag - String instance tag (Optional)
+ * @param scope - String of instance scope
+ * @throws IllegalAccessException - if there is no tag in dependency graph
+ */
+@Suppress("UNCHECKED_CAST")
+@CanThrowException(HOLDER_NULL_ERROR)
+inline fun <reified InstanceType : Any> IKodi.instanceWith(
+    parameter: Any? = null,
+    tag: String? = null,
+    scope: String? = null
+): InstanceType {
+    val holder = holder<InstanceType>(
+        tag = tag,
+        scope = scope
+    )
+    val paramsInst = parameter?.let {
+        (holder as? KodiHolder.KodiWithParamProvider<Any>)?.getWithParam(
+            kodiImpl = this,
+            param = parameter
+        )
+    } ?: holder.get(kodiImpl = this)
+    return (paramsInst as? InstanceType).or {
+        throwKodiException<ClassCastException>(
+            message = "Cannot get instance from $holder with Generic type ${genericName<InstanceType>()}"
+        )
+    }
 }
 
 /**
@@ -189,13 +242,18 @@ inline fun <reified T : Any> IKodi.instance(tag: String? = null, scope: String? 
  * @param scope - String of instance scope
  * @throws IllegalAccessException - if there is no tag in dependency graph it's crash
  */
-@CanThrowException("There is no KodiHolder instance in dependency graph")
-inline fun <reified T : Any> IKodi.holder(tag: String? = null, scope: String? = null): KodiHolder {
+@CanThrowException(HOLDER_NULL_ERROR)
+inline fun <reified InstanceType : Any> IKodi.holder(
+    tag: String? = null,
+    scope: String? = null
+): KodiHolder<out Any> {
     val instance = this
-    val tagToWrap = tag.or { genericName<T>() }.asTag()
-    val scopeToWrap = scope?.asScope()
-    return Kodi.createOrGet(tagToWrap, scopeToWrap.or { defaultScope }) {
-        throwKodiException<IllegalAccessException>("There is no tag `$tagToWrap` in dependency graph with scope `$scopeToWrap` injected into IKodi instance [$instance]")
+    val tagToWrap = tag.asTag<InstanceType>()
+    val scopeToWrap = scope.asScope()
+    return Kodi.createOrGet(tag = tagToWrap, scope = scopeToWrap) {
+        throwKodiException<IllegalAccessException>(
+            message = "There is no tag `$tagToWrap` in dependency graph with scope `$scopeToWrap` injected into IKodi instance [$instance]"
+        )
     }
 }
 
@@ -206,8 +264,10 @@ inline fun <reified T : Any> IKodi.holder(tag: String? = null, scope: String? = 
  *
  * @return [KodiHolder.KodiSingle] implementation instance
  */
-inline fun <reified T : Any> IKodi.single(noinline init: InstanceInitializer<T>): KodiHolder {
-    return createHolder<KodiHolder.KodiSingle<T>, T>(init)
+inline fun <reified SingleType : Any> IKodi.single(
+    noinline init: InstanceInitializer<SingleType>
+): KodiHolder<SingleType> {
+    return createHolder<KodiHolder.KodiSingle<SingleType>, SingleType>(init)
 }
 
 /**
@@ -217,8 +277,25 @@ inline fun <reified T : Any> IKodi.single(noinline init: InstanceInitializer<T>)
  *
  * @return [KodiHolder.KodiProvider] implementation instance
  */
-inline fun <reified T : Any> IKodi.provider(noinline init: InstanceInitializer<T>): KodiHolder {
-    return createHolder<KodiHolder.KodiProvider<T>, T>(init)
+inline fun <reified ProviderType : Any> IKodi.provider(
+    noinline init: InstanceInitializer<ProviderType>
+): KodiHolder<ProviderType> {
+    return createHolder<KodiHolder.KodiProvider<ProviderType>, ProviderType>(init)
+}
+
+/**
+ * Bind the provider function with params class
+ *
+ * @param defaultParameter - optional default parameter instance
+ * @param init - instance initializer [InstanceInitializerWithParam]
+ *
+ * @return [KodiHolder.KodiProvider] implementation instance
+ */
+inline fun <reified ParamType : Any> IKodi.providerWith(
+    defaultParameter: ParamType? = null,
+    noinline init: InstanceInitializerWithParam<ParamType>
+): KodiHolder<Any> {
+    return createParamHolder(defaultParameter, init)
 }
 
 /**
@@ -228,11 +305,49 @@ inline fun <reified T : Any> IKodi.provider(noinline init: InstanceInitializer<T
  *
  * @return [KodiHolder.KodiConstant] implementation instance
  */
-inline fun <reified T : Any> IKodi.constant(noinline init: InstanceInitializer<T>): KodiHolder {
-    return createHolder<KodiHolder.KodiConstant<T>, T>(init)
+inline fun <reified ConstantType : Any> IKodi.constant(
+    noinline init: InstanceInitializer<ConstantType>
+): KodiHolder<ConstantType> {
+    return createHolder<KodiHolder.KodiConstant<ConstantType>, ConstantType>(init)
 }
 
 
+/**
+ * Create [KodiHolder] with given [InstanceInitializer]
+ * It's also apply scope [KodiScopeWrapper] from [IKodiModule]
+ *
+ * @param init - noinline [InstanceInitializer]
+ *
+ * @return [KodiHolder] implementation instance
+ */
+@CanThrowException(INITIALIZER_NULL_ERROR)
+inline fun <reified HolderType : KodiHolder<ReturnType>, reified ReturnType : Any> IKodi.createHolder(
+    noinline init: InstanceInitializer<ReturnType>
+): HolderType {
+    return when (HolderType::class.java) {
+        KodiHolder.KodiSingle::class.java -> KodiHolder.KodiSingle(init)
+        KodiHolder.KodiProvider::class.java -> KodiHolder.KodiProvider(init)
+        KodiHolder.KodiConstant::class.java -> KodiHolder.KodiConstant(init())
+        else -> throwKodiException<ClassCastException>("There is no type holder like \'${genericName<ReturnType>()}\'")
+    }.holderAs(this as? IKodiModule) { module -> this at module.scope } as HolderType
+}
+
+/**
+ * Create [KodiHolder] with given [InstanceInitializerWithParam] and [ParamType]
+ * It's also apply scope [KodiScopeWrapper] from [IKodiModule]
+ *
+ * @param defaultParameter - optional parameter instance
+ * @param init - noinline [InstanceInitializerWithParam]
+ *
+ * @return [KodiHolder] implementation instance
+ */
+inline fun <reified ParamType : Any> IKodi.createParamHolder(
+    defaultParameter: ParamType? = null,
+    noinline init: InstanceInitializerWithParam<ParamType>
+): KodiHolder<Any> {
+    return KodiHolder.KodiWithParamProvider(init, defaultParameter)
+        .holderAs(this as? IKodiModule) { module -> this at module.scope }
+}
 
 /**
  * Lazy immutable property initializer wrapper for injection
@@ -242,8 +357,12 @@ inline fun <reified T : Any> IKodi.constant(noinline init: InstanceInitializer<T
  * @param tag - there is an optional tag that we pass to key into dependency graph
  * @param scope - there is a scope of current instance
  */
-inline fun <reified T : Any> IKodi.immutableInstance(tag: String? = null, scope: String? = null): IImmutableDelegate<T> = immutableGetter {
-    instance<T>(tag, scope)
+inline fun <reified InstanceType : Any> IKodi.immutableInstance(
+    param: Any? = null,
+    tag: String? = null,
+    scope: String? = null
+): IImmutableDelegate<InstanceType> = immutableGetter {
+    instanceWith(parameter = param, tag = tag, scope = scope)
 }
 
 /**
@@ -254,6 +373,10 @@ inline fun <reified T : Any> IKodi.immutableInstance(tag: String? = null, scope:
  * @param tag - there is an optional tag that we pass to key into dependency graph
  * @param scope - there is a scope of current instance
  */
-inline fun <reified T : Any> IKodi.mutableInstance(tag: String? = null, scope: String? = null): IMutableDelegate<T> = mutableGetter {
-    instance<T>(tag, scope)
+inline fun <reified InstanceType : Any> IKodi.mutableInstance(
+    param: Any? = null,
+    tag: String? = null,
+    scope: String? = null
+): IMutableDelegate<InstanceType> = mutableGetter {
+    instanceWith(parameter = param, tag = tag, scope = scope)
 }

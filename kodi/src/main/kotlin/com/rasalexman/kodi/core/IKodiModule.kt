@@ -30,6 +30,7 @@ interface IKodiModule : IKodi {
      * Initialization literal function withScope receiver
      */
     val instanceInitializer: ModuleInitializer
+
     /**
      * Module Scope for all elements
      */
@@ -47,7 +48,7 @@ interface IKodiModule : IKodi {
  * @param instanceInitializer - initializer [ModuleInitializer]
  */
 internal data class KodiModule(
-        override val instanceInitializer: ModuleInitializer
+    override val instanceInitializer: ModuleInitializer
 ) : IKodiModule {
     /**
      * Module Scope. It's Lazy initializing
@@ -57,7 +58,7 @@ internal data class KodiModule(
     /**
      * Set of all instances that includes in this module
      */
-    override val moduleInstancesSet: MutableSet<KodiTagWrapper> by immutableGetter { mutableSetOf<KodiTagWrapper>() }
+    override val moduleInstancesSet: MutableSet<KodiTagWrapper> by immutableGetter { mutableSetOf() }
 }
 
 /**
@@ -91,8 +92,9 @@ fun IKodi.import(module: IKodiModule) {
  *
  * @param tag [String] - string representation of instance must be unique
  */
-inline fun <reified T : Any> IKodiModule.hasInstance(tag: String? = null): Boolean {
-    return this.moduleInstancesSet.contains(tag.or { genericName<T>() }.asTag())
+inline fun <reified InstanceType : Any> IKodiModule.hasInstance(tag: String? = null): Boolean {
+    val tagToWrapper = tag.asTag<InstanceType>()
+    return this.moduleInstancesSet.contains(tagToWrapper)
 }
 
 /**
@@ -100,8 +102,9 @@ inline fun <reified T : Any> IKodiModule.hasInstance(tag: String? = null): Boole
  *
  * @param tag [KodiTagWrapper] - string representation of instance must be unique
  */
-inline fun <reified T : Any> IKodiModule.hasInstance(tag: KodiTagWrapper? = null): Boolean {
-    return this.moduleInstancesSet.contains(tag.or { genericName<T>().asTag() })
+inline fun <reified InstanceType : Any> IKodiModule.hasInstance(tag: KodiTagWrapper? = null): Boolean {
+    val tagToWrapper = tag.or { genericName<InstanceType>().asTag<InstanceType>() }
+    return this.moduleInstancesSet.contains(tagToWrapper)
 }
 
 /**

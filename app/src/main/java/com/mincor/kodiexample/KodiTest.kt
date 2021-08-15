@@ -25,39 +25,55 @@ fun main() {
         bind<IProviderInterface>() at MY_PROVIDER_SCOPE_NAME with provider { ProviderClass(UUID.randomUUID().toString()) }
 
         import(com.kodi.generated.modules.kodi.kodiModule)
-        //bindType<ISingleInterface, AnotherSingleClass>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
-        //bindType<ISingleInterface, OneMoreSingleClass>() with single { OneMoreSingleClass(UUID.randomUUID().toString()) }
+        bindType<ISingleInterface, AnotherSingleClass>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
+        bindType<ISingleInterface, OneMoreSingleClass>() with single { OneMoreSingleClass(UUID.randomUUID().toString()) }
     } withScope MY_SINGLE_SCOPE_NAME
 
     val anotherModule = kodiModule {
         bind<ISingleInterface>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
         bind<ISingleInterface>() at MY_EXCLUSIV_SCOPE_NAME with single { SingleClass(UUID.randomUUID().toString()) }
 
-        bindTag("Hello") with single {
-            "Hello"
-        }
+        bindTag("Hello") with constant { "Hello" }
 
         bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) }
+        // with parameters
+        bind<IProviderWithParamsInterface>() with providerWith(defaultParameter = "Default Parameter") {
+            ProviderClass(it.orEmpty())
+        }
         bind<IClass>() at SECOND_SCOPE with single { SecondClass(instance(), instance()) }
         bind<IClass>() at FIRST_SCOPE with single { FirstClass(instance()) }
     } //withScope MY_ANOTHER_SCOPE_NAME
 
-
     kodi {
-        addBindingListener<ISingleInterface>(scope = MY_SINGLE_SCOPE_NAME) { iSingleInterface ->
-            println("$TAG instance $iSingleInterface is added to graph")
-        }
-        addUnbindingListener<ISingleInterface>  {  iSingleInterface ->
-            println("$TAG instance $iSingleInterface was removed from graph")
-        }
-
 
         import(kodiModule)
         import(anotherModule)
+        val defaultParamsItem: IProviderWithParamsInterface by immutableInstance("Random")
+        defaultParamsItem.printName()
+        
+        addBindingListener<ISingleInterface>(scope = MY_SINGLE_SCOPE_NAME) {
+            println("$TAG addBindingListener value = ${it.get(this).printName()}")
+        }
+        addUnbindingListener<ISingleInterface>  {
+            println("$TAG addUnbindingListener value = ${it.tag.asString()} ")
+        }
 
-       // val firstModuleInstance: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
-       // val secondModuleInstance: ISingleInterface = instance()
-       // val exclusivModuleInstance: ISingleInterface = instance(scope = MY_EXCLUSIV_SCOPE_NAME)
+        val instanceListener: KodiHolderHandler<IProviderWithParamsInterface> = {
+            println("$TAG addInstanceListener value = ${it.tag.asString()}")
+        }
+        addInstanceListener(listener = instanceListener)
+
+
+        val instanceWithParams: IProviderWithParamsInterface = instanceWith("Hello Params")
+        instanceWithParams.printName()
+        val instanceWithDefaultParams: IProviderWithParamsInterface = instanceWith()
+        instanceWithDefaultParams.printName()
+
+//        val firstModuleInstance: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
+        val secondModuleInstance: ISingleInterface = instance()
+        secondModuleInstance.printName()
+        val exclusivModuleInstance: ISingleInterface = instance(scope = MY_EXCLUSIV_SCOPE_NAME)
+        exclusivModuleInstance.printName()
 
 //        val myProvider: IProviderInterface = instance()
 //        val myProviderByScope: IProviderInterface = instance(scope = MY_PROVIDER_SCOPE_NAME)
@@ -76,6 +92,7 @@ fun main() {
             log { "secondInstance id = $result" }
         }*/
 
+        removeInstanceListener<IProviderWithParamsInterface>(listener = instanceListener)
         unbind<ISingleInterface>()
         //val removedInterface: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)
 
@@ -161,21 +178,31 @@ fun main() {
 }
 
 interface IPrintable {
+    fun printName()
+}
+
+interface IDefaultModel : IPrintable {
     val id: String
     val name: String
-    fun printName() {
+
+    override fun printName() {
         println("$TAG ${this.name} | with id: $id")
     }
 }
 
-interface ISingleInterface : IPrintable
+interface ISingleInterface : IDefaultModel
 data class SingleClass(override val id: String, override val name: String = "Single") : ISingleInterface
 data class AnotherSingleClass(override val id: String, override val name: String = "Another") : ISingleInterface
 data class OneMoreSingleClass(override val id: String, override val name: String = "OneMore") : ISingleInterface
 data class DynamicSingleClass(override val id: String, override val name: String = "Dynamic") : ISingleInterface
 
-interface IProviderInterface : IPrintable, Cloneable
-data class ProviderClass(override val id: String, override val name: String = "Provider") : IProviderInterface
+interface IProviderInterface : IDefaultModel, Cloneable
+interface IProviderWithParamsInterface : IProviderInterface
+data class ProviderClass(override val id: String, override val name: String = "Provider") : IProviderWithParamsInterface {
+    override fun printName() {
+        println("$TAG ProviderClass with start params = $id")
+    }
+}
 
 open class FirstClass(
         private val anotherSingleClass: IProviderInterface
