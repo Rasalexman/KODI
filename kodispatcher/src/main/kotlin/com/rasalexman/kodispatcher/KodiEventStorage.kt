@@ -11,8 +11,12 @@
 // IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-package com.rasalexman.kodi.core
+package com.rasalexman.kodispatcher
 
+import com.rasalexman.kodi.core.KodiHolder
+import com.rasalexman.kodi.core.KodiScopeWrapper
+import com.rasalexman.kodi.core.KodiStorage
+import com.rasalexman.kodi.core.KodiTagWrapper
 import com.rasalexman.kodi.delegates.immutableGetter
 
 /**
@@ -53,7 +57,7 @@ internal typealias EventsMap = MutableMap<KodiEvent, ListenersMap>
 /**
  * Storage for events
  */
-internal interface IKodiEventStorage<V> : IKodiStorage<V> {
+internal interface IKodiEventStorage<V> {
     /**
      * Add binding listeners to the list
      *

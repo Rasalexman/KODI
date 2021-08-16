@@ -1,7 +1,7 @@
 package com.mincor.kodiexample.presentation.genres
 
 import com.mincor.kodiexample.presentation.base.IBaseRecyclerView
-import com.rasalexman.kodi.core.IKodiListener
+import com.rasalexman.kodispatcher.IKodiListener
 import com.rasalexman.sticky.core.IStickyPresenter
 
 interface GenresContract {

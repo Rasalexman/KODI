@@ -17,10 +17,7 @@
 package com.rasalexman.kodi.core
 
 import com.rasalexman.kodi.core.KodiHolder.*
-import com.rasalexman.kodi.delegates.IImmutableDelegate
-import com.rasalexman.kodi.delegates.IMutableDelegate
-import com.rasalexman.kodi.delegates.immutableGetter
-import com.rasalexman.kodi.delegates.mutableGetter
+import com.rasalexman.kodi.delegates.*
 
 /**
  * Annotation for mark some throwable functions
@@ -42,17 +39,10 @@ private const val INITIALIZER_NULL_ERROR = "There is no typed initializer passed
  */
 object Kodi : KodiStorage(), IKodi
 
-object KodiListener : KodiEventStorage(), IKodiListener
-
 /**
  * Simple implementing interface for di functionality
  */
 interface IKodi
-
-/**
- *
- */
-interface IKodiListener : IKodi
 
 /**
  * Initialize KODI dependencies
@@ -61,15 +51,6 @@ interface IKodiListener : IKodi
  */
 inline fun <reified ReturnType : Any> kodi(block: IKodi.() -> ReturnType): ReturnType {
     return Kodi.block()
-}
-
-/**
- * Initialize KODI dependencies
- *
- * @param block - main initialization block for binding instances
- */
-inline fun <reified ReturnType : Any> kodiListener(block: IKodiListener.() -> ReturnType): ReturnType {
-    return KodiListener.block()
 }
 
 /**

@@ -115,7 +115,7 @@ dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", Versions.kotlin))
 
-    implementation(project(":kodi"))
+    implementation(project(":kodispatcher"))
 
     implementation(appdependencies.Libs.Core.coreKtx)
     implementation(appdependencies.Libs.Core.constraintlayout)

@@ -12,9 +12,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+@file:Suppress("unused")
+
 package com.rasalexman.kodi.delegates
 
 import com.rasalexman.kodi.core.CanThrowException
+import com.rasalexman.kodi.core.LambdaWithReturn
 import com.rasalexman.kodi.core.throwKodiException
 
 /**
@@ -48,7 +51,7 @@ interface IMutableDelegate<T> : IImmutableDelegate<T> {
  *
  * @param init - func to hold at immutable instance
  */
-open class ImmutableDelegate<T>(private val init: () -> T) : IImmutableDelegate<T> {
+open class ImmutableDelegate<T>(private val init: LambdaWithReturn<T>) : IImmutableDelegate<T> {
 
     /**
      * Value holder
@@ -75,7 +78,7 @@ open class ImmutableDelegate<T>(private val init: () -> T) : IImmutableDelegate<
  *
  * @param init - func to hold at immutable instance
  */
-class MutableDelegate<T>(init: () -> T) : ImmutableDelegate<T>(init), IMutableDelegate<T> {
+class MutableDelegate<T>(init: LambdaWithReturn<T>) : ImmutableDelegate<T>(init), IMutableDelegate<T> {
     /**
      * Standard delegation function overriding
      */
@@ -124,9 +127,9 @@ sealed class Optional<out T> {
 /**
  * high order immutable delegate wrapper
  */
-inline fun <reified T, reified R> R.immutableGetter(noinline init: () -> T): IImmutableDelegate<T> = ImmutableDelegate(init)
+inline fun <reified T> Any.immutableGetter(noinline init: LambdaWithReturn<T>): IImmutableDelegate<T> = ImmutableDelegate(init)
 
 /**
  * high order mutable delegate wrapper
  */
-inline fun <reified T, reified R> R.mutableGetter(noinline init: () -> T): IMutableDelegate<T> = MutableDelegate(init)
+inline fun <reified T> Any.mutableGetter(noinline init: LambdaWithReturn<T>): IMutableDelegate<T> = MutableDelegate(init)

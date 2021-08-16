@@ -12,7 +12,14 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.rasalexman.kodi.core
+@file:Suppress("unused")
+
+package com.rasalexman.kodispatcher
+
+import com.rasalexman.kodi.core.asScope
+import com.rasalexman.kodi.core.asTag
+import com.rasalexman.kodi.core.or
+import com.rasalexman.kodi.core.provider
 
 /**
  * Add listener for event when instance is already binded to dependency graph
@@ -48,7 +55,7 @@ inline fun <reified T : Any> IKodiListener.removeBindingListener(
 }
 
 /**
- * Add listener for event when instance is already unbinded(removed) from dependency graph
+ * Add listener for event when instance is already unbound(removed) from dependency graph
  *
  * @param tag - String instance tag (Optional)
  * @param scope - String of instance scope (Optional)

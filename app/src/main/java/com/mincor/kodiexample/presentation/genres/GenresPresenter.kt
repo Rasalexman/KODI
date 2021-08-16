@@ -5,14 +5,13 @@ import com.mincor.kodiexample.common.Consts.Modules.PresentersName
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.genres.IGenresOutUseCase
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
-import com.rasalexman.coroutinesmanager.launchOnUI
 import com.rasalexman.coroutinesmanager.launchOnUITryCatch
 import com.rasalexman.kodi.annotations.BindSingle
 import com.rasalexman.kodi.annotations.WithInstance
 import com.rasalexman.kodi.core.IKodi
-import com.rasalexman.kodi.core.KodiEvent
-import com.rasalexman.kodi.core.addListener
 import com.rasalexman.kodi.core.instance
+import com.rasalexman.kodispatcher.KodiEvent
+import com.rasalexman.kodispatcher.addListener
 import com.rasalexman.sticky.core.IStickyPresenter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren

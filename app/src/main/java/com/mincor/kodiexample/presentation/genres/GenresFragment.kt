@@ -1,7 +1,6 @@
 package com.mincor.kodiexample.presentation.genres
 
 import android.graphics.Rect
-import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
@@ -12,6 +11,8 @@ import com.mincor.kodiexample.R
 import com.mincor.kodiexample.presentation.base.BaseRecyclerFragment
 import com.mincor.kodiexample.presentation.movies.MoviesFragment
 import com.rasalexman.kodi.core.*
+import com.rasalexman.kodispatcher.IKodiListener
+import com.rasalexman.kodispatcher.notifyListener
 
 @ExperimentalUnsignedTypes
 class GenresFragment : BaseRecyclerFragment<GenreItem, GenresContract.IPresenter>(),
@@ -54,7 +55,7 @@ class GenresFragment : BaseRecyclerFragment<GenreItem, GenresContract.IPresenter
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
         if(item.itemId == R.id.actionRefresh) {
-            notifyListener(KodiEvent.INSTANCE, "Hello")
+            notifyListener(com.rasalexman.kodispatcher.KodiEvent.INSTANCE, "Hello")
         } else if(item.itemId == R.id.actionNext) {
             onItemClickHandler(GenreItem(1000, "Film", listOf()))
         }

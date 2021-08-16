@@ -82,7 +82,6 @@ sealed class KodiHolder<T : Any> {
      * Clear current KodiHolder instance
      */
     open fun clear() {
-        notifyEventListeners(KodiEvent.UNBIND)
         scope = defaultScope
         tag = KodiTagWrapper.emptyTag()
     }
@@ -93,7 +92,6 @@ sealed class KodiHolder<T : Any> {
     private fun addToGraph() {
         if (tag.isNotEmpty()) {
             Kodi.createOrGet(tag, scope, ::getCurrentHolder)
-            notifyEventListeners(KodiEvent.BIND)
         }
     }
 
@@ -103,15 +101,6 @@ sealed class KodiHolder<T : Any> {
     private fun removeFromGraph() {
         if (tag.isNotEmpty()) {
             Kodi.removeInstance(tag, scope)
-        }
-    }
-
-    /**
-     * Notify all listener by event
-     */
-    protected fun notifyEventListeners(event: KodiEvent) {
-        if(tag.isNotEmpty() && scope.isNotEmpty()) {
-            KodiListener.notifyListeners(tag, scope, this, event)
         }
     }
 
@@ -145,7 +134,6 @@ sealed class KodiHolder<T : Any> {
                     )
                 }.also {
                     singleInstance = WeakReference(it)
-                    notifyEventListeners(KodiEvent.INSTANCE)
                 }
             }
         }
@@ -175,7 +163,7 @@ sealed class KodiHolder<T : Any> {
          */
         override fun get(kodiImpl: IKodi): ReturnType = providerLiteral?.invoke(kodiImpl).or {
             throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
-        }.also { notifyEventListeners(KodiEvent.INSTANCE) }
+        }
 
         /**
          * Clear current provider from literal
@@ -203,7 +191,7 @@ sealed class KodiHolder<T : Any> {
                 throwKodiException<NoSuchElementException>(
                     message = "There is no instance in [KodiConstant]"
                 )
-            }.also { notifyEventListeners(KodiEvent.INSTANCE) }
+            }
         }
 
         /**
