@@ -64,6 +64,15 @@ inline fun <reified ReturnType : Any> kodi(block: IKodi.() -> ReturnType): Retur
 }
 
 /**
+ * Initialize KODI dependencies
+ *
+ * @param block - main initialization block for binding instances
+ */
+inline fun <reified ReturnType : Any> kodiListener(block: IKodiListener.() -> ReturnType): ReturnType {
+    return KodiListener.block()
+}
+
+/**
  * Bind Any Generic type withScope some instance or KodiHolder types
  *
  * @param tag - optional parameter for custom manipulating withScope instance tag

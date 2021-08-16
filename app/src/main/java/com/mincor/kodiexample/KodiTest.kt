@@ -44,7 +44,7 @@ fun main() {
         bind<IClass>() at FIRST_SCOPE with single { FirstClass(instance()) }
     } //withScope MY_ANOTHER_SCOPE_NAME
 
-    kodi {
+    kodiListener {
 
         import(kodiModule)
         import(anotherModule)
@@ -67,12 +67,11 @@ fun main() {
         }
         addInstanceListener(listener = instanceListener)
 
-        //val scopedInstance: ISingleInterface = instance(scope = MY_SINGLE_SCOPE_NAME)
-        //scopedInstance.printName()
+        val scopedInstance: ISingleInterface = instance(scope = MY_SINGLE_SCOPE_NAME)
+        scopedInstance.printName()
 
         val providerFromScope: IProviderInterface = instance(scope = MY_PROVIDER_SCOPE_NAME)
         providerFromScope.printName()
-        return
 
         val instanceWithParams: IProviderWithParamsInterface = instance("Hello Params")
         instanceWithParams.printName()

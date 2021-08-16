@@ -11,12 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.presentation.base.BaseRecyclerFragment
 import com.mincor.kodiexample.presentation.movies.MoviesFragment
-import com.rasalexman.kodi.core.IKodi
-import com.rasalexman.kodi.core.immutableInstance
+import com.rasalexman.kodi.core.*
 
 @ExperimentalUnsignedTypes
 class GenresFragment : BaseRecyclerFragment<GenreItem, GenresContract.IPresenter>(),
-        GenresContract.IView, IKodi {
+        GenresContract.IView, IKodiListener {
 
     override val recyclerViewId: Int
         get() = R.id.recyclerView
@@ -55,7 +54,7 @@ class GenresFragment : BaseRecyclerFragment<GenreItem, GenresContract.IPresenter
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
         if(item.itemId == R.id.actionRefresh) {
-            presenter.loadGenres()
+            notifyListener(KodiEvent.INSTANCE, "Hello")
         } else if(item.itemId == R.id.actionNext) {
             onItemClickHandler(GenreItem(1000, "Film", listOf()))
         }

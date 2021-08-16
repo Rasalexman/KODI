@@ -31,6 +31,9 @@ sealed class KodiHolder<T : Any> {
      */
     abstract fun get(kodiImpl: IKodi): T
 
+
+    fun IKodi.holderValue(): T = get(this)
+
     /**
      * Local Holder scope [KodiScopeWrapper]
      */
@@ -40,7 +43,7 @@ sealed class KodiHolder<T : Any> {
     /**
      * Current Holder [KodiTagWrapper]
      */
-    var tag: KodiTagWrapper = emptyTag()
+    var tag: KodiTagWrapper = KodiTagWrapper.emptyTag()
         private set
 
     internal val storageKey: String
@@ -81,7 +84,7 @@ sealed class KodiHolder<T : Any> {
     open fun clear() {
         notifyEventListeners(KodiEvent.UNBIND)
         scope = defaultScope
-        tag = emptyTag()
+        tag = KodiTagWrapper.emptyTag()
     }
 
     /**

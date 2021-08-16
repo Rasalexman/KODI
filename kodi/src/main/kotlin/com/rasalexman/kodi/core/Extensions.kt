@@ -20,12 +20,6 @@ package com.rasalexman.kodi.core
 internal val defaultScope = KodiScopeWrapper("DEFAULT_SCOPE")
 
 /**
- * Empty instance tag holder.
- * This means that [KodiHolder] instance is no in dependency graph
- */
-fun emptyTag() = KodiTagWrapper("", "")
-
-/**
  * String moduleScope name to Scope Wrapper
  */
 fun String?.asScope(): KodiScopeWrapper {
@@ -37,12 +31,12 @@ fun String?.asScope(): KodiScopeWrapper {
 /**
  * Inline fun to convert any to [KodiTagWrapper]
  */
-inline fun <reified T : Any> String?.asTag(): KodiTagWrapper {
+inline fun <reified T : Any> Any?.asTag(): KodiTagWrapper {
     val originalTag = genericName<T>()
-    val instanceTag = this?.takeIf { it.isNotEmpty() } ?: originalTag
+    val instanceTag = (this as? String)?.takeIf { it.isNotEmpty() } ?: originalTag
     return KodiTagWrapper(
-        instanceTag = instanceTag,
-        originalTag = originalTag
+        instanceTag = KodiInstanceTagWrapper(instanceTag),
+        originalTag = KodiOriginalTagWrapper(originalTag)
     )
 }
 

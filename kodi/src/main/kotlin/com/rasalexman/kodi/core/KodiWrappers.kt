@@ -22,9 +22,9 @@ package com.rasalexman.kodi.core
  */
 //@JvmInline
 data class KodiTagWrapper(
-    private val instanceTag: String,
-    private val originalTag: String
-    ) {
+    private val instanceTag: KodiInstanceTagWrapper,
+    private val originalTag: KodiOriginalTagWrapper
+) {
 
     /**
      * Check instanceTag is not empty
@@ -38,12 +38,26 @@ data class KodiTagWrapper(
     /**
      * Return a [String] representation of Wrapper
      */
-    fun asString(): String = this.instanceTag
+    fun asString(): String = this.instanceTag.asString()
 
     /**
      * Return a [String] representation of Original Generic Class Name
      */
-    fun asOriginal(): String = this.originalTag
+    fun asOriginal(): String = this.originalTag.asString()
+
+    override fun toString(): String {
+        return asString()
+    }
+
+    companion object {
+        /**
+         * Empty instance tag holder.
+         * This means that [KodiHolder] instance is no in dependency graph
+         */
+        fun emptyTag(): KodiTagWrapper {
+            return KodiTagWrapper(KodiInstanceTagWrapper(""), KodiOriginalTagWrapper(""))
+        }
+    }
 }
 
 /**
@@ -77,7 +91,7 @@ inline infix fun <reified T : KodiHolder<*>> KodiTagScopeWrappers.with(instance:
  */
 @CanThrowException(SCOPE_EMPTY_ERROR)
 infix fun KodiTagWrapper.at(scopeName: String): KodiTagScopeWrappers {
-    if(scopeName.isEmpty()) throwKodiException<IllegalStateException>(SCOPE_EMPTY_ERROR)
+    if (scopeName.isEmpty()) throwKodiException<IllegalStateException>(SCOPE_EMPTY_ERROR)
     return this to scopeName.asScope()
 }
 
@@ -99,4 +113,16 @@ value class KodiScopeWrapper(private val scopeTag: String) {
      * Return a [String] representation of Wrapper
      */
     fun asString(): String = this.scopeTag
+}
+
+@JvmInline
+value class KodiInstanceTagWrapper(private val value: String) {
+    fun isNotEmpty(): Boolean = value.isNotEmpty()
+    fun asString(): String = this.value
+}
+
+@JvmInline
+value class KodiOriginalTagWrapper(private val value: String) {
+    fun isNotEmpty(): Boolean = value.isNotEmpty()
+    fun asString(): String = this.value
 }

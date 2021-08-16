@@ -10,10 +10,13 @@ import com.rasalexman.coroutinesmanager.launchOnUITryCatch
 import com.rasalexman.kodi.annotations.BindSingle
 import com.rasalexman.kodi.annotations.WithInstance
 import com.rasalexman.kodi.core.IKodi
+import com.rasalexman.kodi.core.KodiEvent
+import com.rasalexman.kodi.core.addListener
 import com.rasalexman.kodi.core.instance
 import com.rasalexman.sticky.core.IStickyPresenter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 @ExperimentalUnsignedTypes
@@ -34,15 +37,18 @@ class GenresPresenter constructor(
     override val mustRestoreSticky: Boolean
         get() = true
 
+    init {
+        addListener<String>(KodiEvent.INSTANCE) {
+            loadGenres()
+        }
+    }
+
     override fun onViewCreated(view: GenresContract.IView) {
         startLoadGenres(getGenresUseCase)
     }
 
     override fun loadGenres() {
         asyncJob.cancelChildren()
-        launchOnUI {
-            view().hideLoading()
-        }
         val loadGenres = instance<IGenresOutUseCase>()
         startLoadGenres(loadGenres)
     }
@@ -50,9 +56,15 @@ class GenresPresenter constructor(
     private fun startLoadGenres(localGetGenresUseCase: IGenresOutUseCase) {
         launchOnUITryCatch(
             tryBlock = {
-                view().showLoading()
+                view().sticky {
+                    hideLoading()
+                    clearAdapter()
+                    showLoading()
+                }
                 //val getGenresUseCase: IGenresOutUseCase = instance()
                 val result = withContext(Dispatchers.IO) { localGetGenresUseCase.invoke() }
+                delay(2000L)
+
                 view().sticky {
                     when (result) {
                         is SResult.Success -> showItems(result.data)
@@ -64,6 +76,7 @@ class GenresPresenter constructor(
             catchBlock = {
                 println("----> ERROR = $it")
                 view().hideLoading()
+                view().showError(it.message.orEmpty())
             }
         )
     }

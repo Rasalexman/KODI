@@ -223,10 +223,9 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
         recycler?.stopScroll()
     }
 
-    private fun clearAdapter() {
+    open fun clearAdapter() {
         itemAdapter.clear()
         mFastItemAdapter.notifyAdapterDataSetChanged()
-        mFastItemAdapter.notifyDataSetChanged()
     }
 
     private fun clearFastAdapter() {

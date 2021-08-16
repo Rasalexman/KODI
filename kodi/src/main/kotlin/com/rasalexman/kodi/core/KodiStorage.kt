@@ -118,7 +118,6 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
      */
     private val modulesSet by immutableGetter { mutableSetOf<IKodiModule>() }
 
-
     /**
      * Kodi scopes sets
      */
@@ -248,7 +247,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
                 }
             }
             isRemoved
-        } ?: false
+        }.or { false }
     }
 
     /**
@@ -308,8 +307,8 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
         // if it does not exist add to scope set
         return if (!localStore.containsKey(instanceKey)) {
             val originalTag = tag.asOriginal()
-            // if we don't need to add copied
-            if(withCopy) {
+            // if we don't need to add copied we find key or add copied holder to key
+            if (withCopy) {
                 localStore.addKeyIfNotExist(instanceKey, originalTag)
             } else {
                 localStore.takeKeyFromScope(instanceKey, originalTag)
@@ -320,7 +319,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
     }
 
     /**
-     *
+     * Add Key if it doesn't added to graph
      */
     private fun Map<String, KodiHolder<out Any>>.addKeyIfNotExist(
         instanceKey: String,
@@ -341,7 +340,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
     }
 
     /**
-     *
+     * Find [KodiHolder] and take key from it
      */
     private fun Map<String, KodiHolder<out Any>>.takeKeyFromScope(
         instanceKey: String,
@@ -352,10 +351,10 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
     }
 
     /**
-     *
+     * find [KodiHolder] for instance key search
      */
     private fun Set<String>.findHolder(instanceMap: Map<String, KodiHolder<out Any>>): KodiHolder<out Any>? {
-        if(isEmpty()) {
+        if (isEmpty()) {
             return null
         }
         val localScopes = this.toList()
