@@ -18,11 +18,12 @@ package com.rasalexman.kodi.core
  * Inline instanceTag wrapper for storing injectable class
  *
  * @param instanceTag - String tag for instance `key` storage
+ * @param originalTag - String for instance generic name
  */
 //@JvmInline
 data class KodiTagWrapper(
     private val instanceTag: String,
-    private val originalTag: String = ""
+    private val originalTag: String
     ) {
 
     /**
@@ -72,21 +73,11 @@ inline infix fun <reified T : KodiHolder<*>> KodiTagScopeWrappers.with(instance:
 /**
  * Add scope tag to binding instance
  *
- * @param scopeWrapper - [KodiScopeWrapper] String scope wrapper name
- */
-infix fun KodiTagWrapper.at(scopeWrapper: KodiScopeWrapper): KodiTagScopeWrappers {
-    if(!scopeWrapper.isNotEmpty()) throwKodiException<IllegalStateException>("Parameter `scopeWrapper` can't be empty")
-    return this to scopeWrapper
-}
-
-/**
- * Add scope tag to binding instance
- *
  * @param scopeName - String scope name
  */
-@CanThrowException("Parameter `scopeName: String` can't be empty")
+@CanThrowException(SCOPE_EMPTY_ERROR)
 infix fun KodiTagWrapper.at(scopeName: String): KodiTagScopeWrappers {
-    if(scopeName.isEmpty()) throwKodiException<IllegalStateException>("Parameter `scopeName: String` can't be empty")
+    if(scopeName.isEmpty()) throwKodiException<IllegalStateException>(SCOPE_EMPTY_ERROR)
     return this to scopeName.asScope()
 }
 
@@ -103,11 +94,6 @@ value class KodiScopeWrapper(private val scopeTag: String) {
      * @return [Boolean]
      */
     fun isNotEmpty(): Boolean = this.scopeTag.isNotEmpty()
-
-    /**
-     *
-     */
-    fun isNotDefault(): Boolean = this != defaultScope
 
     /**
      * Return a [String] representation of Wrapper

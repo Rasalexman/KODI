@@ -26,7 +26,7 @@ object Versions {
 
     const val room = "2.3.0"
 
-    const val kotPref = "2.13.0"
+    const val kotPref = "2.13.1"
     const val circleImageView = "3.0.1"
     const val coroutinesManager = "1.3.4"
     const val timber = "4.7.1"

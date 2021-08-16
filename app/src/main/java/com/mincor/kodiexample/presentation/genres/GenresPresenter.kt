@@ -11,7 +11,6 @@ import com.rasalexman.kodi.annotations.BindSingle
 import com.rasalexman.kodi.annotations.WithInstance
 import com.rasalexman.kodi.core.IKodi
 import com.rasalexman.kodi.core.instance
-import com.rasalexman.kodi.core.instanceWith
 import com.rasalexman.sticky.core.IStickyPresenter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
@@ -44,7 +43,7 @@ class GenresPresenter constructor(
         launchOnUI {
             view().hideLoading()
         }
-        val loadGenres = instanceWith<IGenresOutUseCase>("HEllO")
+        val loadGenres = instance<IGenresOutUseCase>()
         startLoadGenres(loadGenres)
     }
 
@@ -58,6 +57,7 @@ class GenresPresenter constructor(
                     when (result) {
                         is SResult.Success -> showItems(result.data)
                         is SResult.Error -> showError(result.message)
+                        else -> Unit
                     }
                 }
             },

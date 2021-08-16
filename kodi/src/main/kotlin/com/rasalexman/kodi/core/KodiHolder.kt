@@ -22,11 +22,6 @@ import java.lang.ref.WeakReference
 internal typealias InstanceInitializer<T> = IKodi.() -> T
 
 /**
- *  Typealias for simplification with params
- */
-internal typealias InstanceInitializerWithParam<R> = IKodi.(R?) -> Any
-
-/**
  * Available classes for binding
  */
 sealed class KodiHolder<T : Any> {
@@ -48,6 +43,9 @@ sealed class KodiHolder<T : Any> {
     var tag: KodiTagWrapper = emptyTag()
         private set
 
+    internal val storageKey: String
+        get() = "${scope.asString()}_${tag.asString()}"
+
     /**
      * Add [KodiTagWrapper] to current Holder
      * And put it into dependency scope
@@ -68,7 +66,6 @@ sealed class KodiHolder<T : Any> {
 
     /**
      * Add Instance Tag to moduleScope
-     * Or remove it if input [KodiScopeWrapper] is [emptyScope]
      *
      * @param scopeWrapper - [KodiScopeWrapper] to add instance tag
      * @return [KodiHolder]
@@ -83,7 +80,7 @@ sealed class KodiHolder<T : Any> {
      */
     open fun clear() {
         notifyEventListeners(KodiEvent.UNBIND)
-        scope = emptyScope()
+        scope = defaultScope
         tag = emptyTag()
     }
 
@@ -183,44 +180,6 @@ sealed class KodiHolder<T : Any> {
         override fun clear() {
             super.clear()
             providerLiteral = null
-        }
-    }
-
-    /**
-     * Provider Instance Holder withScope many execution
-     *
-     * @param providerLiteral - [InstanceInitializerWithParam] function
-     */
-    data class KodiWithParamProvider<ParamType : Any>(
-        private var providerLiteral: InstanceInitializerWithParam<ParamType>?,
-        private var defaultParameter: ParamType? = null
-    ) : KodiHolder<Any>() {
-        /**
-         * Get holder value
-         * @param kodiImpl - implemented [IKodi] instance
-         */
-        override fun get(kodiImpl: IKodi): Any {
-            return providerLiteral?.invoke(kodiImpl, defaultParameter).or {
-                throwKodiException<NoSuchElementException>(
-                    message = "There is no instance provider with params or it's already null"
-                )
-            }.also { notifyEventListeners(KodiEvent.INSTANCE) }
-        }
-
-        /**
-         * Get value with params not implemented yet
-         */
-        fun getWithParam(kodiImpl: IKodi, param: ParamType) =
-            providerLiteral?.invoke(kodiImpl, param).or {
-                throwKodiException<NoSuchElementException>(
-                    message = "There is no instance provider with params or it's already null"
-                )
-            }.also { notifyEventListeners(KodiEvent.INSTANCE) }
-
-        override fun clear() {
-            super.clear()
-            providerLiteral = null
-            defaultParameter = null
         }
     }
 

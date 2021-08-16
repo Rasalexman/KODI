@@ -37,8 +37,8 @@ fun main() {
 
         bind<IProviderInterface>() with provider { ProviderClass(UUID.randomUUID().toString()) }
         // with parameters
-        bind<IProviderWithParamsInterface>() with providerWith(defaultParameter = "Default Parameter") {
-            ProviderClass(it.orEmpty())
+        bind<IProviderWithParamsInterface>() with provider {
+            ProviderClass(UUID.randomUUID().toString())
         }
         bind<IClass>() at SECOND_SCOPE with single { SecondClass(instance(), instance()) }
         bind<IClass>() at FIRST_SCOPE with single { FirstClass(instance()) }
@@ -48,8 +48,9 @@ fun main() {
 
         import(kodiModule)
         import(anotherModule)
-        val defaultParamsItem: IProviderWithParamsInterface by immutableInstance("Random")
-        defaultParamsItem.printName()
+        //
+        //val defaultParamsItem: IProviderWithParamsInterface by immutableInstance("Random")
+        //defaultParamsItem.printName()
         
         addBindingListener<ISingleInterface>(scope = MY_SINGLE_SCOPE_NAME) {
             println("$TAG addBindingListener1 value = ${it.get(this).printName()}")
@@ -66,10 +67,16 @@ fun main() {
         }
         addInstanceListener(listener = instanceListener)
 
+        //val scopedInstance: ISingleInterface = instance(scope = MY_SINGLE_SCOPE_NAME)
+        //scopedInstance.printName()
 
-        val instanceWithParams: IProviderWithParamsInterface = instanceWith("Hello Params")
+        val providerFromScope: IProviderInterface = instance(scope = MY_PROVIDER_SCOPE_NAME)
+        providerFromScope.printName()
+        return
+
+        val instanceWithParams: IProviderWithParamsInterface = instance("Hello Params")
         instanceWithParams.printName()
-        val instanceWithDefaultParams: IProviderWithParamsInterface = instanceWith()
+        val instanceWithDefaultParams: IProviderWithParamsInterface = instance()
         instanceWithDefaultParams.printName()
 
 //        val firstModuleInstance: ISingleInterface = instance(scope = MY_ANOTHER_SCOPE_NAME)

@@ -15,7 +15,6 @@
 package com.rasalexman.kodi.core
 
 import com.rasalexman.kodi.delegates.immutableGetter
-import com.rasalexman.kodi.delegates.mutableGetter
 
 /**
  * Module Initializer
@@ -94,16 +93,6 @@ fun IKodi.import(module: IKodiModule)  {
  */
 inline fun <reified InstanceType : Any> IKodiModule.hasInstance(tag: String? = null): Boolean {
     val tagToWrapper = tag.asTag<InstanceType>()
-    return this.moduleInstancesSet.contains(tagToWrapper)
-}
-
-/**
- * Does this module contains input instance tag or class type
- *
- * @param tag [KodiTagWrapper] - string representation of instance must be unique
- */
-inline fun <reified InstanceType : Any> IKodiModule.hasInstance(tag: KodiTagWrapper? = null): Boolean {
-    val tagToWrapper = tag.or { genericName<InstanceType>().asTag<InstanceType>() }
     return this.moduleInstancesSet.contains(tagToWrapper)
 }
 

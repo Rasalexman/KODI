@@ -24,7 +24,7 @@ internal typealias LambdaWithReturn<T> = () -> T
 /**
  * Main storage abstraction
  */
-interface IKodiStorage<V> {
+internal interface IKodiStorage<V> {
 
     /**
      * Is there any instance by given key in instanceMap storage
@@ -119,6 +119,9 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
     private val modulesSet by immutableGetter { mutableSetOf<IKodiModule>() }
 
 
+    /**
+     * Kodi scopes sets
+     */
     private val scopes by immutableGetter { mutableMapOf<String, MutableSet<String>>() }
 
     /**
@@ -142,11 +145,11 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
     override fun removeModule(module: IKodiModule) {
         if (modulesSet.remove(module)) {
             val moduleScope = module.scope
-            val moduleInstanceSet = module.moduleInstancesSet
+            val moduleInstanceSet = module.moduleInstancesSet.toSet()
             moduleInstanceSet.forEach { tag ->
                 removeInstance(tag, moduleScope)
             }
-            moduleInstanceSet.clear()
+            module.moduleInstancesSet.clear()
         }
     }
 
@@ -228,19 +231,23 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
     override fun removeInstance(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean {
         return tag.takeIf { it.isNotEmpty() }?.let {
             // if we has scope to delete instance, create key and remove current instance
-            if (scope.isNotEmpty() && scope != defaultScope) {
-                val key = createKey(tag, scope)
-                scopes.remove(tag.asOriginal())?.clear()
-                instancesStore.remove(key)?.apply {
-                    clear()
-                } != null
-            } else {
-                val allInstances = takeFilteredKeys(tag.asString())
-                allInstances.forEach {
-                    instancesStore.remove(it)?.clear()
+            val key = createKey(tag, scope, false)
+
+            val isRemoved = instancesStore.remove(key)?.apply {
+                clear()
+            } != null
+
+            if (isRemoved) {
+                val originalTag = tag.asOriginal()
+                val localScopes = scopes[originalTag]
+                localScopes?.apply {
+                    remove(key)
+                    if (isEmpty()) {
+                        scopes.remove(originalTag)
+                    }
                 }
-                allInstances.isNotEmpty()
             }
+            isRemoved
         } ?: false
     }
 
@@ -277,9 +284,8 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
      */
     private fun takeFilteredKeys(filter: String): List<String> {
         val localInstanceStore = instancesStore.toMap()
-        return localInstanceStore.filterKeys { it.contains(filter) }.keys.toList()
+        return localInstanceStore.filterKeys { it.contains(filter, true) }.keys.toList()
     }
-
 
 
     /**
@@ -287,30 +293,74 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
      *
      * @param tag - [KodiTagWrapper]
      * @param scope - [KodiScopeWrapper]
+     * @param withCopy - [Boolean] does we need to add copied instance to graph
      *
      * @return [String] of generated storage key
      */
-    protected open fun createKey(tag: KodiTagWrapper, scope: KodiScopeWrapper): String {
+    protected open fun createKey(
+        tag: KodiTagWrapper,
+        scope: KodiScopeWrapper,
+        withCopy: Boolean = true
+    ): String {
         val instanceKey = "${scope.asString()}_${tag.asString()}"
+        // find in local copy
         val localStore = instancesStore.toMap()
-        if(!localStore.containsKey(instanceKey)) {
-            val tagScopes = scopes.getOrPut(tag.asOriginal()) { mutableSetOf() }
-            if(tagScopes.isEmpty()) {
-                tagScopes.add(instanceKey)
+        // if it does not exist add to scope set
+        return if (!localStore.containsKey(instanceKey)) {
+            val originalTag = tag.asOriginal()
+            // if we don't need to add copied
+            if(withCopy) {
+                localStore.addKeyIfNotExist(instanceKey, originalTag)
             } else {
-                val localTagsScopes = tagScopes.toList()
-                val existedHolder = localTagsScopes.firstNotNullOfOrNull {
-                    localStore[it]
-                }
-                if(existedHolder != null) {
-                    tagScopes.add(instanceKey)
-                    instancesStore[instanceKey] = existedHolder
-                    return instanceKey
-                } else {
-                    tagScopes.add(instanceKey)
-                }
+                localStore.takeKeyFromScope(instanceKey, originalTag)
+            }
+        } else {
+            instanceKey
+        }
+    }
+
+    /**
+     *
+     */
+    private fun Map<String, KodiHolder<out Any>>.addKeyIfNotExist(
+        instanceKey: String,
+        originalTag: String
+    ): String {
+        val tagScopes = scopes.getOrPut(originalTag) { mutableSetOf() }
+        if (tagScopes.isEmpty()) {
+            tagScopes.add(instanceKey)
+        } else {
+            tagScopes.findHolder(this)?.let { existedHolder ->
+                tagScopes.add(instanceKey)
+                instancesStore[instanceKey] = existedHolder
+            }.or {
+                tagScopes.add(instanceKey)
             }
         }
         return instanceKey
+    }
+
+    /**
+     *
+     */
+    private fun Map<String, KodiHolder<out Any>>.takeKeyFromScope(
+        instanceKey: String,
+        originalTag: String
+    ): String {
+        val existedHolder = scopes[originalTag]?.findHolder(this)
+        return existedHolder?.storageKey ?: instanceKey
+    }
+
+    /**
+     *
+     */
+    private fun Set<String>.findHolder(instanceMap: Map<String, KodiHolder<out Any>>): KodiHolder<out Any>? {
+        if(isEmpty()) {
+            return null
+        }
+        val localScopes = this.toList()
+        return localScopes.firstNotNullOfOrNull {
+            instanceMap[it]
+        }
     }
 }

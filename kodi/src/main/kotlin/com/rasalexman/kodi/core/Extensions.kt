@@ -15,12 +15,6 @@
 package com.rasalexman.kodi.core
 
 /**
- * Empty moduleScope.
- * This is means that tag has no scope
- */
-fun emptyScope() = KodiScopeWrapper("")
-
-/**
  * Default SCOPE name for all instances that doest have a scope name in bindings
  */
 internal val defaultScope = KodiScopeWrapper("DEFAULT_SCOPE")
@@ -34,25 +28,26 @@ fun emptyTag() = KodiTagWrapper("", "")
 /**
  * String moduleScope name to Scope Wrapper
  */
-fun String?.asScope() = this?.takeIf { it.isNotEmpty() }?.let {
-    KodiScopeWrapper(scopeTag = it)
-}.or { defaultScope }
+fun String?.asScope(): KodiScopeWrapper {
+  return this?.takeIf { it.isNotEmpty() }?.let {
+      KodiScopeWrapper(scopeTag = it)
+  } ?: defaultScope
+}
 
 /**
  * Inline fun to convert any to [KodiTagWrapper]
  */
 inline fun <reified T : Any> String?.asTag(): KodiTagWrapper {
     val originalTag = genericName<T>()
+    val instanceTag = this?.takeIf { it.isNotEmpty() } ?: originalTag
     return KodiTagWrapper(
-        instanceTag = this?.takeIf { it.isNotEmpty() }.or { originalTag },
+        instanceTag = instanceTag,
         originalTag = originalTag
     )
 }
 
-
 /**
  * Add Instance Tag to moduleScope
- * Or remove it if input [KodiScopeWrapper] is [emptyScope]
  *
  * @param scopeWrapper - [KodiScopeWrapper] to add instance tag
  */
@@ -61,30 +56,26 @@ infix fun<T : Any> KodiHolder<T>.at(scopeWrapper: KodiScopeWrapper): KodiHolder<
 }
 
 /**
+ * Apply [IKodiModule] scope to created holder
+ */
+fun<T : Any> KodiHolder<T>.withModuleScope(kodiImpl: IKodi): KodiHolder<T> {
+    return if(kodiImpl is IKodiModule) {
+        this at kodiImpl.scope
+    } else this
+}
+
+/**
  * Add [KodiTagWrapper] to current Holder
  * And put it into dependency scope
  *
  * @param instanceTag - tag for instance binding
  */
-infix fun<T : Any> KodiHolder<T>.tag(instanceTag: KodiTagWrapper) = this.tagWith(instanceTag)
-
-
-/**
- * Make prediction for [KodiHolder] and do some action if prediction is not null
- *
- * @param prediction - some generic transformation as? T
- *
- * @param action - some action with conditional
- */
-fun <T : IKodi, E : Any> KodiHolder<E>.holderAs(prediction: T?, action: KodiHolder<E>.(T) -> Unit): KodiHolder<E> {
-    prediction?.let { kodiInstance ->
-        this.action(kodiInstance)
-    }
-    return this
+infix fun<T : Any> KodiHolder<T>.tag(instanceTag: KodiTagWrapper): KodiHolder<T> {
+    return this.tagWith(instanceTag)
 }
 
 /**
- * Another elvis comparision high-order function
+ * Another elvis compare high-order function
  */
 fun <T> T?.or(block: () -> T): T {
     return this ?: block()
