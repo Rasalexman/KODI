@@ -77,6 +77,9 @@ object Libs {
         const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
 
         const val sticky = "com.github.Rasalexman:Sticky:${Versions.sticky}"
+
+        //--- LEAK DETECTOR
+        const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
     }
 
     object Tests {

@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/kodiandroidx" />
             <option value="$PROJECT_DIR$/kodigen" />
             <option value="$PROJECT_DIR$/kodireflect" />
+            <option value="$PROJECT_DIR$/kodispatcher" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -30,7 +30,8 @@ object Versions {
     const val circleImageView = "3.0.1"
     const val coroutinesManager = "1.3.4"
     const val timber = "4.7.1"
-    const val sticky = "1.1.1"
+    const val sticky = "1.1.2"
+    const val leakcanary: String = "2.7"
 
     object Navigation {
         const val fragment = "2.3.5"

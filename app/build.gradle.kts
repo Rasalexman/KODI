@@ -155,6 +155,7 @@ dependencies {
     //implementation(appdependencies.Libs.Common.circleimageview)
     implementation(appdependencies.Libs.Common.timber)
     implementation(appdependencies.Libs.Common.sticky)
+    implementation(appdependencies.Libs.Common.leakCanary)
 
 
     testImplementation(Libs.Tests.junit)
