@@ -1,16 +1,21 @@
 package com.mincor.kodiexample.presentation.details
 
 import com.mincor.kodiexample.R
+import com.mincor.kodiexample.common.Consts.Modules.PresentersName
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.domain.usecases.movies.IGetMovieDetailUseCase
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
 import com.rasalexman.coroutinesmanager.launchOnUITryCatch
+import com.rasalexman.kodi.annotations.BindProvider
 import com.rasalexman.kodi.core.IKodi
 import com.rasalexman.kodi.core.instance
 import com.rasalexman.sticky.core.IStickyPresenter
 
-@ExperimentalUnsignedTypes
-class DetailsPresenter : IStickyPresenter<IDetailsView>, ICoroutinesManager, IKodi {
+@BindProvider(
+    toClass = IDetailsPresenter::class,
+    toModule = PresentersName
+)
+internal class DetailsPresenter : IDetailsPresenter, ICoroutinesManager, IKodi {
 
     var movieId: Int = 0
 
@@ -22,6 +27,7 @@ class DetailsPresenter : IStickyPresenter<IDetailsView>, ICoroutinesManager, IKo
                     when (result) {
                         is SResult.Success -> showDetails(result.data)
                         is SResult.Error -> showToast(result.message)
+                        else -> Unit
                     }
                 }
             },
@@ -35,3 +41,5 @@ class DetailsPresenter : IStickyPresenter<IDetailsView>, ICoroutinesManager, IKo
         cleanup()
     }
 }
+
+interface IDetailsPresenter :  IStickyPresenter<IDetailsView>
