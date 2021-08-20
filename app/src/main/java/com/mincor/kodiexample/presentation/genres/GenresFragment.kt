@@ -13,8 +13,9 @@ import com.mincor.kodiexample.presentation.movies.MoviesFragment
 import com.rasalexman.kodi.core.*
 import com.rasalexman.kodispatcher.IKodiListener
 import com.rasalexman.kodispatcher.notifyListener
+import kotlin.random.Random
 
-@ExperimentalUnsignedTypes
+
 class GenresFragment : BaseRecyclerFragment<GenreItem, GenresContract.IPresenter>(),
         GenresContract.IView, IKodiListener {
 
@@ -57,7 +58,9 @@ class GenresFragment : BaseRecyclerFragment<GenreItem, GenresContract.IPresenter
         if(item.itemId == R.id.actionRefresh) {
             notifyListener(com.rasalexman.kodispatcher.KodiEvent.INSTANCE, "Hello")
         } else if(item.itemId == R.id.actionNext) {
-            onItemClickHandler(GenreItem(1000, "Film", listOf()))
+            val rand = Random.nextInt(0, mFastItemAdapter.itemCount) //.getItem()
+            val randomItem = mFastItemAdapter.getItem(rand)
+            onItemClickHandler(randomItem as GenreItem)
         }
         return super.onMenuItemClick(item)
     }

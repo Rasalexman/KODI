@@ -16,7 +16,7 @@ import com.mincor.kodiexample.common.unsafeLazy
 import com.rasalexman.sticky.core.IStickyPresenter
 import com.rasalexman.sticky.core.IStickyView
 
-@ExperimentalUnsignedTypes
+
 abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
         where I : BaseItem<*>, P : IStickyPresenter<out IStickyView> {
 

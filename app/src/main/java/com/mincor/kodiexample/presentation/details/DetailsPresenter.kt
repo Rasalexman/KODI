@@ -17,7 +17,7 @@ import com.rasalexman.sticky.core.IStickyPresenter
 )
 internal class DetailsPresenter : IDetailsPresenter, ICoroutinesManager, IKodi {
 
-    var movieId: Int = 0
+    override var movieId: Int = 0
 
     override fun onViewCreated(view: IDetailsView) = launchOnUITryCatch(
             tryBlock = {
@@ -42,4 +42,6 @@ internal class DetailsPresenter : IDetailsPresenter, ICoroutinesManager, IKodi {
     }
 }
 
-interface IDetailsPresenter :  IStickyPresenter<IDetailsView>
+interface IDetailsPresenter :  IStickyPresenter<IDetailsView> {
+    var movieId: Int
+}

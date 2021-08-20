@@ -38,7 +38,7 @@ sourceSets {
 
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    compileOnly(kotlin("stdlib", Versions.kotlin))
+    implementation(kotlin("stdlib", Versions.kotlin))
 }
 
 group = "com.rasalexman.kodi"

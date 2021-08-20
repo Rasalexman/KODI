@@ -2,6 +2,7 @@ package com.mincor.kodiexample.data.source.local
 
 import com.mincor.kodiexample.common.Consts
 import com.mincor.kodiexample.data.dto.SResult
+import com.mincor.kodiexample.data.dto.emptyResult
 import com.mincor.kodiexample.data.dto.successResult
 import com.mincor.kodiexample.data.model.local.GenreEntity
 import com.rasalexman.kodi.annotations.BindSingle
@@ -21,12 +22,18 @@ class GenresCacheDataSource (
         }
     }
 
-    override suspend fun getGenresFromCache(): SResult.Success<List<GenreEntity>> {
-        return successResult(memoryGenresList)
+    override suspend fun getGenresFromCache(): SResult<List<GenreEntity>> {
+        val isEmptyCache = memoryGenresList.isEmpty()
+        println("-----> getGenresFromCache isEmptyCache = $isEmptyCache")
+        return if(isEmptyCache) {
+            emptyResult()
+        } else {
+            successResult(memoryGenresList)
+        }
     }
 }
 
 interface IGenresCacheDataSource {
     suspend fun putGenresInCache(genresList: List<GenreEntity>)
-    suspend fun getGenresFromCache(): SResult.Success<List<GenreEntity>>
+    suspend fun getGenresFromCache(): SResult<List<GenreEntity>>
 }

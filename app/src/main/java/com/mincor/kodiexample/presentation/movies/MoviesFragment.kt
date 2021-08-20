@@ -16,11 +16,11 @@ import com.rasalexman.kodi.core.IKodi
 import com.rasalexman.kodi.core.instance
 import com.rasalexman.kodi.core.throwKodiException
 
-@ExperimentalUnsignedTypes
+
 class MoviesFragment : BaseRecyclerFragment<MovieUI, MoviesContract.IPresenter>(),
         MoviesContract.IView, IKodi {
 
-    private lateinit var moviesBinding: FragmentAppbarRecyclerBinding
+    private var moviesBinding: FragmentAppbarRecyclerBinding? = null
 
     override val recyclerViewId: Int
         get() = R.id.recyclerView
@@ -35,8 +35,8 @@ class MoviesFragment : BaseRecyclerFragment<MovieUI, MoviesContract.IPresenter>(
         }
     }
 
-    override val toolbarView: Toolbar
-        get() = moviesBinding.toolBarView
+    override val toolbarView: Toolbar?
+        get() = moviesBinding?.toolBarView
 
     override val toolbarTitle: String
         get() = arguments?.getString(KEY_GENRE_NAME).orEmpty()
@@ -59,6 +59,11 @@ class MoviesFragment : BaseRecyclerFragment<MovieUI, MoviesContract.IPresenter>(
         return super.onCreateView(inflater, container, savedInstanceState)?.also {
             moviesBinding = FragmentAppbarRecyclerBinding.bind(it)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        moviesBinding = null
     }
 
     companion object {

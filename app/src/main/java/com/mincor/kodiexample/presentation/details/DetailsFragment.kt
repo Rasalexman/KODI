@@ -8,14 +8,15 @@ import androidx.appcompat.widget.Toolbar
 import coil.load
 import com.mincor.kodiexample.R
 import com.mincor.kodiexample.common.Consts
+import com.mincor.kodiexample.common.unsafeLazy
 import com.mincor.kodiexample.data.model.local.MovieEntity
 import com.mincor.kodiexample.databinding.FragmentDetailsBinding
 import com.mincor.kodiexample.presentation.base.BaseFragment
 import com.rasalexman.kodi.core.IKodi
 import com.rasalexman.kodi.core.immutableInstance
+import com.rasalexman.kodi.core.instance
 import com.rasalexman.kodi.core.throwKodiException
 
-@ExperimentalUnsignedTypes
 class DetailsFragment : BaseFragment<IDetailsPresenter>(),
         IDetailsView, IKodi {
 
@@ -38,7 +39,11 @@ class DetailsFragment : BaseFragment<IDetailsPresenter>(),
     override val loadingLayout: View
         get() = binding.contentProgressBar
 
-    override val presenter: IDetailsPresenter by immutableInstance()
+    override val presenter: IDetailsPresenter by unsafeLazy {
+        instance<IDetailsPresenter>().apply {
+            movieId = arguments?.getInt(KEY_MOVIE_ID) ?: 0
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return super.onCreateView(inflater, container, savedInstanceState)?.also {

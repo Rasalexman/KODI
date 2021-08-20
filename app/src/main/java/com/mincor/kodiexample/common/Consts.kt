@@ -23,6 +23,7 @@ object Consts {
 
     object Tags {
         const val GENRE_USE_CASE = "GENRE_USE_CASE"
+        const val GENRE_USE_CASE_2 = "GENRE_USE_CASE_2"
         const val GENRE_LOCAL_USE_CASE = "GENRE_LOCAL_USE_CASE"
     }
 

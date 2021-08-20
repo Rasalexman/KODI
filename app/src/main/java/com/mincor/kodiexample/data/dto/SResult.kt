@@ -13,6 +13,9 @@ sealed class SResult<out T : Any> {
     class Error(val code: Int, val message: String) : SResult<Nothing>()
 }
 
+inline fun <reified T : Any> T?.toSuccessResult(): SResult<T> {
+    return this?.let { successResult(it) } ?: errorResult(1010, "Result is null")
+}
 inline fun <reified T : Any> successResult(data: T) = SResult.Success(data)
 fun emptyResult() = SResult.Empty
 fun errorResult(code: Int, message: String) = SResult.Error(code, message)
@@ -34,10 +37,26 @@ suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfSucces
 }
 
 @Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfEmptySuspend(
+    crossinline block: suspend () -> SResult<O>
+): SResult<O> {
+    return if (this is SResult.Empty) block()
+    else this as SResult<O>
+}
+
+@Suppress("UNCHECKED_CAST")
 suspend inline fun <reified I : Any> SResult<I>.applyIfSuccessSuspend(
     crossinline block: suspend (I) -> Unit
 ): SResult<I> {
     if (this is SResult.Success) block(this.data)
+    return this
+}
+
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any> SResult<I>.applyIfEmptySuspend(
+    crossinline block: suspend () -> Unit
+): SResult<I> {
+    if (this is SResult.Empty) block()
     return this
 }
 

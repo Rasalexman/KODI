@@ -50,6 +50,12 @@ data class MovieEntity(
         )
     }
 
-    fun getBackDropImageUrl() = "${BuildConfig.IMAGES_BACKDROP_URL}$backdropPath"
-    fun getImageUrl() = "${BuildConfig.IMAGES_URL}$posterPath"
+    fun getBackDropImageUrl(): String {
+        val backdropUrl = "${BuildConfig.IMAGES_BACKDROP_URL}$backdropPath"
+        return backdropUrl
+    }
+    fun getImageUrl(): String {
+        val posterUrl = "${BuildConfig.IMAGES_URL}$posterPath"
+        return posterUrl
+    }
 }

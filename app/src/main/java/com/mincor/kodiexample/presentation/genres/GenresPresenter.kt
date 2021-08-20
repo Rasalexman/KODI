@@ -18,7 +18,6 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
-@ExperimentalUnsignedTypes
 @BindSingle(
     toClass = GenresContract.IPresenter::class,
     toModule = PresentersName
@@ -46,7 +45,7 @@ class GenresPresenter constructor(
         startLoadGenres(getGenresUseCase)
     }
 
-    override fun loadGenres() {
+    private fun loadGenres() {
         asyncJob.cancelChildren()
         val loadGenres = instance<IGenresOutUseCase>()
         startLoadGenres(loadGenres)
@@ -55,7 +54,7 @@ class GenresPresenter constructor(
     private fun startLoadGenres(localGetGenresUseCase: IGenresOutUseCase) {
         launchOnUITryCatch(
             tryBlock = {
-                view().sticky {
+                view().apply {
                     hideLoading()
                     clearAdapter()
                     showLoading()

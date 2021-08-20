@@ -223,7 +223,7 @@ inline fun <reified InstanceType : Any> IKodi.holder(
     val instance = this
     val tagToWrap = tag.asTag<InstanceType>()
     val scopeToWrap = scope.asScope()
-    return Kodi.createOrGet(tag = tagToWrap, scope = scopeToWrap) {
+    return Kodi.getHolder(tag = tagToWrap, scope = scopeToWrap).or {
         throwKodiException<IllegalAccessException>(
             message = "There is no tag `$tagToWrap` in dependency graph with scope `$scopeToWrap` injected into IKodi instance [$instance]"
         )

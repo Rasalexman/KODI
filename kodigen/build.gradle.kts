@@ -37,7 +37,7 @@ configurations.all {
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib", appdependencies.Versions.kotlin))
-    compileOnly(project(":kodi"))
+    implementation(project(":kodi"))
 
     implementation("com.squareup:kotlinpoet:1.8.0")
     implementation("com.google.auto.service:auto-service:1.0")

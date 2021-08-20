@@ -4,6 +4,7 @@ import com.mincor.kodiexample.common.Consts.Modules.RDSName
 import com.mincor.kodiexample.common.getResult
 import com.mincor.kodiexample.data.dto.SResult
 import com.mincor.kodiexample.data.dto.errorResult
+import com.mincor.kodiexample.data.dto.toSuccessResult
 import com.mincor.kodiexample.data.model.local.GenreEntity
 import com.mincor.kodiexample.data.model.remote.GenreModel
 import com.mincor.kodiexample.providers.network.api.IMovieApi
@@ -29,9 +30,9 @@ class GenresRemoteDataSource(
         })
     }
 
-    override suspend fun getGenresImages(result: List<GenreEntity>) {
-        doTryCatchAsyncAwait(tryBlock = {
-            result.forEach { genreEntity ->
+    override suspend fun getGenresImages(result: List<GenreEntity>): SResult<List<GenreEntity>> {
+        return doTryCatchAsyncAwait(tryBlock = {
+            result.onEach { genreEntity ->
                 val genreId = genreEntity.id ?: 0
                 moviesApi.getMoviesListByPopularity(genreId).run {
                     body()?.let { moviesResult ->
@@ -47,9 +48,10 @@ class GenresRemoteDataSource(
                         }
                     }
                 }
-            }
+            }.toSuccessResult()
         }, catchBlock = {
             println("-----> getGenresImages Error = $it")
+            errorResult(101, it.message.orEmpty())
         })
     }
 
@@ -60,5 +62,5 @@ class GenresRemoteDataSource(
 
 interface IGenresRemoteDataSource : IAsyncTasksManager {
     suspend fun getRemoteGenresList(): SResult<List<GenreModel>>
-    suspend fun getGenresImages(result: List<GenreEntity>)
+    suspend fun getGenresImages(result: List<GenreEntity>): SResult<List<GenreEntity>>
 }

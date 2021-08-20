@@ -9,6 +9,6 @@ interface GenresContract {
     interface IView : IBaseRecyclerView<GenreItem>
 
     interface IPresenter : IStickyPresenter<IView>, IKodiListener {
-        fun loadGenres()
+
     }
 }

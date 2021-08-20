@@ -3,13 +3,10 @@ package com.mincor.kodiexample.presentation.base
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
 import com.mincor.kodiexample.R
@@ -21,7 +18,6 @@ import com.rasalexman.sticky.base.StickyFragment
 import com.rasalexman.sticky.core.IStickyPresenter
 import com.rasalexman.sticky.core.IStickyView
 
-@ExperimentalUnsignedTypes
 abstract class BaseFragment<P : IStickyPresenter<out IStickyView>> : StickyFragment<P>(),
     INavigationHandler, Toolbar.OnMenuItemClickListener {
 
@@ -135,7 +131,6 @@ abstract class BaseFragment<P : IStickyPresenter<out IStickyView>> : StickyFragm
         return true
     }
 
-    @ExperimentalUnsignedTypes
     override fun onDestroyView() {
         toolbarView?.setNavigationOnClickListener(null)
         closeAlertDialog()
