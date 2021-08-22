@@ -78,7 +78,8 @@ open class ImmutableDelegate<T>(private val init: LambdaWithReturn<T>) : IImmuta
  *
  * @param init - func to hold at immutable instance
  */
-class MutableDelegate<T>(init: LambdaWithReturn<T>) : ImmutableDelegate<T>(init), IMutableDelegate<T> {
+class MutableDelegate<T>(init: LambdaWithReturn<T>) : ImmutableDelegate<T>(init),
+    IMutableDelegate<T> {
     /**
      * Standard delegation function overriding
      */
@@ -127,9 +128,11 @@ sealed class Optional<out T> {
 /**
  * high order immutable delegate wrapper
  */
-inline fun <reified T> Any.immutableGetter(noinline init: LambdaWithReturn<T>): IImmutableDelegate<T> = ImmutableDelegate(init)
+inline fun <reified T> immutableGetter(noinline init: LambdaWithReturn<T>): IImmutableDelegate<T> =
+    ImmutableDelegate(init)
 
 /**
  * high order mutable delegate wrapper
  */
-inline fun <reified T> Any.mutableGetter(noinline init: LambdaWithReturn<T>): IMutableDelegate<T> = MutableDelegate(init)
+inline fun <reified T> mutableGetter(noinline init: LambdaWithReturn<T>): IMutableDelegate<T> =
+    MutableDelegate(init)

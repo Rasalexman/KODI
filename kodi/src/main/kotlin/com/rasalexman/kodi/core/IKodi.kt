@@ -17,7 +17,10 @@
 package com.rasalexman.kodi.core
 
 import com.rasalexman.kodi.core.KodiHolder.*
-import com.rasalexman.kodi.delegates.*
+import com.rasalexman.kodi.delegates.IImmutableDelegate
+import com.rasalexman.kodi.delegates.IMutableDelegate
+import com.rasalexman.kodi.delegates.immutableGetter
+import com.rasalexman.kodi.delegates.mutableGetter
 
 /**
  * Annotation for mark some throwable functions
@@ -62,10 +65,9 @@ inline fun <reified ReturnType : Any> kodi(block: IKodi.() -> ReturnType): Retur
  * @receiver [IKodi]
  * @return [KodiTagWrapper]
  */
-inline fun <reified BindType : Any> IKodi.bind(tag: String? = null, unbindLast: Boolean = false): KodiTagWrapper {
-    if(unbindLast) {
-        unbind<BindType>(tag = tag)
-    }
+inline fun <reified BindType : Any> IKodi.bind(
+    tag: String? = null
+): KodiTagWrapper {
     val receiver = this
     return tag.asTag<BindType>().also {
         if (receiver is IKodiModule) {
@@ -144,9 +146,7 @@ inline fun <reified InstanceType : Any> IKodi.hasInstance(tag: String? = null): 
 fun IKodi.bindTag(tag: String): KodiTagWrapper {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.bind<Any>(it)
-    }.or {
-        throwKodiException<IllegalArgumentException>(TAG_EMPTY_ERROR)
-    }
+    } ?: throwKodiException<IllegalArgumentException>(TAG_EMPTY_ERROR)
 }
 
 /**
@@ -163,7 +163,7 @@ fun IKodi.bindTag(tag: String): KodiTagWrapper {
 fun IKodi.unbindTag(tag: String, scope: String? = null): Boolean {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.unbind<Any>(tag, scope)
-    }.or { throwKodiException<IllegalArgumentException>(TAG_EMPTY_ERROR) }
+    } ?: throwKodiException<IllegalArgumentException>(TAG_EMPTY_ERROR)
 }
 
 /**
@@ -201,11 +201,9 @@ inline fun <reified InstanceType : Any> IKodi.instance(
     scope: String? = null
 ): InstanceType {
     val inst = holder<InstanceType>(tag = tag, scope = scope).get(kodiImpl = this)
-    return (inst as? InstanceType).or {
-        throwKodiException<ClassCastException>(
-            message = "Cannot cast instance = $inst to Generic type ${genericName<InstanceType>()}"
-        )
-    }
+    return (inst as? InstanceType) ?: throwKodiException<ClassCastException>(
+        message = "Cannot cast instance = $inst to Generic type ${genericName<InstanceType>()}"
+    )
 }
 
 /**
@@ -223,11 +221,10 @@ inline fun <reified InstanceType : Any> IKodi.holder(
     val instance = this
     val tagToWrap = tag.asTag<InstanceType>()
     val scopeToWrap = scope.asScope()
-    return Kodi.getHolder(tag = tagToWrap, scope = scopeToWrap).or {
-        throwKodiException<IllegalAccessException>(
-            message = "There is no tag `$tagToWrap` in dependency graph with scope `$scopeToWrap` injected into IKodi instance [$instance]"
+    return Kodi.getHolder(tag = tagToWrap, scope = scopeToWrap)
+        ?: throwKodiException<IllegalAccessException>(
+            message = "There is no tag `${tagToWrap.asString()}` in dependency graph with scope `${scopeToWrap.asString()}` injected into IKodi instance [$instance]"
         )
-    }
 }
 
 /**

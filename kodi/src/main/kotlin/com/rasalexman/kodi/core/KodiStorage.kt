@@ -92,6 +92,8 @@ internal interface IKodiStorage<V> {
      *
      * @param tag [KodiTagWrapper] - for retrieve instance by tag
      * @param scope [KodiScopeWrapper] - current scope or [defaultScope]
+     *
+     * @return [KodiHolder] current holder instance
      */
     fun getHolder(tag: KodiTagWrapper, scope: KodiScopeWrapper): KodiHolder<out Any>?
 }
@@ -200,6 +202,14 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
         return instancesStore.getOrPut(key, defaultValue)
     }
 
+    /**
+     * Get [KodiHolder] instance from storage
+     *
+     * @param tag [KodiTagWrapper] - for retrieve instance by tag
+     * @param scope [KodiScopeWrapper] - current scope or [defaultScope]
+     *
+     * @return [KodiHolder] current holder instance
+     */
     override fun getHolder(
         tag: KodiTagWrapper,
         scope: KodiScopeWrapper
@@ -316,8 +326,8 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
         val instanceKey = "${scope.asString()}_${tag.asString()}"
 
         if(withCopy) {
-            if(!instancesStore.containsKey(instanceKey)) {
-                val localStore = instancesStore.toMap()
+            val localStore = instancesStore.toMap()
+            if(!localStore.containsKey(instanceKey)) {
                 return localStore.addKeyIfNotExist(instanceKey, tag.asOriginal())
             }
         }
@@ -332,7 +342,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
         originalTag: String
     ): String {
         val tagScopes = scopes.getOrPut(originalTag) { mutableSetOf() }
-        tagScopes.findHolder(this)?.let { existedHolder ->
+        this.findHolder(tagScopes)?.let { existedHolder ->
             tagScopes.add(instanceKey)
             instancesStore[instanceKey] = existedHolder
         }
@@ -342,13 +352,13 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
     /**
      * find [KodiHolder] for instance key search
      */
-    private fun Set<String>.findHolder(instanceMap: Map<String, KodiHolder<out Any>>): KodiHolder<out Any>? {
+    private fun Map<String, KodiHolder<out Any>>.findHolder(scopeStore: Set<String>): KodiHolder<out Any>? {
         if (isEmpty()) {
             return null
         }
-        val localScopes = this.toList()
+        val localScopes = scopeStore.toList()
         return localScopes.firstNotNullOfOrNull {
-            instanceMap[it]
+            this[it]
         }
     }
 }

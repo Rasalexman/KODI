@@ -32,7 +32,7 @@ class GenresRemoteDataSource(
 
     override suspend fun getGenresImages(result: List<GenreEntity>): SResult<List<GenreEntity>> {
         return doTryCatchAsyncAwait(tryBlock = {
-            result.onEach { genreEntity ->
+            result.forEach { genreEntity ->
                 val genreId = genreEntity.id ?: 0
                 moviesApi.getMoviesListByPopularity(genreId).run {
                     body()?.let { moviesResult ->
@@ -48,7 +48,8 @@ class GenresRemoteDataSource(
                         }
                     }
                 }
-            }.toSuccessResult()
+            }
+            result.toSuccessResult()
         }, catchBlock = {
             println("-----> getGenresImages Error = $it")
             errorResult(101, it.message.orEmpty())

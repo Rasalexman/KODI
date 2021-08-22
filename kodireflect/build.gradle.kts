@@ -66,7 +66,7 @@ android {
 
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin("stdlib", Versions.kotlin))
+    implementation(kotlin(appdependencies.Builds.STDLIB, Versions.kotlin))
     implementation(kotlin("reflect", Versions.kotlin))
 }
 

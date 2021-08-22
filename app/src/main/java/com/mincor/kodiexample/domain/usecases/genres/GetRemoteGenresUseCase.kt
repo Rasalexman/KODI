@@ -18,6 +18,7 @@ class GetRemoteGenresUseCase(
 ) : IGetRemoteGenresUseCase {
     override suspend fun invoke(): SResult<List<GenreItem>> {
         return repository.getRemoteGenresList().applyIfSuccessSuspend { data ->
+            println("------> Save all genres to local storage")
             repository.saveGenres(data)
         }.mapListTo()
     }

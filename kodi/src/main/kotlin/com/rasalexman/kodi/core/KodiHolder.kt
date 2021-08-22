@@ -62,7 +62,9 @@ sealed class KodiHolder<T : Any> {
         } else if (!instanceTag.isNotEmpty()) {
             removeFromGraph()
         } else {
-            throwKodiException<IllegalStateException>("You can't change tag `$tag` on `$this`. Only set it to emptyTag()")
+            throwKodiException<IllegalStateException>(
+                message = "You can't change tag `${tag.asString()}` on `$this`. Only set it to `KodiTagWrapper.emptyTag()`"
+            )
         }
         return this
     }
@@ -74,7 +76,7 @@ sealed class KodiHolder<T : Any> {
      * @return [KodiHolder]
      */
     internal infix fun <T : Any> KodiHolder<T>.scopeWith(scopeWrapper: KodiScopeWrapper): KodiHolder<T> {
-        if(scopeWrapper.isNotEmpty() && scope != scopeWrapper) scope = scopeWrapper
+        if (scopeWrapper.isNotEmpty() && scope != scopeWrapper) scope = scopeWrapper
         return this
     }
 
@@ -161,9 +163,11 @@ sealed class KodiHolder<T : Any> {
          * Get holder value
          * @param kodiImpl - implemented [IKodi] instance
          */
-        override fun get(kodiImpl: IKodi): ReturnType = providerLiteral?.invoke(kodiImpl).or {
-            throwKodiException<NoSuchElementException>("There is no instance provider or it's already null")
-        }
+        override fun get(kodiImpl: IKodi): ReturnType = providerLiteral?.invoke(kodiImpl)
+            ?: throwKodiException<NoSuchElementException>(
+                message = "There is no instance provider or it's already null"
+            )
+
 
         /**
          * Clear current provider from literal
@@ -187,11 +191,9 @@ sealed class KodiHolder<T : Any> {
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): ReturnType {
-            return constantValue.or {
-                throwKodiException<NoSuchElementException>(
-                    message = "There is no instance in [KodiConstant]"
-                )
-            }
+            return constantValue ?: throwKodiException<NoSuchElementException>(
+                message = "There is no instance in [KodiConstant]"
+            )
         }
 
         /**

@@ -10,6 +10,7 @@ plugins {
 kapt {
     useBuildCache = true
     generateStubs = false
+    includeCompileClasspath = false
 }
 
 sourceSets {
@@ -26,26 +27,22 @@ java {
     withSourcesJar()
 }
 
-configurations.all {
+/*configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.jetbrains.kotlin") {
             this.useVersion(appdependencies.Versions.kotlin)
         }
     }
-}
+}*/
 
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin("stdlib", appdependencies.Versions.kotlin))
+    implementation(kotlin(appdependencies.Builds.STDLIB, appdependencies.Versions.kotlin))
     implementation(project(":kodi"))
 
     implementation("com.squareup:kotlinpoet:1.8.0")
     implementation("com.google.auto.service:auto-service:1.0")
     kapt("com.google.auto.service:auto-service:1.0")
-}
-
-kapt {
-    includeCompileClasspath = false
 }
 
 group = "com.rasalexman.kodigen"

@@ -113,7 +113,7 @@ kapt {
 
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin("stdlib-jdk8", Versions.kotlin))
+    implementation(kotlin(appdependencies.Builds.STDLIB, Versions.kotlin))
 
     implementation(project(":kodispatcher"))
 

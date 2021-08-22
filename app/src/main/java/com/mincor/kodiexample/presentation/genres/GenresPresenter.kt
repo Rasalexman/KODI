@@ -61,7 +61,7 @@ class GenresPresenter constructor(
                 }
                 //val getGenresUseCase: IGenresOutUseCase = instance()
                 val result = withContext(Dispatchers.IO) { localGetGenresUseCase.invoke() }
-                delay(2000L)
+                println("-----> Genres loading result = $result")
 
                 view().sticky {
                     when (result) {
@@ -73,6 +73,7 @@ class GenresPresenter constructor(
             },
             catchBlock = {
                 println("----> ERROR = $it")
+
                 view().hideLoading()
                 view().showError(it.message.orEmpty())
             }

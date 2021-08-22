@@ -10,7 +10,7 @@ plugins {
 }
 
 // Declare the task that will monitor all configurations.
-configurations.all {
+/*configurations.all {
     // 2 Define the resolution strategy in case of conflicts.
     resolutionStrategy {
         // Fail eagerly on version conflict (includes transitive dependencies),
@@ -20,7 +20,7 @@ configurations.all {
         // Prefer modules that are part of this build (multi-project or composite build) over external modules.
         preferProjectModules()
     }
-}
+}*/
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -38,7 +38,7 @@ sourceSets {
 
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin("stdlib", Versions.kotlin))
+    implementation(kotlin(appdependencies.Builds.STDLIB, Versions.kotlin))
 }
 
 group = "com.rasalexman.kodi"

@@ -32,7 +32,9 @@ class GenresRepository(
 
     override suspend fun getRemoteGenresList(): SResult<List<GenreEntity>> {
         return remoteDataSource.getRemoteGenresList().mapListTo().flatMapIfSuccessSuspend {
-            remoteDataSource.getGenresImages(it)
+            remoteDataSource.getGenresImages(it).applyIfSuccessSuspend { allGenres ->
+                println("-----> All genre posters was loaded with count = ${allGenres.size}")
+            }
         }
     }
 
