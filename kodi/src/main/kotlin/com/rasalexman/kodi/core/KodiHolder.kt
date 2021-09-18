@@ -14,8 +14,6 @@
 
 package com.rasalexman.kodi.core
 
-import java.lang.ref.WeakReference
-
 /**
  * Typealias for simplification
  */
@@ -122,20 +120,20 @@ sealed class KodiHolder<T : Any> {
         /**
          * Lazy initialized instance
          */
-        private var singleInstance: WeakReference<ReturnType>? = null
+        private var singleInstance: ReturnType? = null
 
         /**
          * Get holder value
          * @param kodiImpl - implemented [IKodi] instance
          */
         override fun get(kodiImpl: IKodi): ReturnType {
-            return singleInstance?.get().or {
+            return singleInstance.or {
                 singleInstanceProvider?.invoke(Kodi).or {
                     throwKodiException<NoSuchElementException>(
                         message = "There is no instance provider or it's already null"
                     )
                 }.also {
-                    singleInstance = WeakReference(it)
+                    singleInstance = it
                 }
             }
         }
@@ -145,7 +143,6 @@ sealed class KodiHolder<T : Any> {
          */
         override fun clear() {
             super.clear()
-            singleInstance?.clear()
             singleInstance = null
             singleInstanceProvider = null
         }
