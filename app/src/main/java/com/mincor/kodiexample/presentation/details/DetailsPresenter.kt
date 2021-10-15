@@ -19,7 +19,8 @@ internal class DetailsPresenter : IDetailsPresenter, ICoroutinesManager, IKodi {
 
     override var movieId: Int = 0
 
-    override fun onViewCreated(view: IDetailsView) = launchOnUITryCatch(
+    override fun onViewCreated(view: IDetailsView) {
+        launchOnUITryCatch(
             tryBlock = {
                 view().showLoading()
                 val result = instance<IGetMovieDetailUseCase>().invoke(movieId)
@@ -34,7 +35,8 @@ internal class DetailsPresenter : IDetailsPresenter, ICoroutinesManager, IKodi {
             catchBlock = {
                 view().showToast(it.message ?: R.string.error_loading_details)
             }
-    )
+        )
+    }
 
     override fun onViewDestroyed() {
         super.onViewDestroyed()

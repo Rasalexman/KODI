@@ -84,6 +84,7 @@ android {
     kotlinOptions {
         languageVersion = "1.5"
         apiVersion = "1.5"
+        jvmTarget = "11"
     }
 }
 
@@ -94,8 +95,6 @@ kapt {
 
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    //implementation(kotlin(appdependencies.Builds.STDLIB, Versions.kotlin))
-
     implementation(project(":kodispatcher"))
 
     implementation(Libs.Core.coreKtx)

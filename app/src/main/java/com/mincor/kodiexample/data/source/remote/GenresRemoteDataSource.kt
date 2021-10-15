@@ -51,8 +51,9 @@ class GenresRemoteDataSource(
             }
             result.toSuccessResult()
         }, catchBlock = {
-            println("-----> getGenresImages Error = $it")
-            errorResult(101, it.message.orEmpty())
+            val errorMessage = it.message.orEmpty()
+            println("-----> getGenresImages Error = $errorMessage")
+            errorResult(101, errorMessage)
         })
     }
 

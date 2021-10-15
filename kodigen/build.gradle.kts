@@ -29,7 +29,7 @@ java {
 
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin(appdependencies.Builds.STDLIB, appdependencies.Versions.kotlin))
+    //implementation(kotlin(appdependencies.Builds.STDLIB, appdependencies.Versions.kotlin))
     implementation(project(":kodi"))
 
     implementation(appdependencies.Libs.Processor.kotlinpoet)

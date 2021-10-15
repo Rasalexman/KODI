@@ -1,4 +1,3 @@
-import appdependencies.Versions
 import resources.Resources.codeDirs
 
 plugins {
@@ -23,7 +22,7 @@ sourceSets {
 
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin(appdependencies.Builds.STDLIB, Versions.kotlin))
+    //implementation(kotlin(appdependencies.Builds.STDLIB, Versions.kotlin))
 }
 
 group = "com.rasalexman.kodi"

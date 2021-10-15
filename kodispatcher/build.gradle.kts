@@ -37,7 +37,7 @@ configurations.all {
 
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin("stdlib", Versions.kotlin))
+    //implementation(kotlin("stdlib", Versions.kotlin))
     api(project(":kodi"))
 }
 

@@ -20,15 +20,9 @@ object Libs {
     }
 
     object Lifecycle {
-        //const val extensions = "androidx.lifecycle:lifecycle-extensions:${lifecycle}"
-        //const val runtimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${lifecycle}"
         const val viewmodelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycle}"
-        // view model saved state handler
-        //const val savedStateViewModel = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${savedstate}"
         // kotlin live data extensions
         const val livedataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycle}"
-        // alternately - if using Java8, use the following instead of lifecycle-compiler
-        //const val common = "androidx.lifecycle:lifecycle-common-java8:${lifecycle}"
     }
 
     ///------ RECYCLER VIEW ADAPTER
@@ -68,8 +62,6 @@ object Libs {
 
     object Common {
 
-        const val circleimageview = "de.hdodenhof:circleimageview:${Versions.circleImageView}"
-
         // COROUTINES MANAGER
         const val coroutinesmanager = "com.github.Rasalexman:coroutinesmanager:${Versions.coroutinesManager}"
 
@@ -80,6 +72,10 @@ object Libs {
 
         //--- LEAK DETECTOR
         const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
+    }
+
+    object Processor {
+       const val kotlinpoet = "com.squareup:kotlinpoet:1.10.1"
     }
 
     object Tests {

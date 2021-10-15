@@ -155,6 +155,7 @@ abstract class BaseRecyclerFragment<I, P> : BaseFragment<P>()
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     protected open fun addClickListener() {
         mFastItemAdapter.onClickListener = { _, _, item, _ ->
             (item as? I)?.let {

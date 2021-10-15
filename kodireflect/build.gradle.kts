@@ -29,8 +29,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     packagingOptions {
@@ -53,12 +53,11 @@ android {
     kotlinOptions {
         languageVersion = "1.5"
         apiVersion = "1.5"
+        jvmTarget = "11"
     }
 }
 
 dependencies {
-    //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin(appdependencies.Builds.STDLIB, Versions.kotlin))
     implementation(kotlin("reflect", Versions.kotlin))
 }
 

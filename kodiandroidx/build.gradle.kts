@@ -2,7 +2,6 @@ import appdependencies.Builds.COMPILE_VERSION
 import appdependencies.Builds.MIN_VERSION
 import appdependencies.Builds.TARGET_VERSION
 import appdependencies.Libs
-import appdependencies.Versions
 import resources.Resources.codeDirs
 
 plugins {
@@ -67,7 +66,7 @@ android {
 
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin(appdependencies.Builds.STDLIB, Versions.kotlin))
+    //implementation(kotlin(appdependencies.Builds.STDLIB, Versions.kotlin))
 
     implementation(Libs.Core.coreKtx)
     api(project(":kodi"))

@@ -49,13 +49,15 @@ class MoviesPresenter constructor(
                     when (result) {
                         is SResult.Success -> showItems(allResults)
                         is SResult.Error -> showError(result.message)
+                        else -> Unit
                     }
                 }
             },
             catchBlock = catchBlock
     )
 
-    override fun getNextMoviesByGenreId() = launchOnUITryCatch(
+    override fun getNextMoviesByGenreId() {
+        launchOnUITryCatch(
             tryBlock = {
                 view().showLoading()
                 val result = getNextMoviesUseCase.invoke(genreId)
@@ -66,10 +68,12 @@ class MoviesPresenter constructor(
                     when (result) {
                         is SResult.Success -> addItems(result.data)
                         is SResult.Error -> showError(result.message)
+                        else -> Unit
                     }
                 }
             }, catchBlock = catchBlock
-    )
+        )
+    }
 
     override fun onViewDestroyed() {
         cleanup()
