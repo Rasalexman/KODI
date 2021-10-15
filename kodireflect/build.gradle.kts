@@ -10,18 +10,16 @@ plugins {
 }
 
 android {
-    compileSdkVersion(COMPILE_VERSION)
+    compileSdk = (COMPILE_VERSION)
     defaultConfig {
-        minSdkVersion(MIN_VERSION)
-        targetSdkVersion(TARGET_VERSION)
-        versionCode = appdependencies.Builds.KodiReflect.VERSION_CODE
-        versionName = appdependencies.Builds.KodiReflect.VERSION_NAME
+        minSdk = (MIN_VERSION)
+        targetSdk = (TARGET_VERSION)
+        version = appdependencies.Builds.KodiReflect.VERSION_NAME
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            isDebuggable = true
         }
 
         getByName("release") {
@@ -30,24 +28,13 @@ android {
         }
     }
 
-    /*sourceSets {
-        getByName("main") {
-            java.setSrcDirs(javaDirs)
-            res.setSrcDirs(dirs)
-        }
-    }
-
-    dexOptions {
-        javaMaxHeapSize = "4g"
-    }*/
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     packagingOptions {
-        exclude("META-INF/notice.txt")
+        resources.excludes.add("META-INF/notice.txt")
     }
 
     // Declare the task that will monitor all configurations.
@@ -62,6 +49,11 @@ android {
             preferProjectModules()
         }
     }
+
+    kotlinOptions {
+        languageVersion = "1.5"
+        apiVersion = "1.5"
+    }
 }
 
 dependencies {
@@ -73,15 +65,10 @@ dependencies {
 group = "com.rasalexman.kodireflect"
 version = appdependencies.Builds.KodiReflect.VERSION_NAME
 
-
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
-/*val javaComponent = components["java"] as AdhocComponentWithVariants
-javaComponent.withVariantsFromConfiguration(configurations["sourcesElements"]) {
-    skip()
-}*/
 
 afterEvaluate {
 
@@ -107,6 +94,7 @@ afterEvaluate {
 
         repositories {
             maven {
+                name = "kodireflect"
                 url = uri("${buildDir}/publishing-repository")
             }
         }

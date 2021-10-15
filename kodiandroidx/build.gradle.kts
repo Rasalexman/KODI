@@ -12,18 +12,18 @@ plugins {
 }
 
 android {
-    compileSdkVersion(COMPILE_VERSION)
+    compileSdk = (COMPILE_VERSION)
     defaultConfig {
-        minSdkVersion(MIN_VERSION)
-        targetSdkVersion(TARGET_VERSION)
-        versionCode = appdependencies.Builds.KodiAndroidX.VERSION_CODE
-        versionName = appdependencies.Builds.KodiAndroidX.VERSION_NAME
+        minSdk = (MIN_VERSION)
+        targetSdk = (TARGET_VERSION)
+        //versionCode = appdependencies.Builds.KodiAndroidX.VERSION_CODE
+        version = appdependencies.Builds.KodiAndroidX.VERSION_NAME
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            isDebuggable = true
+            //isDebuggable = true
         }
 
         getByName("release") {
@@ -43,12 +43,12 @@ android {
     }*/
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     packagingOptions {
-        exclude("META-INF/notice.txt")
+        resources.excludes.add("META-INF/notice.txt")
     }
 
     // Declare the task that will monitor all configurations.

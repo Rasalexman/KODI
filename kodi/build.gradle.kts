@@ -1,4 +1,3 @@
-//import org.jetbrains.dokka.gradle.DokkaTask
 import appdependencies.Versions
 import resources.Resources.codeDirs
 
@@ -6,25 +5,11 @@ plugins {
     id("java-library")
     id("kotlin")
     id("maven-publish")
-    //id("org.jetbrains.dokka")
 }
 
-// Declare the task that will monitor all configurations.
-/*configurations.all {
-    // 2 Define the resolution strategy in case of conflicts.
-    resolutionStrategy {
-        // Fail eagerly on version conflict (includes transitive dependencies),
-        // e.g., multiple different versions of the same dependency (group and name are equal).
-        failOnVersionConflict()
-
-        // Prefer modules that are part of this build (multi-project or composite build) over external modules.
-        preferProjectModules()
-    }
-}*/
-
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
     withJavadocJar()
     withSourcesJar()
@@ -43,7 +28,6 @@ dependencies {
 
 group = "com.rasalexman.kodi"
 version = appdependencies.Builds.Kodi.VERSION_NAME
-
 
 publishing {
     publications {

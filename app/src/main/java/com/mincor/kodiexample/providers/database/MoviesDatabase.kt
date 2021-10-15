@@ -18,7 +18,7 @@ import com.rasalexman.kodi.annotations.BindSingle
 @Database(entities = [
     GenreEntity::class,
     MovieEntity::class
-], version = 2)
+], version = 2, exportSchema = false)
 @TypeConverters(FromListOfIntToStringConverter::class, FromListOfStringsToStringConverter::class)
 abstract class MoviesDatabase : RoomDatabase() {
 
