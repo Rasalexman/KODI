@@ -10,22 +10,22 @@ object Builds {
     const val STDLIB = "stdlib-jdk8"
 
     object App {
-        const val VERSION_CODE = 10011
-        const val VERSION_NAME = "10011"
+        const val VERSION_CODE = 10012
+        const val VERSION_NAME = "10012"
     }
 
     object Kodi {
-        const val VERSION_NAME = "1.5.19"
+        const val VERSION_NAME = "1.5.20"
     }
 
     object KodiAndroidX {
-        const val VERSION_CODE = 105019
+        const val VERSION_CODE = 105020
         const val VERSION_NAME = Kodi.VERSION_NAME
     }
 
     object KodiReflect {
-        const val VERSION_CODE = 10137
-        const val VERSION_NAME = "1.1.37"
+        const val VERSION_CODE = 10138
+        const val VERSION_NAME = "1.1.38"
     }
 }
 
