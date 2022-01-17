@@ -2,8 +2,8 @@ package appdependencies
 
 object Versions {
 
-    const val gradle = "7.0.3"
-    const val kotlin = "1.6.0"
+    const val gradle = "7.0.4"
+    const val kotlin = "1.6.10"
 
     const val appCoreX = "1.7.0"
     const val constraintLayout = "2.1.1"

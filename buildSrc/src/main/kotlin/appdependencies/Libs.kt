@@ -75,7 +75,7 @@ object Libs {
     }
 
     object Processor {
-       const val kotlinpoet = "com.squareup:kotlinpoet:1.10.1"
+       const val kotlinpoet = "com.squareup:kotlinpoet:1.10.2"
     }
 
     object Tests {
