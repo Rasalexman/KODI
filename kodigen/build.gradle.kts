@@ -10,7 +10,7 @@ plugins {
 kapt {
     useBuildCache = true
     generateStubs = false
-    includeCompileClasspath = false
+    //includeCompileClasspath = false
 }
 
 sourceSets {
@@ -33,8 +33,8 @@ dependencies {
     implementation(project(":kodi"))
 
     implementation(appdependencies.Libs.Processor.kotlinpoet)
-    implementation("com.google.auto.service:auto-service:1.0")
-    kapt("com.google.auto.service:auto-service:1.0")
+    implementation("com.google.auto.service:auto-service:1.0.1")
+    kapt("com.google.auto.service:auto-service:1.0.1")
 }
 
 group = "com.rasalexman.kodigen"

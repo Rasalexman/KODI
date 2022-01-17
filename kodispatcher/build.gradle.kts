@@ -41,10 +41,6 @@ dependencies {
     api(project(":kodi"))
 }
 
-kapt {
-    includeCompileClasspath = false
-}
-
 group = "com.rasalexman.kodispatcher"
 version = appdependencies.Builds.Kodi.VERSION_NAME
 

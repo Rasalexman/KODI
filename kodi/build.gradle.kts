@@ -6,18 +6,18 @@ plugins {
     id("maven-publish")
 }
 
+sourceSets {
+    getByName("main") {
+        java.setSrcDirs(codeDirs)
+    }
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 
     withJavadocJar()
     withSourcesJar()
-}
-
-sourceSets {
-    getByName("main") {
-        java.setSrcDirs(codeDirs)
-    }
 }
 
 dependencies {
@@ -38,8 +38,8 @@ publishing {
             artifactId = "kodi"
             version = appdependencies.Builds.Kodi.VERSION_NAME
 
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
+            //artifact(tasks["sourcesJar"])
+            //artifact(tasks["javadocJar"])
         }
     }
 
