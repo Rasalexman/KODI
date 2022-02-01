@@ -6,27 +6,32 @@ plugins {
     id("maven-publish")
 }
 
+group = "com.rasalexman.kodi"
+version = appdependencies.Builds.Kodi.VERSION_NAME
+
 sourceSets {
     getByName("main") {
         java.setSrcDirs(codeDirs)
     }
 }
 
+tasks.create(name = "sourceJar", type = Jar::class) {
+    from(sourceSets["main"].java.srcDirs)
+    archiveClassifier.set("sources")
+}
+
 java {
+    this.sourceSets {
+        getByName("main") {
+            java.setSrcDirs(codeDirs)
+        }
+    }
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 
     withJavadocJar()
     withSourcesJar()
 }
-
-dependencies {
-    //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    //implementation(kotlin(appdependencies.Builds.STDLIB, Versions.kotlin))
-}
-
-group = "com.rasalexman.kodi"
-version = appdependencies.Builds.Kodi.VERSION_NAME
 
 publishing {
     publications {
@@ -38,8 +43,8 @@ publishing {
             artifactId = "kodi"
             version = appdependencies.Builds.Kodi.VERSION_NAME
 
-            //artifact(tasks["sourcesJar"])
-            //artifact(tasks["javadocJar"])
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
         }
     }
 

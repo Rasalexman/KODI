@@ -7,11 +7,8 @@ plugins {
     kotlin("kapt")
 }
 
-kapt {
-    useBuildCache = true
-    generateStubs = false
-    //includeCompileClasspath = false
-}
+group = "com.rasalexman.kodigen"
+version = appdependencies.Builds.Kodi.VERSION_NAME
 
 sourceSets {
     getByName("main") {
@@ -19,7 +16,17 @@ sourceSets {
     }
 }
 
+tasks.create(name = "sourceJar", type = Jar::class) {
+    from(sourceSets["main"].java.srcDirs)
+    archiveClassifier.set("sources")
+}
+
 java {
+    this.sourceSets {
+        getByName("main") {
+            java.setSrcDirs(codeDirs)
+        }
+    }
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 
@@ -30,15 +37,12 @@ java {
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     //implementation(kotlin(appdependencies.Builds.STDLIB, appdependencies.Versions.kotlin))
-    implementation(project(":kodi"))
+    compileOnly(project(":kodi"))
 
     implementation(appdependencies.Libs.Processor.kotlinpoet)
-    implementation("com.google.auto.service:auto-service:1.0.1")
-    kapt("com.google.auto.service:auto-service:1.0.1")
+    implementation(appdependencies.Libs.Processor.autoService)
+    kapt(appdependencies.Libs.Processor.autoService)
 }
-
-group = "com.rasalexman.kodigen"
-version = appdependencies.Builds.Kodi.VERSION_NAME
 
 publishing {
     publications {

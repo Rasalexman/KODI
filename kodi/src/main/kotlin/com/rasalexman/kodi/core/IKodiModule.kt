@@ -14,8 +14,6 @@
 
 package com.rasalexman.kodi.core
 
-import com.rasalexman.kodi.delegates.immutableGetter
-
 /**
  * Module Initializer
  */
@@ -57,7 +55,7 @@ internal data class KodiModule(
     /**
      * Set of all instances that includes in this module
      */
-    override val moduleInstancesSet: MutableSet<KodiTagWrapper> by immutableGetter { mutableSetOf() }
+    override val moduleInstancesSet: MutableSet<KodiTagWrapper> by lazy { mutableSetOf() }
 }
 
 /**

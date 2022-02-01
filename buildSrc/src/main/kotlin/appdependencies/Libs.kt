@@ -76,6 +76,7 @@ object Libs {
 
     object Processor {
        const val kotlinpoet = "com.squareup:kotlinpoet:1.10.2"
+       const val autoService = "com.google.auto.service:auto-service:1.0.1"
     }
 
     object Tests {

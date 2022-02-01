@@ -29,12 +29,12 @@ import com.rasalexman.kodi.delegates.mutableGetter
  */
 @Target(AnnotationTarget.FUNCTION)
 annotation class CanThrowException(
-    val message: String = "Check that the \'tag\' is added to the dependency graph, otherwise it will fall with RuntimeException"
+    val message: String = "Check that the 'tag' is added to the dependency graph, otherwise it will fall with RuntimeException"
 )
 
-private const val TAG_EMPTY_ERROR = "Parameter \'tag\' cannot be empty string"
-internal const val SCOPE_EMPTY_ERROR = "Parameter \'scopeName\' cannot be empty string"
-private const val HOLDER_NULL_ERROR = "There is no \'KodiHolder\' instance in dependency graph"
+private const val TAG_EMPTY_ERROR = "Parameter 'tag' cannot be empty string"
+internal const val SCOPE_EMPTY_ERROR = "Parameter 'scopeName' cannot be empty string"
+private const val HOLDER_NULL_ERROR = "There is no 'KodiHolder' instance in dependency graph"
 private const val INITIALIZER_NULL_ERROR = "There is no typed initializer passed throw an exception"
 
 /**
@@ -116,7 +116,7 @@ inline fun <reified UnbindType : Any> IKodi.unbind(
  *
  * @return [Boolean]
  */
-inline fun <reified InstanceType : Any> IKodi.hasModule(tag: String? = null): Boolean {
+inline fun <reified InstanceType : Any> hasModule(tag: String? = null): Boolean {
     val tagToWrap = tag.asTag<InstanceType>()
     return Kodi.hasModuleByTag(tagToWrap)
 }
@@ -129,7 +129,7 @@ inline fun <reified InstanceType : Any> IKodi.hasModule(tag: String? = null): Bo
  *
  * @return [Boolean]
  */
-inline fun <reified InstanceType : Any> IKodi.hasInstance(tag: String? = null): Boolean {
+inline fun <reified InstanceType : Any> hasInstance(tag: String? = null): Boolean {
     val tagToWrap = tag.asTag<InstanceType>()
     return Kodi.hasInstance(tagToWrap)
 }
@@ -295,7 +295,7 @@ inline fun <reified HolderType : KodiHolder<ReturnType>, reified ReturnType : An
  * @param tag - there is an optional tag that we pass to key into dependency graph
  * @param scope - there is a scope of current instance
  */
-inline fun <reified InstanceType : Any> IKodi.immutableInstance(
+inline fun <reified InstanceType : Any> immutableInstance(
     tag: String? = null,
     scope: String? = null
 ): IImmutableDelegate<InstanceType> = immutableGetter {
@@ -312,7 +312,7 @@ inline fun <reified InstanceType : Any> IKodi.immutableInstance(
  *
  * @return [IMutableDelegate] delegate with [InstanceType] holder
  */
-inline fun <reified InstanceType : Any> IKodi.mutableInstance(
+inline fun <reified InstanceType : Any> mutableInstance(
     tag: String? = null,
     scope: String? = null
 ): IMutableDelegate<InstanceType> = mutableGetter {

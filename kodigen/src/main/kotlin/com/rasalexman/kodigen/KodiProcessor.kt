@@ -96,8 +96,8 @@ class KodiProcessor : AbstractProcessor() {
     }
 
     override fun getSupportedOptions(): Set<String?>? {
-        return Collections.singleton("org.gradle.annotation.processing.aggregating")
-        //return Collections.singleton("org.gradle.annotation.processing.isolating")
+        //return Collections.singleton("org.gradle.annotation.processing.aggregating")
+        return Collections.singleton("org.gradle.annotation.processing.isolating")
     }
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latestSupported()
@@ -130,9 +130,7 @@ class KodiProcessor : AbstractProcessor() {
         val lowerModuleName = moduleName.apply { this.first().lowercaseChar() }
         val packageName = "$KODI_GENERATED_PATH${moduleName.lowercase(Locale.ENGLISH)}"
         val fileName = "${lowerModuleName.replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(
-                Locale.ENGLISH
-            ) else it.toString()
+            if (it.isLowerCase()) it.titlecase(Locale.ENGLISH) else it.toString()
         }}$DEFAULT_MODULE_NAME"
 
         val codeInitializer = buildCodeBlock {
@@ -142,7 +140,7 @@ class KodiProcessor : AbstractProcessor() {
                 val toClass = bindingData.toClass
 
                 if (toClass.contains(KODI_ERROR_PACKAGE_NAME)) {
-                    throwKodiException<IllegalStateException>("You cannot use java class \'$toClass\' as binding class cause it's goes to unexpected graph.")
+                    throwKodiException<IllegalStateException>("You cannot use java class '$toClass' as binding class cause it's goes to unexpected graph.")
                 }
 
                 val element = bindingData.element

@@ -22,6 +22,11 @@ import com.rasalexman.kodi.delegates.immutableGetter
 internal typealias LambdaWithReturn<T> = () -> T
 
 /**
+ * Lambda wrapper for getters delegates
+ */
+internal typealias LambdaWithParamAndReturn<T> = IKodi.() -> T
+
+/**
  * Main storage abstraction
  */
 internal interface IKodiStorage<V> {
