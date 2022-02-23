@@ -119,6 +119,13 @@ class KodiProcessor : AbstractProcessor() {
                 modulesMap,
                 ::getDataFromBindSingle
             )
+
+            val foundAnnotatedElementsNumber = modulesMap.entries.sumOf { it.value.size }
+            messager.printMessage(
+                Diagnostic.Kind.NOTE,
+                "Found $foundAnnotatedElementsNumber annotated elements in ${modulesMap.size} kodi modules"
+            )
+
             modulesMap.forEach(::processModules)
             println("KodiAnnotationProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
             return !isProvideRequested && !isSingleRequested
