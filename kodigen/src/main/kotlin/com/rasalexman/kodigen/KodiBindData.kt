@@ -15,6 +15,7 @@
 package com.rasalexman.kodigen
 
 import javax.lang.model.element.Element
+import javax.lang.model.type.TypeMirror
 
 /**
  * Main class to bind data into processor
@@ -24,6 +25,7 @@ data class KodiBindData(
         val toModule: String,
         val toPack: String,
         val toClass: String,
+        val toClassType: TypeMirror,
         val instanceType: String,
         val scope: String,
         val tag: String
