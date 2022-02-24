@@ -119,6 +119,13 @@ class KodiProcessor : AbstractProcessor() {
                 modulesMap,
                 ::getDataFromBindSingle
             )
+
+            val foundAnnotatedElementsNumber = modulesMap.entries.sumOf { it.value.size }
+            messager.printMessage(
+                Diagnostic.Kind.NOTE,
+                "Found $foundAnnotatedElementsNumber annotated elements in ${modulesMap.size} kodi modules"
+            )
+
             modulesMap.forEach(::processModules)
             println("KodiAnnotationProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
             return !isProvideRequested && !isSingleRequested
@@ -142,6 +149,8 @@ class KodiProcessor : AbstractProcessor() {
                 if (toClass.contains(KODI_ERROR_PACKAGE_NAME)) {
                     throwKodiException<IllegalStateException>("You cannot use java class '$toClass' as binding class cause it's goes to unexpected graph.")
                 }
+
+                verifyBindingTypes(bindingData)
 
                 val element = bindingData.element
                 val toPack = bindingData.toPack
@@ -207,13 +216,15 @@ class KodiProcessor : AbstractProcessor() {
 
     private fun getDataFromBindSingle(element: Element): KodiBindData {
         val annotation = element.getAnnotation(BindSingle::class.java)
-        val toClassPackageAndClass = element.getAnnotationClassValue<BindSingle> { toClass }.toString()
+        val toClassType = element.getAnnotationClassValue<BindSingle> { toClass }
+        val toClassPackageAndClass = toClassType.toString()
         val (packName, className) = toClassPackageAndClass.getPackAndClass()
         return KodiBindData(
                 element = element,
                 toModule = annotation.toModule,
                 toPack = packName,
                 toClass = className,
+                toClassType = toClassType,
                 instanceType = INSTANCE_TYPE_SINGLE,
                 scope = annotation.atScope,
                 tag = annotation.toTag
@@ -222,13 +233,15 @@ class KodiProcessor : AbstractProcessor() {
 
     private fun getDataFromBindProvider(element: Element): KodiBindData {
         val annotation = element.getAnnotation(BindProvider::class.java)
-        val packageAndClass = element.getAnnotationClassValue<BindProvider> { toClass }.toString()
+        val toClassType = element.getAnnotationClassValue<BindProvider> { toClass }
+        val packageAndClass = toClassType.toString()
         val (packName, className) = packageAndClass.getPackAndClass()
         return KodiBindData(
                 element = element,
                 toModule = annotation.toModule,
                 toPack = packName,
                 toClass = className,
+                toClassType = toClassType,
                 instanceType = INSTANCE_TYPE_PROVIDER,
                 scope = annotation.atScope,
                 tag = annotation.toTag
@@ -375,6 +388,29 @@ class KodiProcessor : AbstractProcessor() {
             list.add(bindingData)
         }
         return false
+    }
+
+    private fun verifyBindingTypes(bindingData: KodiBindData) {
+        val element: Element = bindingData.element
+        val toClassType = bindingData.toClassType
+        val elementType = if (element is ExecutableElement) {
+            element.returnType
+        } else {
+            element.asType()
+        }
+        val assignable = TYPE_UTILS.isAssignable(elementType, toClassType)
+
+        if (!assignable) {
+            val (_, elementTypeSimpleName) = elementType.toString().getPackAndClass()
+            messager.printMessage(
+                Diagnostic.Kind.ERROR,
+                "Incorrect binding at ${element.enclosingElement} \r\n" +
+                        "target:  [${elementType}] \r\n" +
+                        "toClass: [$toClassType] \r\n\r\n" +
+                        "$elementTypeSimpleName is not assignable to ${bindingData.toClass} \r\n",
+                element,
+            )
+        }
     }
 
     private fun String.getPackAndClass(): Pair<String, String> {
