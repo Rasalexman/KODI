@@ -23,7 +23,7 @@ object Versions {
     const val room = "2.4.1"
 
     const val kotPref = "2.13.2"
-    const val coroutinesManager = "1.3.7"
+    const val coroutinesManager = "1.4.0"
     const val timber = "5.0.1"
     const val sticky = "1.1.4"
     const val leakcanary: String = "2.7"
