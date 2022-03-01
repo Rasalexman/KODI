@@ -1,7 +1,11 @@
 //------ APP VERSION
 extra["appVersion"] = "1.2.5"
+extra["kodiVersion"] = "1.5.24"
+extra["reflectVersion"] = "1.1.41"
+
 
 //------ CONFIG DATA
+extra["appId"] = "com.mincor.kodiexample"
 extra["minSdkVersion"] = 19
 extra["buildSdkVersion"] = 31
 extra["toolsVersion"] = "31.0.0"
@@ -25,6 +29,18 @@ val recyclerView = "1.3.0-alpha01"
 val lifecycle = "2.4.0"
 val fragment: String = "1.4.0"
 val paging: String = "3.1.0"
+val swiperefreshlayout: String = "1.0.0"
+val room: String = "2.4.1"
+val retrofit = "2.9.0"
+val retrofitLogging = "3.0.0"
+val coroutinesManager = "1.4.0"
+val timber = "5.0.1"
+val sticky = "1.1.4"
+val coil = "1.4.0"
+val kotPref = "2.13.2"
+val fastAdapterLib = "5.6.0"
+
+//----- extra navigation
 extra["navigation"] = navigation
 
 //------- Libs path
@@ -36,8 +52,29 @@ extra["navigationUI"] = "androidx.navigation:navigation-ui-ktx:$navigation"
 extra["navigationFragment"] = "androidx.navigation:navigation-fragment-ktx:$navigation"
 extra["material"] = "com.google.android.material:material:$material"
 extra["viewpager2"] = "androidx.viewpager2:viewpager2:$viewPager2"
+extra["swiperefreshlayout"] = "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefreshlayout"
 extra["recyclerview"] = "androidx.recyclerview:recyclerview:$recyclerView"
 extra["fragmentKtx"] = "androidx.fragment:fragment-ktx:$fragment"
 extra["paging"] = "androidx.paging:paging-runtime:$paging"
 extra["viewmodelKtx"] = "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"
 extra["livedataKtx"] = "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle"
+extra["roomRuntime"] = "androidx.room:room-runtime:$room"
+extra["roomKtx"] = "androidx.room:room-ktx:$room"
+extra["roomKapt"] = "androidx.room:room-compiler:$room"
+extra["retrofit"] = "com.squareup.retrofit2:retrofit:${retrofit}"
+extra["moshi"] = "com.squareup.retrofit2:converter-moshi:${retrofit}"
+extra["logging"] = "com.github.ihsanbal:LoggingInterceptor:${retrofitLogging}"
+extra["coroutinesmanager"] = "com.github.Rasalexman:coroutinesmanager:${coroutinesManager}"
+extra["timber"] = "com.jakewharton.timber:timber:${timber}"
+extra["sticky"] = "com.github.Rasalexman:Sticky:${sticky}"
+extra["coil"] = "io.coil-kt:coil:${coil}"
+extra["kotpref"] = "com.chibatching.kotpref:kotpref:${kotPref}"
+extra["kotprefSupport"] = "com.chibatching.kotpref:livedata-support:${kotPref}"
+extra["kotlinpoet"] = "com.squareup:kotlinpoet:1.10.2"
+extra["autoService"] = "com.google.auto.service:auto-service:1.0.1"
+
+extra["fastadapterCore"] = "com.mikepenz:fastadapter:${fastAdapterLib}@aar"
+extra["fastadapterUI"] = "com.mikepenz:fastadapter-extensions-ui:${fastAdapterLib}"
+extra["fastadapterDiff"] = "com.mikepenz:fastadapter-extensions-diff:${fastAdapterLib}"
+extra["fastadapterPaged"] = "com.mikepenz:fastadapter-extensions-paged:${fastAdapterLib}"
+extra["fastadapterScroll"] = "com.mikepenz:fastadapter-extensions-scroll:${fastAdapterLib}"

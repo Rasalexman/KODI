@@ -1,5 +1,3 @@
-import resources.Resources.codeDirs
-
 plugins {
     id("java-library")
     id("kotlin")
@@ -7,16 +5,21 @@ plugins {
     kotlin("kapt")
 }
 
+
+val codePath: String by rootProject.extra
+val kodiVersion: String by rootProject.extra
+
+val srcDirs = listOf(codePath)
 group = "com.rasalexman.kodigen"
-version = appdependencies.Builds.Kodi.VERSION_NAME
+version = kodiVersion
 
 sourceSets {
     getByName("main") {
-        java.setSrcDirs(codeDirs)
+        java.setSrcDirs(srcDirs)
     }
 }
 
-tasks.create(name = "sourceJar", type = Jar::class) {
+tasks.register<Jar>(name = "sourceJar") {
     from(sourceSets["main"].java.srcDirs)
     archiveClassifier.set("sources")
 }
@@ -24,7 +27,7 @@ tasks.create(name = "sourceJar", type = Jar::class) {
 java {
     this.sourceSets {
         getByName("main") {
-            java.setSrcDirs(codeDirs)
+            java.setSrcDirs(srcDirs)
         }
     }
     sourceCompatibility = JavaVersion.VERSION_11
@@ -35,13 +38,13 @@ java {
 }
 
 dependencies {
-    //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    //implementation(kotlin(appdependencies.Builds.STDLIB, appdependencies.Versions.kotlin))
     compileOnly(project(":kodi"))
+    val kotlinpoet: String by rootProject.extra
+    val autoService: String by rootProject.extra
 
-    implementation(appdependencies.Libs.Processor.kotlinpoet)
-    implementation(appdependencies.Libs.Processor.autoService)
-    kapt(appdependencies.Libs.Processor.autoService)
+    implementation(kotlinpoet)
+    implementation(autoService)
+    kapt(autoService)
 }
 
 publishing {
@@ -51,7 +54,7 @@ publishing {
             // You can then customize attributes of the publication as shown below.
             groupId = "com.rasalexman.kodigen"
             artifactId = "kodigen"
-            version = appdependencies.Builds.Kodi.VERSION_NAME
+            version = kodiVersion
 
             artifact(tasks["sourcesJar"])
             artifact(tasks["javadocJar"])

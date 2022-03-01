@@ -1,6 +1,3 @@
-import appdependencies.Versions
-import resources.Resources.codeDirs
-
 plugins {
     id("java-library")
     id("kotlin")
@@ -8,18 +5,37 @@ plugins {
     kotlin("kapt")
 }
 
+val codePath: String by rootProject.extra
+val kodiVersion: String by rootProject.extra
+val kotlinVersion: String by rootProject.extra
+
+val srcDirs = listOf(codePath)
+
+group = "com.rasalexman.kodispatcher"
+version = kodiVersion
+
 kapt {
     useBuildCache = true
     generateStubs = false
 }
 
+tasks.register<Jar>(name = "sourceJar") {
+    from(sourceSets["main"].java.srcDirs)
+    archiveClassifier.set("sources")
+}
+
 sourceSets {
     getByName("main") {
-        java.setSrcDirs(codeDirs)
+        java.setSrcDirs(srcDirs)
     }
 }
 
 java {
+    this.sourceSets {
+        getByName("main") {
+            java.setSrcDirs(srcDirs)
+        }
+    }
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 
@@ -30,19 +46,14 @@ java {
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "org.jetbrains.kotlin") {
-            this.useVersion(Versions.kotlin)
+            this.useVersion(kotlinVersion)
         }
     }
 }
 
 dependencies {
-    //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    //implementation(kotlin("stdlib", Versions.kotlin))
     api(project(":kodi"))
 }
-
-group = "com.rasalexman.kodispatcher"
-version = appdependencies.Builds.Kodi.VERSION_NAME
 
 publishing {
     publications {
@@ -51,7 +62,7 @@ publishing {
             // You can then customize attributes of the publication as shown below.
             groupId = "com.rasalexman.kodispatcher"
             artifactId = "kodispatcher"
-            version = appdependencies.Builds.Kodi.VERSION_NAME
+            version = kodiVersion
 
             artifact(tasks["sourcesJar"])
             artifact(tasks["javadocJar"])

@@ -1,20 +1,22 @@
-import appdependencies.Builds.COMPILE_VERSION
-import appdependencies.Builds.MIN_VERSION
-import appdependencies.Builds.TARGET_VERSION
-import appdependencies.Versions
-
 plugins {
     id("com.android.library")
     kotlin("android")
     id("maven-publish")
 }
 
+val reflectVersion: String by rootProject.extra
+group = "com.rasalexman.kodireflect"
+version = reflectVersion
+
 android {
-    compileSdk = (COMPILE_VERSION)
+    val buildSdkVersion: Int by rootProject.extra
+    val minSdkVersion: Int by rootProject.extra
+
+    compileSdk = buildSdkVersion
     defaultConfig {
-        minSdk = (MIN_VERSION)
-        targetSdk = (TARGET_VERSION)
-        version = appdependencies.Builds.KodiReflect.VERSION_NAME
+        minSdk = minSdkVersion
+        targetSdk = buildSdkVersion
+        version = reflectVersion
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -49,20 +51,12 @@ android {
             preferProjectModules()
         }
     }
-
-    kotlinOptions {
-        languageVersion = "1.5"
-        apiVersion = "1.5"
-        jvmTarget = "11"
-    }
 }
 
 dependencies {
-    implementation(kotlin("reflect", Versions.kotlin))
+    val kotlinVersion: String by rootProject.extra
+    implementation(kotlin("reflect", kotlinVersion))
 }
-
-group = "com.rasalexman.kodireflect"
-version = appdependencies.Builds.KodiReflect.VERSION_NAME
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -79,7 +73,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = "com.rasalexman.kodireflect"
                 artifactId = "kodireflect"
-                version = appdependencies.Builds.KodiReflect.VERSION_NAME
+                version = reflectVersion
             }
             create<MavenPublication>("debug") {
                 from(components["debug"])
@@ -87,7 +81,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = "com.rasalexman.kodireflect"
                 artifactId = "kodireflect-debug"
-                version = appdependencies.Builds.KodiReflect.VERSION_NAME
+                version = reflectVersion
             }
         }
 
