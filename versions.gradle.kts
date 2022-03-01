@@ -1,7 +1,7 @@
 //------ APP VERSION
 extra["appVersion"] = "1.2.5"
 extra["kodiVersion"] = "1.5.24"
-extra["reflectVersion"] = "1.1.41"
+extra["reflectVersion"] = "1.1.42"
 
 
 //------ CONFIG DATA
@@ -23,14 +23,14 @@ val leakcanary = "2.8.1"
 val coroutines = "1.6.0"
 val core: String = "1.7.0"
 val constraintLayout = "2.1.3"
-val material = "1.6.0-alpha02"
+val material = "1.6.0-alpha03"
 val viewPager2 = "1.1.0-beta01"
 val recyclerView = "1.3.0-alpha01"
-val lifecycle = "2.4.0"
+val lifecycle = "2.4.1"
 val fragment: String = "1.4.0"
 val paging: String = "3.1.0"
-val swiperefreshlayout: String = "1.0.0"
-val room: String = "2.4.1"
+val swiperefreshlayout: String = "1.1.0"
+val room: String = "2.4.2"
 val retrofit = "2.9.0"
 val retrofitLogging = "3.0.0"
 val coroutinesManager = "1.4.0"

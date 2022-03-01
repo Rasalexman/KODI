@@ -1,5 +1,0 @@
-package resources
-
-object Resources {
-
-}

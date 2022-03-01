@@ -1,5 +1,0 @@
-package appdependencies
-
-object Versions {
-
-}

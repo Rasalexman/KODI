@@ -55,7 +55,7 @@ android {
 
 dependencies {
     val kotlinVersion: String by rootProject.extra
-    implementation(kotlin("reflect", kotlinVersion))
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 }
 
 java {
