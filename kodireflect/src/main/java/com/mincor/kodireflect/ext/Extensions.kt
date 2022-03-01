@@ -39,6 +39,7 @@ inline fun <reified T : Any> KClass<T>.createInstance(values: List<Any>? = null)
  * Inject given params to constructor instance members properties
  * All properties must be a KMutableProperty1
  */
+@Suppress("UNCHECKED_CAST")
 fun Any.injectInConstructor(consParams: List<Any>? = null): Any {
     consParams?.let { params ->
         val members = this.javaClass.kotlin.memberProperties as? List<KProperty1<Any, Any>>

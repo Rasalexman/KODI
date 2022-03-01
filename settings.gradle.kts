@@ -30,16 +30,17 @@ dependencyResolutionManagement {
      * default, but it does not configure any dependencies (unless you select a
      * template that requires some).
      */
-
+    apply(from="versions.gradle.kts")
+    val jitpackPath: String by extra
+    val pluginsPath: String by extra
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") }
-        maven { url = uri("https://plugins.gradle.org/m2/") }
+        maven { url = uri(jitpackPath) }
+        maven { url = uri(pluginsPath) }
     }
 }
-
-rootProject.buildFileName = "build.gradle.kts"
-include(":app", ":kodi", ":kodispatcher", ":kodigen", ":kodiandroidx", ":kodireflect")
 rootProject.name= "KODI"
+include(":app", ":kodi", ":kodispatcher", ":kodigen", ":kodiksp", ":kodiandroidx", ":kodireflect")
+

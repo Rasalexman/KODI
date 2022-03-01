@@ -28,7 +28,6 @@ import android.media.session.MediaSessionManager
 import android.media.tv.TvInputManager
 import android.net.ConnectivityManager
 import android.net.nsd.NsdManager
-import android.net.wifi.WifiManager
 import android.net.wifi.p2p.WifiP2pManager
 import android.nfc.NfcManager
 import android.os.*
@@ -93,10 +92,10 @@ val kodiAndroidXManagers by lazy {
         bind<TextServicesManager>() with provider { instance<Context>().getSystemService(Context.TEXT_SERVICES_MANAGER_SERVICE) as TextServicesManager }
         bind<UiModeManager>() with provider { instance<Context>().getSystemService(Context.UI_MODE_SERVICE) as UiModeManager }
         bind<UsbManager>() with provider { instance<Context>().getSystemService(Context.USB_SERVICE) as UsbManager }
-        bind<Vibrator>() with provider { instance<Context>().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator }
+        //bind<Vibrator>() with provider { instance<Context>().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator }
         bind<WallpaperManager>() with provider { instance<Context>().getSystemService(Context.WALLPAPER_SERVICE) as WallpaperManager }
         bind<WifiP2pManager>() with provider { instance<Context>().getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager }
-        bind<WifiManager>() with provider { instance<Context>().getSystemService(Context.WIFI_SERVICE) as WifiManager }
+        //bind<WifiManager>() with provider { instance<Context>().getSystemService(Context.WIFI_SERVICE) as WifiManager }
         bind<WindowManager>() with provider { instance<Context>().getSystemService(Context.WINDOW_SERVICE) as WindowManager }
 
         bind<InputManager>() with provider { instance<Context>().getSystemService(Context.INPUT_SERVICE) as InputManager }

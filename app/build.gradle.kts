@@ -4,6 +4,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.devtools.ksp") version "1.6.10-1.0.4"
     kotlin("kapt")
 }
 
@@ -133,12 +134,10 @@ dependencies {
     val fastadapterCore: String by settings
     val fastadapterUI: String by settings
     val fastadapterDiff: String by settings
-    //val fastadapterPaged: String by settings
     val fastadapterScroll: String by settings
     implementation(fastadapterCore)
     implementation(fastadapterUI)
     implementation(fastadapterDiff)
-    //implementation(fastadapterPaged)
     implementation(fastadapterScroll)
 
     implementation(kotpref)
@@ -155,6 +154,7 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 
+    ksp(project(":kodiksp"))
     kapt(project(":kodigen"))
     kapt(roomKapt)
 }
