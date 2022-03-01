@@ -1,21 +1,23 @@
-import resources.Resources.codeDirs
-
 plugins {
     id("java-library")
     id("kotlin")
     id("maven-publish")
 }
 
+val codePath: String by rootProject.extra
+val kodiVersion: String by extra
+
+val srcDirs = listOf(codePath)
 group = "com.rasalexman.kodi"
-version = appdependencies.Builds.Kodi.VERSION_NAME
+version = kodiVersion
 
 sourceSets {
     getByName("main") {
-        java.setSrcDirs(codeDirs)
+        java.setSrcDirs(srcDirs)
     }
 }
 
-tasks.create(name = "sourceJar", type = Jar::class) {
+tasks.register<Jar>(name = "sourceJar") {
     from(sourceSets["main"].java.srcDirs)
     archiveClassifier.set("sources")
 }
@@ -23,7 +25,7 @@ tasks.create(name = "sourceJar", type = Jar::class) {
 java {
     this.sourceSets {
         getByName("main") {
-            java.setSrcDirs(codeDirs)
+            java.setSrcDirs(srcDirs)
         }
     }
     sourceCompatibility = JavaVersion.VERSION_11
@@ -41,7 +43,7 @@ publishing {
             // You can then customize attributes of the publication as shown below.
             groupId = "com.rasalexman.kodi"
             artifactId = "kodi"
-            version = appdependencies.Builds.Kodi.VERSION_NAME
+            version = kodiVersion
 
             artifact(tasks["sourcesJar"])
             artifact(tasks["javadocJar"])

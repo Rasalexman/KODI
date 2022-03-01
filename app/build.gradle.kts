@@ -1,9 +1,3 @@
-import appdependencies.Builds.APP_ID
-import appdependencies.Builds.BUILD_TOOLS
-import appdependencies.Builds.COMPILE_VERSION
-import appdependencies.Builds.MIN_VERSION
-import appdependencies.Builds.TARGET_VERSION
-import appdependencies.Libs
 import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 
 plugins {
@@ -14,15 +8,18 @@ plugins {
 }
 
 android {
-    compileSdk = COMPILE_VERSION
-    buildToolsVersion = BUILD_TOOLS
+
+    val buildSdkVersion: Int by extra
+    val minSdkVersion: Int by extra
+    val appVersion: String by extra
+    val appId: String by extra
+
+    compileSdk = buildSdkVersion
     defaultConfig {
-        applicationId = APP_ID
-        minSdk = MIN_VERSION
-        targetSdk = TARGET_VERSION
-        version = appdependencies.Builds.App.VERSION_NAME
-        //versionCode = appdependencies.Builds.App.VERSION_CODE
-        //versionName = appdependencies.Builds.App.VERSION_NAME
+        applicationId = appId
+        minSdk = minSdkVersion
+        targetSdk = buildSdkVersion
+        version = appVersion
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
 
@@ -42,16 +39,6 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
-
-    /*sourceSets {
-        getByName("main") {
-            java.setSrcDirs(arrayListOf(
-                    "${buildDir.absolutePath}/generated/source/kaptKotlin/",
-                    "src/main/java"
-            ))
-            res.setSrcDirs(dirs)
-        }
-    }*/
 
     applicationVariants.forEach { variant ->
         variant.outputs.forEach { output ->
@@ -81,71 +68,95 @@ android {
         viewBinding = true
     }
 
-    kotlinOptions {
-        languageVersion = "1.6"
-        apiVersion = "1.6"
-        jvmTarget = "11"
-    }
-}
+    // Declare the task that will monitor all configurations.
+    configurations.all {
+        // 2 Define the resolution strategy in case of conflicts.
+        resolutionStrategy {
+            // Fail eagerly on version conflict (includes transitive dependencies),
+            // e.g., multiple different versions of the same dependency (group and name are equal).
+            failOnVersionConflict()
 
-kapt {
-    useBuildCache = true
-    generateStubs = false
+            // Prefer modules that are part of this build (multi-project or composite build) over external modules.
+            preferProjectModules()
+        }
+    }
 }
 
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(project(":kodispatcher"))
 
-    implementation(Libs.Core.coreKtx)
-    implementation(Libs.Core.constraintlayout)
-    implementation(Libs.Core.navigationFragmentKtx)
-    implementation(Libs.Core.navigationUiKtx)
-    implementation(Libs.Core.viewPager2)
-    implementation(Libs.Core.paging)
-    implementation(Libs.Core.swipeRefreshLayout)
-    implementation(Libs.Core.material)
+    val settings = rootProject.extra
+    val viewpager2: String by settings
+    val paging: String by settings
+    val coreKtx: String by settings
+    val constraintlayout: String by settings
+    val navigationFragment: String by settings
+    val navigationUI: String by settings
+    val material: String by settings
+    val livedataKtx: String by settings
+    val viewmodelKtx: String by settings
+    val leakCanary: String by settings
+    val swiperefreshlayout: String by settings
+    val roomRuntime: String by settings
+    val roomKtx: String by settings
+    val roomKapt: String by settings
+    val retrofit: String by settings
+    val moshi: String by settings
+    val logging: String by settings
+    val coroutinesmanager: String by settings
+    val timber: String by settings
+    val sticky: String by settings
+    val coil: String by settings
+    val kotpref: String by settings
+    val kotprefSupport: String by settings
 
-    implementation(Libs.Room.runtime)
-    implementation(Libs.Room.ktx)
+    implementation(coreKtx)
+    implementation(constraintlayout)
+    implementation(navigationFragment)
+    implementation(navigationUI)
+    implementation(viewpager2)
+    implementation(paging)
+    implementation(swiperefreshlayout)
+    implementation(material)
 
-    implementation(Libs.Retrofit.core)
-    implementation(Libs.Retrofit.moshi)
-    implementation(Libs.Retrofit.logging)
+    implementation(roomRuntime)
+    implementation(roomKtx)
 
-    implementation(Libs.Lifecycle.livedataKtx)
-    implementation(Libs.Lifecycle.viewmodelKtx)
-    //implementation(appdependencies.Libs.Lifecycle.savedStateViewModel)
-    //implementation(appdependencies.Libs.Lifecycle.extensions)
-    //implementation(appdependencies.Libs.Lifecycle.common)
+    implementation(retrofit)
+    implementation(moshi)
+    implementation(logging)
 
-    implementation(Libs.FastAdapter.core)
-    implementation(Libs.FastAdapter.ui)
-    implementation(Libs.FastAdapter.uiExt)
-    implementation(Libs.FastAdapter.diff)
-    implementation(Libs.FastAdapter.paged)
-    implementation(Libs.FastAdapter.scroll)
+    implementation(livedataKtx)
+    implementation(viewmodelKtx)
 
-    implementation(Libs.KotPref.core)
-    implementation(Libs.KotPref.liveData)
+    val fastadapterCore: String by settings
+    val fastadapterUI: String by settings
+    val fastadapterDiff: String by settings
+    //val fastadapterPaged: String by settings
+    val fastadapterScroll: String by settings
+    implementation(fastadapterCore)
+    implementation(fastadapterUI)
+    implementation(fastadapterDiff)
+    //implementation(fastadapterPaged)
+    implementation(fastadapterScroll)
 
-    implementation(Libs.ImageLoading.coil)
+    implementation(kotpref)
+    implementation(kotprefSupport)
 
-    implementation(Libs.Common.coroutinesmanager)
-    implementation(Libs.Common.timber)
-    implementation(Libs.Common.sticky)
-    implementation(Libs.Common.leakCanary)
+    implementation(coil)
 
+    implementation(coroutinesmanager)
+    implementation(timber)
+    implementation(sticky)
 
-    testImplementation(Libs.Tests.junit)
-    androidTestImplementation(Libs.Tests.runner)
-    androidTestImplementation(Libs.Tests.espresso)
-
-    //implementation("com.rasalexman.kodigen:kodigen:1.4.92")
+    debugImplementation(leakCanary)
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 
     kapt(project(":kodigen"))
-    //kapt("com.github.Rasalexman.KODI:kodigen:1.5.13")
-    kapt(Libs.Room.kapt)
+    kapt(roomKapt)
 }
 /*
 configurations.all {
