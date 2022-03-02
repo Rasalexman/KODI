@@ -48,6 +48,12 @@ android {
     packagingOptions {
         resources.excludes.add("META-INF/notice.txt")
     }
+
+    kotlinOptions {
+        this.freeCompilerArgs += listOf(
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+        )
+    }
 }
 
 dependencies {

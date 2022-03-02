@@ -53,6 +53,15 @@ android {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        this.freeCompilerArgs += listOf(
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=kotlin.RequiresOptIn"
+        )
+    }
+}
+
 dependencies {
     val kotlinVersion: String by rootProject.extra
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")

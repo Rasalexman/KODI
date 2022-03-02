@@ -19,6 +19,14 @@ sourceSets {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        this.freeCompilerArgs += listOf(
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+        )
+    }
+}
+
 tasks.register<Jar>(name = "sourceJar") {
     from(sourceSets["main"].java.srcDirs)
     archiveClassifier.set("sources")

@@ -15,7 +15,7 @@ class KodiCodeGenerator(
 ) {
 
     private companion object {
-        private const val KODI_GENERATED_PATH = "com.kodi.modules."
+        private const val KODI_GENERATED_PATH = "com.kodi.generated.modules."
 
         private const val DEFAULT_MODULE_NAME = "Module"
         private const val KODI_MODULE_PROPERTY_TYPE = "IKodiModule"

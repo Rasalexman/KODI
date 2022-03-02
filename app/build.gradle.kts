@@ -14,6 +14,8 @@ android {
     val minSdkVersion: Int by extra
     val appVersion: String by extra
     val appId: String by extra
+    val codePath: String by rootProject.extra
+    val srcDirs = listOf(codePath)
 
     compileSdk = buildSdkVersion
     defaultConfig {
@@ -60,12 +62,18 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlin {
-        sourceSets.main {
-            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+    sourceSets {
+        getByName("main") {
+            java.setSrcDirs(srcDirs)
         }
-        sourceSets.test {
-            kotlin.srcDir("build/generated/ksp/test/kotlin")
+    }
+
+    kotlin {
+        sourceSets.release {
+            kotlin.srcDirs("build/generated/ksp/release/kotlin")
+        }
+        sourceSets.debug {
+            kotlin.srcDirs("build/generated/ksp/debug/kotlin")
         }
     }
 

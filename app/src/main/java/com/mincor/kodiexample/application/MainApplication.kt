@@ -2,14 +2,14 @@ package com.mincor.kodiexample.application
 
 import android.app.Application
 import android.content.Context
-import com.kodi.modules.localdatasource.localDataSourceModule
-import com.kodi.modules.presenters.presentersModule
-import com.kodi.modules.providers.providersModule
-import com.kodi.modules.remotedatasource.remoteDataSourceModule
-import com.kodi.modules.repository.repositoryModule
-import com.kodi.modules.usecasesdetails.useCasesDetailsModule
-import com.kodi.modules.usecasesgenres.useCasesGenresModule
-import com.kodi.modules.usecasesmovies.useCasesMoviesModule
+import com.kodi.generated.modules.localdatasource.localDataSourceModule
+import com.kodi.generated.modules.presenters.presentersModule
+import com.kodi.generated.modules.providers.providersModule
+import com.kodi.generated.modules.remotedatasource.remoteDataSourceModule
+import com.kodi.generated.modules.repository.repositoryModule
+import com.kodi.generated.modules.usecasesdetails.useCasesDetailsModule
+import com.kodi.generated.modules.usecasesgenres.useCasesGenresModule
+import com.kodi.generated.modules.usecasesmovies.useCasesMoviesModule
 import com.rasalexman.coroutinesmanager.AsyncTasksManager
 import com.rasalexman.coroutinesmanager.CoroutinesManager
 import com.rasalexman.coroutinesmanager.IAsyncTasksManager
