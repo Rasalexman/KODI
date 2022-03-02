@@ -18,7 +18,7 @@ import com.rasalexman.kodi.annotations.BindSingle
 @Database(entities = [
     GenreEntity::class,
     MovieEntity::class
-], version = 2, exportSchema = false)
+], version = 3, exportSchema = false)
 @TypeConverters(FromListOfIntToStringConverter::class, FromListOfStringsToStringConverter::class)
 abstract class MoviesDatabase : RoomDatabase() {
 
@@ -55,7 +55,10 @@ abstract class MoviesDatabase : RoomDatabase() {
                         "kodiMoviesDB"
                 )/*.addMigrations(
                         MIGRATION_1_2
-                    )*/.fallbackToDestructiveMigration().build()
+                    )*/.fallbackToDestructiveMigration()
+                    .addTypeConverter(FromListOfStringsToStringConverter())
+                    .addTypeConverter(FromListOfIntToStringConverter())
+                    .build()
                 INSTANCE = instance
                 return instance
             }

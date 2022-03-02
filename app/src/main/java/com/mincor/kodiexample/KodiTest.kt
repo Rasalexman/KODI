@@ -25,7 +25,7 @@ fun main() {
         bind<ISingleInterface>() with single { SingleClass(UUID.randomUUID().toString()) }
         bind<IProviderInterface>() at MY_PROVIDER_SCOPE_NAME with provider { ProviderClass(UUID.randomUUID().toString()) }
 
-        import(com.kodi.generated.modules.kodi.kodiModule)
+        import(com.kodi.modules.default.defaultModule)
         bindType<ISingleInterface, AnotherSingleClass>() with single { AnotherSingleClass(UUID.randomUUID().toString()) }
         bindType<ISingleInterface, OneMoreSingleClass>() with single { OneMoreSingleClass(UUID.randomUUID().toString()) }
     } withScope MY_SINGLE_SCOPE_NAME

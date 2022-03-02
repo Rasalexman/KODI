@@ -6,13 +6,14 @@ buildscript {
     val agpVersion: String by extra
     val navigation: String by extra
     val jitpackPath: String by extra
+    val pluginsPath: String by extra
 
     repositories {
         google()
         mavenCentral()
         gradlePluginPortal()
         maven { url = uri(jitpackPath) }
-        maven { url = uri("https://plugins.gradle.org/m2/") }
+        maven { url = uri(pluginsPath) }
     }
     dependencies {
         classpath("com.android.tools.build:gradle:$agpVersion")

@@ -4,7 +4,8 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("androidx.navigation.safeargs.kotlin")
-    kotlin("kapt")
+    id("com.google.devtools.ksp") version "1.6.10-1.0.4"
+    //kotlin("kapt")
 }
 
 android {
@@ -57,6 +58,15 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    kotlin {
+        sourceSets.main {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        }
+        sourceSets.test {
+            kotlin.srcDir("build/generated/ksp/test/kotlin")
+        }
     }
 
     packagingOptions {
@@ -133,12 +143,10 @@ dependencies {
     val fastadapterCore: String by settings
     val fastadapterUI: String by settings
     val fastadapterDiff: String by settings
-    //val fastadapterPaged: String by settings
     val fastadapterScroll: String by settings
     implementation(fastadapterCore)
     implementation(fastadapterUI)
     implementation(fastadapterDiff)
-    //implementation(fastadapterPaged)
     implementation(fastadapterScroll)
 
     implementation(kotpref)
@@ -155,8 +163,9 @@ dependencies {
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 
-    kapt(project(":kodigen"))
-    kapt(roomKapt)
+    ksp(project(":kodiksp"))
+    //kapt(project(":kodigen"))
+    ksp(roomKapt)
 }
 /*
 configurations.all {

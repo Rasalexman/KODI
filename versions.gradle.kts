@@ -1,7 +1,7 @@
 //------ APP VERSION
 extra["appVersion"] = "1.2.5"
-extra["kodiVersion"] = "1.5.24"
-extra["reflectVersion"] = "1.1.42"
+extra["kodiVersion"] = "1.6.0"
+extra["reflectVersion"] = "1.1.43"
 
 
 //------ CONFIG DATA
@@ -11,9 +11,10 @@ extra["buildSdkVersion"] = 31
 extra["toolsVersion"] = "31.0.0"
 extra["apiVersion"] = "1.6"
 extra["jvmVersion"] = "11"
-extra["agpVersion"] = "7.0.4"//"7.1.0" // use agp 7.1 jnly with stable android studio
+extra["agpVersion"] = "7.1.2" //"7.0.4"
 extra["kotlinVersion"] = "1.6.10"
 extra["jitpackPath"] = "https://jitpack.io"
+extra["pluginsPath"] = "https://plugins.gradle.org/m2/"
 extra["codePath"] = "src/main/kotlin"
 extra["resPath"] = "src/main/res"
 
@@ -39,6 +40,9 @@ val sticky = "1.1.4"
 val coil = "1.4.0"
 val kotPref = "2.13.2"
 val fastAdapterLib = "5.6.0"
+val ksp = "1.6.10-1.0.4"
+val kotlinpoet = "1.10.2"
+val autoService = "1.0.1"
 
 //----- extra navigation
 extra["navigation"] = navigation
@@ -70,8 +74,10 @@ extra["sticky"] = "com.github.Rasalexman:Sticky:${sticky}"
 extra["coil"] = "io.coil-kt:coil:${coil}"
 extra["kotpref"] = "com.chibatching.kotpref:kotpref:${kotPref}"
 extra["kotprefSupport"] = "com.chibatching.kotpref:livedata-support:${kotPref}"
-extra["kotlinpoet"] = "com.squareup:kotlinpoet:1.10.2"
-extra["autoService"] = "com.google.auto.service:auto-service:1.0.1"
+extra["kotlinpoet"] = "com.squareup:kotlinpoet:$kotlinpoet"
+extra["kotlinpoetKsp"] = "com.squareup:kotlinpoet-ksp:$kotlinpoet"
+extra["autoService"] = "com.google.auto.service:auto-service:$autoService"
+extra["kspapi"] = "com.google.devtools.ksp:symbol-processing-api:$ksp"
 
 extra["fastadapterCore"] = "com.mikepenz:fastadapter:${fastAdapterLib}@aar"
 extra["fastadapterUI"] = "com.mikepenz:fastadapter-extensions-ui:${fastAdapterLib}"
