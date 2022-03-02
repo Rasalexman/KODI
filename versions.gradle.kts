@@ -1,7 +1,7 @@
 //------ APP VERSION
 extra["appVersion"] = "1.2.5"
-extra["kodiVersion"] = "1.5.24"
-extra["reflectVersion"] = "1.1.42"
+extra["kodiVersion"] = "1.6.0"
+extra["reflectVersion"] = "1.1.43"
 
 
 //------ CONFIG DATA
@@ -75,6 +75,7 @@ extra["coil"] = "io.coil-kt:coil:${coil}"
 extra["kotpref"] = "com.chibatching.kotpref:kotpref:${kotPref}"
 extra["kotprefSupport"] = "com.chibatching.kotpref:livedata-support:${kotPref}"
 extra["kotlinpoet"] = "com.squareup:kotlinpoet:$kotlinpoet"
+extra["kotlinpoetKsp"] = "com.squareup:kotlinpoet-ksp:$kotlinpoet"
 extra["autoService"] = "com.google.auto.service:auto-service:$autoService"
 extra["kspapi"] = "com.google.devtools.ksp:symbol-processing-api:$ksp"
 

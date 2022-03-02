@@ -5,7 +5,7 @@ plugins {
     kotlin("android")
     id("androidx.navigation.safeargs.kotlin")
     id("com.google.devtools.ksp") version "1.6.10-1.0.4"
-    kotlin("kapt")
+    //kotlin("kapt")
 }
 
 android {
@@ -58,6 +58,15 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    kotlin {
+        sourceSets.main {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        }
+        sourceSets.test {
+            kotlin.srcDir("build/generated/ksp/test/kotlin")
+        }
     }
 
     packagingOptions {
@@ -155,8 +164,8 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 
     ksp(project(":kodiksp"))
-    kapt(project(":kodigen"))
-    kapt(roomKapt)
+    //kapt(project(":kodigen"))
+    ksp(roomKapt)
 }
 /*
 configurations.all {

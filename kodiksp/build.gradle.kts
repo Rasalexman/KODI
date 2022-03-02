@@ -2,7 +2,6 @@ plugins {
     id("java-library")
     kotlin("jvm")
     id("maven-publish")
-    id("com.google.devtools.ksp") version "1.6.10-1.0.4"
 }
 
 val codePath: String by rootProject.extra
@@ -36,11 +35,34 @@ java {
     withSourcesJar()
 }
 
+
 dependencies {
     api(project(":kodi"))
-    val kotlinpoet: String by rootProject.extra
+    val kotlinpoetKsp: String by rootProject.extra
     val kspapi: String by rootProject.extra
 
-    implementation(kotlinpoet)
+    implementation(kotlinpoetKsp)
     implementation(kspapi)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("kodiksp") {
+            from(components["kotlin"])
+            // You can then customize attributes of the publication as shown below.
+            groupId = "com.rasalexman.kodiksp"
+            artifactId = "kodigen"
+            version = kodiVersion
+
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
+        }
+    }
+
+    repositories {
+        maven {
+            name = "kodiksp"
+            url = uri("${buildDir}/publishing-repository")
+        }
+    }
 }

@@ -4,7 +4,8 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.validate
 import com.rasalexman.kodi.annotations.BindProvider
 import com.rasalexman.kodi.annotations.BindSingle
 
@@ -12,47 +13,61 @@ class KodiSymbolProcessor (
     environment: SymbolProcessorEnvironment
 ) : SymbolProcessor {
 
-    private val codeGenerator = environment.codeGenerator
-    private val logger = environment.logger
+    private companion object {
+        private val BIND_SINGLE_NAME = BindSingle::class.qualifiedName!!
+        private val BIND_PROVIDER_NAME = BindProvider::class.qualifiedName!!
 
-    //private val verify = environment.options["autoserviceKsp.verify"]?.toBoolean() == true
-    //private val verbose = environment.options["autoserviceKsp.verbose"]?.toBoolean() == true
+        private const val INSTANCE_TYPE_SINGLE = "single"
+        private const val INSTANCE_TYPE_PROVIDER = "provider"
+    }
+
+    private val logger = environment.logger
+    private val kodiModuleGenerator = KodiCodeGenerator(environment.codeGenerator, logger)
+
+    private lateinit var intType: KSType
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-
-        logger.warn("----> KodiSymbolProcessor start")
+        intType = resolver.builtIns.intType
         val startTime = System.currentTimeMillis()
+        logger.logging("----> KodiSymbolProcessor start")
 
-        //----- Bind Single Processing
+        //----- collect BindSingle annotations
         val singleSymbols = resolver
-            // Getting all symbols that are annotated with @Function.
+            // Getting all symbols that are annotated with @BindSingle.
             .getSymbolsWithAnnotation(BIND_SINGLE_NAME)
-            // Making sure we take only class declarations.
-            .filterIsInstance<KSClassDeclaration>()
 
-        // Exit from the processor in case nothing is annotated with @Function.
-        if (!singleSymbols.iterator().hasNext()) return emptyList()
+        //----- collect BindProvider annotations
+        val providerSymbols = resolver
+            // Getting all symbols that are annotated with @BindProvider.
+            .getSymbolsWithAnnotation(BIND_PROVIDER_NAME)
 
-        processSingleAnnotation(singleSymbols)
-
-        logger.warn("----> KodiSymbolProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
-
-        return emptyList()
-    }
-
-    private fun processSingleAnnotation(symbols: Sequence<KSClassDeclaration>) {
-
-        symbols.forEach { clz ->
-            logger.warn("-----> class = ${clz}")
-            val annots = clz.annotations.toList()
-            annots.forEach { anno ->
-                logger.warn("-----> anno = ${anno.arguments}")
-            }
+        // Exit from the processor in case nothing is annotated
+        if (!singleSymbols.iterator().hasNext() && !providerSymbols.iterator().hasNext()) {
+            return emptyList()
         }
-    }
 
-    private companion object {
-        val BIND_SINGLE_NAME = BindSingle::class.qualifiedName!!
-        val BIND_PROVIDER_NAME = BindProvider::class.qualifiedName!!
+        // clear storage
+        kodiModuleGenerator.clear()
+
+        // validate already generated files
+        val unableToProcessWithSingle = singleSymbols.filterNot { it.validate() }.toList()
+        val unableToProcessWithProvider = providerSymbols.filterNot { it.validate() }.toList()
+
+        // create code blocks for BindSingle
+        singleSymbols.filter { it.validate() }.mapNotNull {
+            it.accept(KodiAnnotationsVisitor(logger), INSTANCE_TYPE_SINGLE)
+        }.forEach(kodiModuleGenerator::processModuleBlock)
+
+        // create code blocks for BindProvider
+        providerSymbols.filter { it.validate() }.mapNotNull {
+            it.accept(KodiAnnotationsVisitor(logger), INSTANCE_TYPE_PROVIDER)
+        }.forEach(kodiModuleGenerator::processModuleBlock)
+
+        // generate code files
+        kodiModuleGenerator.generateModules()
+
+        logger.logging("----> KodiSymbolProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
+
+        return unableToProcessWithSingle + unableToProcessWithProvider
     }
 }
