@@ -147,12 +147,13 @@ abstract class BaseKodiVisitor(
         val parentElement = element.parentDeclaration.or {
             element.declarations.firstOrNull()
         }
-        //logger.warn("------> parentElement = ${parentElement} ")
+        /*logger.warn("------> parentElement = ${parentElement} ")
+        logger.warn("------> parentTypeParameters = ${parentElement?.typeParameters} ")*/
         val parentName = parentElement?.simpleName?.asString().or {
             methodName
         }
 
-        val isAbstract = element.modifiers.contains(Modifier.ABSTRACT)
+        val isAbstract = element.modifiers.contains(Modifier.ABSTRACT) || element.isAbstract
                 || parentElement?.modifiers?.contains(Modifier.ABSTRACT) == true
         val isCompanion = parentName == "Companion"
         val isTopLevel = element.functionKind == FunctionKind.TOP_LEVEL

@@ -20,24 +20,20 @@ import com.rasalexman.kodi.annotations.BindSingle
     MovieEntity::class
 ], version = 3, exportSchema = false)
 @TypeConverters(FromListOfIntToStringConverter::class, FromListOfStringsToStringConverter::class)
-abstract class MoviesDatabase : RoomDatabase() {
-
-    @BindProvider(
-            toClass = IGenresDao::class,
-            toModule = Consts.Modules.ProvidersName
-    )
-    abstract fun getGenresDao(): IGenresDao
-
-    @BindProvider(
-            toClass = IMoviesDao::class,
-            toModule = Consts.Modules.ProvidersName
-    )
-    abstract fun getMoviesDao(): IMoviesDao
-
+abstract class MoviesDatabase : RoomDatabase(), IBaseDatabase {
 
     companion object {
         @Volatile
         private var INSTANCE: MoviesDatabase? = null
+
+        @BindSingle(toClass = IGenresDatabase::class, toModule = Consts.Modules.ProvidersName)
+        fun provideGenresDatabase(instance: MoviesDatabase): IGenresDatabase = instance
+
+        @BindSingle(toClass = IMoviesDatabase::class, toModule = Consts.Modules.ProvidersName)
+        fun provideMoviesDatabase(instance: MoviesDatabase): IMoviesDatabase = instance
+
+        @BindSingle(toClass = IBaseDatabase::class, toModule = Consts.Modules.ProvidersName)
+        fun provideBaseDatabase(instance: MoviesDatabase): IBaseDatabase = instance
 
         @BindSingle(
                 toClass = MoviesDatabase::class,
