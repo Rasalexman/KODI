@@ -1,6 +1,6 @@
 //------ APP VERSION
 extra["appVersion"] = "1.2.5"
-extra["kodiVersion"] = "1.6.0"
+extra["kodiVersion"] = "1.6.1"
 extra["reflectVersion"] = "1.1.43"
 
 
