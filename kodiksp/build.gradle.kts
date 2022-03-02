@@ -22,6 +22,14 @@ tasks.register<Jar>(name = "sourceJar") {
     archiveClassifier.set("sources")
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        this.freeCompilerArgs += listOf(
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+        )
+    }
+}
+
 java {
     this.sourceSets {
         getByName("main") {
@@ -51,7 +59,7 @@ publishing {
             from(components["kotlin"])
             // You can then customize attributes of the publication as shown below.
             groupId = "com.rasalexman.kodiksp"
-            artifactId = "kodigen"
+            artifactId = "kodiksp"
             version = kodiVersion
 
             artifact(tasks["sourcesJar"])

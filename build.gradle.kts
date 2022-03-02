@@ -35,7 +35,7 @@ allprojects {
             this.apiVersion = apiVersion
             this.languageVersion = apiVersion
             this.jvmTarget = jvmVersion
-            this.freeCompilerArgs = listOf(
+            this.freeCompilerArgs += listOf(
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=kotlin.RequiresOptIn"
             )
