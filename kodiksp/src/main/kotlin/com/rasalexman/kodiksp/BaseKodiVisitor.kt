@@ -55,6 +55,8 @@ abstract class BaseKodiVisitor(
             )
         }
 
+        verifyBindingTypes(bindingData)
+
         val toPack = bindingData.toPack
         val toClassName = ClassName(toPack, toClass)
 
@@ -301,6 +303,39 @@ abstract class BaseKodiVisitor(
         )/*.also {
             logger.warn("$it")
         }*/
+    }
+
+    private fun verifyBindingTypes(bindingData: KspData) {
+        val element = bindingData.element
+
+        val elementType: KSType? = when (element) {
+            is KSClassDeclaration -> {
+                element.asStarProjectedType()
+            }
+            is KSFunctionDeclaration -> {
+                val returnType = element.returnType?.resolve()?.starProjection()
+                if (returnType == null) {
+                    logger.error("Failed to resolve return type of function $element")
+                }
+                returnType
+            }
+            else -> {
+                logger.error("$element declaration type verification is not supported")
+                null
+            }
+        }
+
+        elementType?.let {
+            val toClassType = bindingData.toClassType
+            val isAssignable = toClassType.isAssignableFrom(elementType)
+            if (!isAssignable) {
+                logger.error(
+                    message = "Incorrect binding at $element \r\n\r\n" +
+                            "$elementType is not assignable to $toClassType \r\n",
+                    symbol = element
+                )
+            }
+        }
     }
 
     private fun String.getPackAndClass(): Pair<String, String> {
