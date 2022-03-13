@@ -315,12 +315,18 @@ abstract class BaseKodiVisitor(
             is KSFunctionDeclaration -> {
                 val returnType = element.returnType?.resolve()?.starProjection()
                 if (returnType == null) {
-                    logger.warn("Failed to resolve return type of function $element, skipping verification")
+                    logger.warn(
+                        message = "Failed to resolve return type of function $element, skipping verification",
+                        symbol = element
+                    )
                 }
                 returnType
             }
             else -> {
-                logger.warn("$element declaration type verification is not supported")
+                logger.warn(
+                    message = "$element declaration type verification is not supported",
+                    symbol = element
+                )
                 null
             }
         }
