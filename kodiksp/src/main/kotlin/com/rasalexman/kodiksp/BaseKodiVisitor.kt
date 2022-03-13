@@ -2,6 +2,8 @@ package com.rasalexman.kodiksp
 
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.*
+import com.rasalexman.kodi.annotations.BindProvider
+import com.rasalexman.kodi.annotations.BindSingle
 import com.rasalexman.kodi.core.or
 import com.rasalexman.kodi.core.throwKodiException
 import com.rasalexman.kodiksp.Consts.KODI_PACKAGE_PATH
@@ -13,6 +15,13 @@ import com.squareup.kotlinpoet.buildCodeBlock
 abstract class BaseKodiVisitor(
     private val logger: KSPLogger
 ) : CoreModuleVisitor() {
+
+    private val kodiAnnotations = listOf(
+        BindSingle::class,
+        BindProvider::class
+    )
+
+    private val kodiAnnotationsNames = kodiAnnotations.mapNotNull { it.simpleName }
 
     private companion object {
 
@@ -271,8 +280,10 @@ abstract class BaseKodiVisitor(
     }
 
     private fun getKspDataFromAnnotation(element: KSDeclaration, instanceType: String): KspData {
-        val firstAnnotation = element.annotations.firstOrNull()
-        val annotationArgs: List<KSValueArgument> = firstAnnotation?.arguments.orEmpty()
+        val bindAnnotation = element.annotations.find { annotation ->
+            kodiAnnotationsNames.contains(annotation.shortName.asString())
+        }
+        val annotationArgs: List<KSValueArgument> = bindAnnotation?.arguments.orEmpty()
         val toModule: String = annotationArgs.getArgumentValue<String>(PARAM_TO_MODULE).orEmpty()
         val atScope: String = annotationArgs.getArgumentValue<String>(PARAM_AT_SCOPE).orEmpty()
         val toTag: String = annotationArgs.getArgumentValue<String>(PARAM_TO_TAG).orEmpty()
