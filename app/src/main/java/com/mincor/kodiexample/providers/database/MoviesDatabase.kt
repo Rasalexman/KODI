@@ -10,9 +10,6 @@ import com.mincor.kodiexample.data.model.local.GenreEntity
 import com.mincor.kodiexample.data.model.local.MovieEntity
 import com.mincor.kodiexample.providers.database.converters.FromListOfIntToStringConverter
 import com.mincor.kodiexample.providers.database.converters.FromListOfStringsToStringConverter
-import com.mincor.kodiexample.providers.database.dao.IGenresDao
-import com.mincor.kodiexample.providers.database.dao.IMoviesDao
-import com.rasalexman.kodi.annotations.BindProvider
 import com.rasalexman.kodi.annotations.BindSingle
 
 @Database(entities = [

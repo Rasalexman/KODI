@@ -27,7 +27,7 @@ import kotlin.reflect.KClass
  *              @WithInstance(
  *                  tag = "myAwesomeTag",
  *                  scope = "MyAwesomeScope",
- *                  with = "IDefaultClass::class"
+ *                  with = IDefaultClass::class
  *                  )
  *              myDefaultValue: IDefaultClass
  *          ) : IMyClass`
