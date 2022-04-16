@@ -1,6 +1,6 @@
 plugins {
     id("java-library")
-    id("kotlin")
+    kotlin("jvm")
     id("maven-publish")
 }
 
@@ -14,6 +14,14 @@ version = kodiVersion
 sourceSets {
     getByName("main") {
         java.setSrcDirs(srcDirs)
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        this.apiVersion = "1.6"
+        this.languageVersion = "1.6"
+        this.jvmTarget = "11"
     }
 }
 

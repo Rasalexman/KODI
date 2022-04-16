@@ -19,6 +19,9 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
     kotlinOptions {
+        this.apiVersion = "1.6"
+        this.languageVersion = "1.6"
+        this.jvmTarget = "11"
         this.freeCompilerArgs += listOf(
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=kotlin.RequiresOptIn"

@@ -64,7 +64,7 @@ class KodiCodeGenerator(
             .initializer(codeInitializer).build()
 
         val file = FileSpec.builder(packageName, fileName)
-            .addComment(FILE_COMMENT)
+            .addFileComment(FILE_COMMENT)
             .addProperty(moduleProperty)
             .build()
         try {

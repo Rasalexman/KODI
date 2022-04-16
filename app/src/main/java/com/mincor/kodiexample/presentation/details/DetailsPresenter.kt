@@ -20,6 +20,8 @@ internal class DetailsPresenter : IDetailsPresenter, ICoroutinesManager, IKodi {
     override var movieId: Int = 0
 
     override fun onViewCreated(view: IDetailsView) {
+
+
         launchOnUITryCatch(
             tryBlock = {
                 view().showLoading()

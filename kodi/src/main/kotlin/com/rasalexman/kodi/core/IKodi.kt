@@ -201,7 +201,10 @@ inline fun <reified InstanceType : Any> IKodi.instance(
     scope: String? = null
 ): InstanceType {
     val inst = holder<InstanceType>(tag = tag, scope = scope).get(kodiImpl = this)
-    return (inst as? InstanceType) ?: throwKodiException<ClassCastException>(
+    if(inst is InstanceType) {
+        return inst
+    }
+    throwKodiException<ClassCastException>(
         message = "Cannot cast instance = $inst to Generic type ${genericName<InstanceType>()}"
     )
 }
