@@ -40,7 +40,7 @@ import kotlin.reflect.KClass
         AnnotationTarget.VALUE_PARAMETER
 )
 @Retention(AnnotationRetention.SOURCE)
-annotation class WithInstance(
+public annotation class WithInstance(
         val tag: String = "",
         val scope: String = "",
         val with: KClass<out Any>

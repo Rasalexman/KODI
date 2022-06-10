@@ -22,7 +22,7 @@ internal typealias ModuleInitializer = InstanceInitializer<Unit>
 /**
  * Support Kodi Module
  */
-interface IKodiModule : IKodi {
+public interface IKodiModule : IKodi {
     /**
      * Initialization literal function withScope receiver
      */
@@ -63,7 +63,7 @@ internal data class KodiModule(
  *
  * @param scopeName - [String] scope name for module
  */
-infix fun IKodiModule.withScope(scopeName: String): IKodiModule {
+public infix fun IKodiModule.withScope(scopeName: String): IKodiModule {
     scope = scopeName.asScope()
     return this
 }
@@ -73,14 +73,14 @@ infix fun IKodiModule.withScope(scopeName: String): IKodiModule {
  *
  * @param - [ModuleInitializer]
  */
-fun kodiModule(init: ModuleInitializer): IKodiModule = KodiModule(init)
+public fun kodiModule(init: ModuleInitializer): IKodiModule = KodiModule(init)
 
 /**
  * Import [IKodiModule] into dependency graph or another module
  *
  * @param module - [IKodiModule]
  */
-fun IKodi.import(module: IKodiModule)  {
+public fun IKodi.import(module: IKodiModule)  {
     Kodi.addModule(module)
 }
 
@@ -89,7 +89,7 @@ fun IKodi.import(module: IKodiModule)  {
  *
  * @param tag [String] - string representation of instance must be unique
  */
-inline fun <reified InstanceType : Any> IKodiModule.hasInstance(tag: String? = null): Boolean {
+public inline fun <reified InstanceType : Any> IKodiModule.hasInstance(tag: String? = null): Boolean {
     val tagToWrapper = tag.asTag<InstanceType>()
     return this.moduleInstancesSet.contains(tagToWrapper)
 }
@@ -98,6 +98,6 @@ inline fun <reified InstanceType : Any> IKodiModule.hasInstance(tag: String? = n
  * Unbind all instances in this module from dependency graph
  * also remove current module from KODI storage
  */
-fun IKodiModule.remove() {
+public fun IKodiModule.remove() {
     Kodi.removeModule(this)
 }

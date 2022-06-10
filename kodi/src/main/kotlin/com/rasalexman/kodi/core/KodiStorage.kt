@@ -19,17 +19,17 @@ import com.rasalexman.kodi.delegates.immutableGetter
 /**
  * Lambda wrapper withScope generic return Type
  */
-internal typealias LambdaWithReturn<T> = () -> T
+public typealias LambdaWithReturn<T> = () -> T
 
 /**
  * Lambda wrapper for getters delegates
  */
-internal typealias LambdaWithParamAndReturn<T> = IKodi.() -> T
+public typealias LambdaWithParamAndReturn<T> = IKodi.() -> T
 
 /**
  * Main storage abstraction
  */
-internal interface IKodiStorage<V> {
+public interface IKodiStorage<V> {
 
     /**
      * Is there any instance by given key in instanceMap storage

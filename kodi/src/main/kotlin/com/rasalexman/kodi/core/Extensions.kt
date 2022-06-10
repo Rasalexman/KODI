@@ -22,7 +22,7 @@ internal val defaultScope = KodiScopeWrapper("DEFAULT_SCOPE")
 /**
  * String moduleScope name to Scope Wrapper
  */
-fun String?.asScope(): KodiScopeWrapper {
+public fun String?.asScope(): KodiScopeWrapper {
   return this?.takeIf { it.isNotEmpty() }?.let {
       KodiScopeWrapper(scopeTag = it)
   } ?: defaultScope
@@ -31,7 +31,7 @@ fun String?.asScope(): KodiScopeWrapper {
 /**
  * Inline fun to convert any to [KodiTagWrapper]
  */
-inline fun <reified T : Any> Any?.asTag(): KodiTagWrapper {
+public inline fun <reified T : Any> Any?.asTag(): KodiTagWrapper {
     val originalTag = genericName<T>()
     val instanceTag = (this as? String)?.takeIf { it.isNotEmpty() } ?: originalTag
     return KodiTagWrapper(
@@ -45,14 +45,14 @@ inline fun <reified T : Any> Any?.asTag(): KodiTagWrapper {
  *
  * @param scopeWrapper - [KodiScopeWrapper] to add instance tag
  */
-infix fun<T : Any> KodiHolder<T>.at(scopeWrapper: KodiScopeWrapper): KodiHolder<T> {
+public infix fun<T : Any> KodiHolder<T>.at(scopeWrapper: KodiScopeWrapper): KodiHolder<T> {
     return this.scopeWith(scopeWrapper)
 }
 
 /**
  * Apply [IKodiModule] scope to created holder
  */
-fun<T : Any> KodiHolder<T>.withModuleScope(kodiImpl: IKodi): KodiHolder<T> {
+public fun<T : Any> KodiHolder<T>.withModuleScope(kodiImpl: IKodi): KodiHolder<T> {
     return if(kodiImpl is IKodiModule) {
         this at kodiImpl.scope
     } else this
@@ -64,21 +64,21 @@ fun<T : Any> KodiHolder<T>.withModuleScope(kodiImpl: IKodi): KodiHolder<T> {
  *
  * @param instanceTag - tag for instance binding
  */
-infix fun<T : Any> KodiHolder<T>.tag(instanceTag: KodiTagWrapper): KodiHolder<T> {
+public infix fun<T : Any> KodiHolder<T>.tag(instanceTag: KodiTagWrapper): KodiHolder<T> {
     return this.tagWith(instanceTag)
 }
 
 /**
  * Another elvis compare high-order function
  */
-fun <T> T?.or(block: () -> T): T {
+public fun <T> T?.or(block: () -> T): T {
     return this ?: block()
 }
 
 /**
  * Take generic `qualifiedName` from class
  */
-inline fun <reified T : Any> genericName(): String {
+public inline fun <reified T : Any> genericName(): String {
     return T::class.qualifiedName.toString()
 }
 
@@ -87,7 +87,7 @@ inline fun <reified T : Any> genericName(): String {
  *
  * @param message - Message for notify user in log
  */
-inline fun <reified T : Exception> throwKodiException(message: String): Nothing {
+public inline fun <reified T : Exception> throwKodiException(message: String): Nothing {
     val exception = when (T::class) {
         RuntimeException::class -> RuntimeException(message)
         ClassCastException::class -> ClassCastException(message)

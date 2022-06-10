@@ -21,7 +21,7 @@ package com.rasalexman.kodi.core
  * @param originalTag - String for instance generic name
  */
 //@JvmInline
-data class KodiTagWrapper(
+public data class KodiTagWrapper(
     private val instanceTag: KodiInstanceTagWrapper,
     private val originalTag: KodiOriginalTagWrapper
 ) {
@@ -63,14 +63,14 @@ data class KodiTagWrapper(
 /**
  * Typealias for merge tag with scope
  */
-internal typealias KodiTagScopeWrappers = Pair<KodiTagWrapper, KodiScopeWrapper>
+public typealias KodiTagScopeWrappers = Pair<KodiTagWrapper, KodiScopeWrapper>
 
 /**
  * Bind instanceTag withScope available instance holders
  *
  * @param instance - [KodiHolder] instance for store
  */
-inline infix fun <reified T : KodiHolder<*>> KodiTagWrapper.with(instance: T) {
+public inline infix fun <reified T : KodiHolder<*>> KodiTagWrapper.with(instance: T) {
     instance tag this
 }
 
@@ -79,7 +79,7 @@ inline infix fun <reified T : KodiHolder<*>> KodiTagWrapper.with(instance: T) {
  *
  * @param instance - current [KodiHolder] instance for merge and store
  */
-inline infix fun <reified T : KodiHolder<*>> KodiTagScopeWrappers.with(instance: T) {
+public inline infix fun <reified T : KodiHolder<*>> KodiTagScopeWrappers.with(instance: T) {
     val (kodiTagWrapper, kodiScopeWrapper) = this
     (instance at kodiScopeWrapper) tag kodiTagWrapper
 }
@@ -90,7 +90,7 @@ inline infix fun <reified T : KodiHolder<*>> KodiTagScopeWrappers.with(instance:
  * @param scopeName - String scope name
  */
 @CanThrowException(SCOPE_EMPTY_ERROR)
-infix fun KodiTagWrapper.at(scopeName: String): KodiTagScopeWrappers {
+public infix fun KodiTagWrapper.at(scopeName: String): KodiTagScopeWrappers {
     if (scopeName.isEmpty()) throwKodiException<IllegalStateException>(SCOPE_EMPTY_ERROR)
     return this to scopeName.asScope()
 }
@@ -101,7 +101,7 @@ infix fun KodiTagWrapper.at(scopeName: String): KodiTagScopeWrappers {
  * @param scopeTag - String tag for moduleScope `key` storage
  */
 @JvmInline
-value class KodiScopeWrapper(private val scopeTag: String) {
+public value class KodiScopeWrapper(private val scopeTag: String) {
     /**
      * Is Wrapper [scopeTag] empty
      *

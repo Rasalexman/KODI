@@ -17,12 +17,12 @@ package com.rasalexman.kodi.core
 /**
  * Typealias for simplification
  */
-internal typealias InstanceInitializer<T> = IKodi.() -> T
+public typealias InstanceInitializer<T> = IKodi.() -> T
 
 /**
  * Available classes for binding
  */
-sealed class KodiHolder<T : Any> {
+public sealed class KodiHolder<T : Any> {
 
     /**
      * Getting value from holder
@@ -30,7 +30,7 @@ sealed class KodiHolder<T : Any> {
     abstract fun get(kodiImpl: IKodi): T
 
 
-    fun IKodi.holderValue(): T = get(this)
+    public fun IKodi.holderValue(): T = get(this)
 
     /**
      * Local Holder scope [KodiScopeWrapper]

@@ -9,7 +9,7 @@ import com.google.devtools.ksp.validate
 import com.rasalexman.kodi.annotations.BindProvider
 import com.rasalexman.kodi.annotations.BindSingle
 
-class KodiSymbolProcessor (
+public class KodiSymbolProcessor (
     environment: SymbolProcessorEnvironment
 ) : SymbolProcessor {
 
@@ -29,7 +29,7 @@ class KodiSymbolProcessor (
     override fun process(resolver: Resolver): List<KSAnnotated> {
         intType = resolver.builtIns.intType
         val startTime = System.currentTimeMillis()
-        logger.logging("----> KodiSymbolProcessor start")
+        logger.warn("----> KodiSymbolProcessor start")
 
         //----- collect BindSingle annotations
         val singleSymbols = resolver
@@ -66,7 +66,7 @@ class KodiSymbolProcessor (
         // generate code files
         kodiModuleGenerator.generateModules()
 
-        logger.logging("----> KodiSymbolProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
+        logger.warn("----> KodiSymbolProcessor finished in `${System.currentTimeMillis() - startTime}` ms")
 
         return unableToProcessWithSingle + unableToProcessWithProvider
     }

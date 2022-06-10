@@ -45,14 +45,14 @@ object Kodi : KodiStorage(), IKodi
 /**
  * Simple implementing interface for di functionality
  */
-interface IKodi
+public interface IKodi
 
 /**
  * Initialize KODI dependencies
  *
  * @param block - main initialization block for binding instances
  */
-inline fun <reified ReturnType : Any> kodi(block: IKodi.() -> ReturnType): ReturnType {
+public inline fun <reified ReturnType : Any> kodi(block: IKodi.() -> ReturnType): ReturnType {
     return Kodi.block()
 }
 
@@ -65,7 +65,7 @@ inline fun <reified ReturnType : Any> kodi(block: IKodi.() -> ReturnType): Retur
  * @receiver [IKodi]
  * @return [KodiTagWrapper]
  */
-inline fun <reified BindType : Any> IKodi.bind(
+public inline fun <reified BindType : Any> IKodi.bind(
     tag: String? = null
 ): KodiTagWrapper {
     val receiver = this
@@ -85,7 +85,7 @@ inline fun <reified BindType : Any> IKodi.bind(
  * @receiver [IKodi]
  * @return [KodiTagWrapper]
  */
-inline fun <reified ParentType : Any, reified ChildType : ParentType> IKodi.bindType(tag: String? = null): KodiTagWrapper {
+public inline fun <reified ParentType : Any, reified ChildType : ParentType> IKodi.bindType(tag: String? = null): KodiTagWrapper {
     return this.bind<ChildType>(tag)
 }
 
@@ -99,7 +99,7 @@ inline fun <reified ParentType : Any, reified ChildType : ParentType> IKodi.bind
  *
  * @return [Boolean] - is instance removed
  */
-inline fun <reified UnbindType : Any> IKodi.unbind(
+public inline fun <reified UnbindType : Any> IKodi.unbind(
     tag: String? = null,
     scope: String? = null
 ): Boolean {
@@ -116,7 +116,7 @@ inline fun <reified UnbindType : Any> IKodi.unbind(
  *
  * @return [Boolean]
  */
-inline fun <reified InstanceType : Any> hasModule(tag: String? = null): Boolean {
+public inline fun <reified InstanceType : Any> hasModule(tag: String? = null): Boolean {
     val tagToWrap = tag.asTag<InstanceType>()
     return Kodi.hasModuleByTag(tagToWrap)
 }
@@ -129,7 +129,7 @@ inline fun <reified InstanceType : Any> hasModule(tag: String? = null): Boolean 
  *
  * @return [Boolean]
  */
-inline fun <reified InstanceType : Any> hasInstance(tag: String? = null): Boolean {
+public inline fun <reified InstanceType : Any> hasInstance(tag: String? = null): Boolean {
     val tagToWrap = tag.asTag<InstanceType>()
     return Kodi.hasInstance(tagToWrap)
 }
@@ -143,7 +143,7 @@ inline fun <reified InstanceType : Any> hasInstance(tag: String? = null): Boolea
  * @return [KodiTagWrapper]
  */
 @CanThrowException(TAG_EMPTY_ERROR)
-fun IKodi.bindTag(tag: String): KodiTagWrapper {
+public fun IKodi.bindTag(tag: String): KodiTagWrapper {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.bind<Any>(it)
     } ?: throwKodiException<IllegalArgumentException>(TAG_EMPTY_ERROR)
@@ -160,7 +160,7 @@ fun IKodi.bindTag(tag: String): KodiTagWrapper {
  * @return [Boolean] is instance unbound by tag
  */
 @CanThrowException(TAG_EMPTY_ERROR)
-fun IKodi.unbindTag(tag: String, scope: String? = null): Boolean {
+public fun IKodi.unbindTag(tag: String, scope: String? = null): Boolean {
     return tag.takeIf { it.isNotEmpty() }?.let {
         this.unbind<Any>(tag, scope)
     } ?: throwKodiException<IllegalArgumentException>(TAG_EMPTY_ERROR)
@@ -174,7 +174,7 @@ fun IKodi.unbindTag(tag: String, scope: String? = null): Boolean {
  * @return [Boolean] flag - is instance unbound
  */
 @CanThrowException(SCOPE_EMPTY_ERROR)
-fun IKodi.unbindScope(scopeName: String): Boolean {
+public fun IKodi.unbindScope(scopeName: String): Boolean {
     if (scopeName.isEmpty()) throwKodiException<IllegalArgumentException>(SCOPE_EMPTY_ERROR)
     return Kodi.removeAllScope(scopeName.asScope())
 }
@@ -182,7 +182,7 @@ fun IKodi.unbindScope(scopeName: String): Boolean {
 /**
  * Unbind moduleScope and all instances from dependency graph
  */
-fun IKodi.unbindAll() {
+public fun IKodi.unbindAll() {
     return Kodi.clearAll()
 }
 
@@ -196,7 +196,7 @@ fun IKodi.unbindAll() {
  * @throws IllegalAccessException - if there is no tag in dependency graph
  */
 @CanThrowException(HOLDER_NULL_ERROR)
-inline fun <reified InstanceType : Any> IKodi.instance(
+public inline fun <reified InstanceType : Any> IKodi.instance(
     tag: String? = null,
     scope: String? = null
 ): InstanceType {
@@ -217,7 +217,7 @@ inline fun <reified InstanceType : Any> IKodi.instance(
  * @throws IllegalAccessException - if there is no tag in dependency graph it's crash
  */
 @CanThrowException(HOLDER_NULL_ERROR)
-inline fun <reified InstanceType : Any> IKodi.holder(
+public inline fun <reified InstanceType : Any> IKodi.holder(
     tag: String? = null,
     scope: String? = null
 ): KodiHolder<out Any> {
@@ -237,7 +237,7 @@ inline fun <reified InstanceType : Any> IKodi.holder(
  *
  * @return [KodiHolder.KodiSingle] implementation instance
  */
-inline fun <reified SingleType : Any> IKodi.single(
+public inline fun <reified SingleType : Any> IKodi.single(
     noinline init: InstanceInitializer<SingleType>
 ): KodiHolder<SingleType> {
     return createHolder<KodiSingle<SingleType>, SingleType>(init = init)
@@ -250,7 +250,7 @@ inline fun <reified SingleType : Any> IKodi.single(
  *
  * @return [KodiHolder.KodiProvider] implementation instance
  */
-inline fun <reified ProviderType : Any> IKodi.provider(
+public inline fun <reified ProviderType : Any> IKodi.provider(
     noinline init: InstanceInitializer<ProviderType>
 ): KodiHolder<ProviderType> {
     return createHolder<KodiProvider<ProviderType>, ProviderType>(init = init)
@@ -263,7 +263,7 @@ inline fun <reified ProviderType : Any> IKodi.provider(
  *
  * @return [KodiHolder.KodiConstant] implementation instance
  */
-inline fun <reified ConstantType : Any> IKodi.constant(
+public inline fun <reified ConstantType : Any> IKodi.constant(
     noinline init: InstanceInitializer<ConstantType>
 ): KodiHolder<ConstantType> {
     return createHolder<KodiConstant<ConstantType>, ConstantType>(init = init)
@@ -279,7 +279,7 @@ inline fun <reified ConstantType : Any> IKodi.constant(
  * @return [KodiHolder] implementation instance
  */
 @CanThrowException(INITIALIZER_NULL_ERROR)
-inline fun <reified HolderType : KodiHolder<ReturnType>, reified ReturnType : Any> IKodi.createHolder(
+public inline fun <reified HolderType : KodiHolder<ReturnType>, reified ReturnType : Any> IKodi.createHolder(
     noinline init: InstanceInitializer<ReturnType>
 ): HolderType {
     return when (HolderType::class) {
@@ -298,7 +298,7 @@ inline fun <reified HolderType : KodiHolder<ReturnType>, reified ReturnType : An
  * @param tag - there is an optional tag that we pass to key into dependency graph
  * @param scope - there is a scope of current instance
  */
-inline fun <reified InstanceType : Any> immutableInstance(
+public inline fun <reified InstanceType : Any> immutableInstance(
     tag: String? = null,
     scope: String? = null
 ): IImmutableDelegate<InstanceType> = immutableGetter {
@@ -315,7 +315,7 @@ inline fun <reified InstanceType : Any> immutableInstance(
  *
  * @return [IMutableDelegate] delegate with [InstanceType] holder
  */
-inline fun <reified InstanceType : Any> mutableInstance(
+public inline fun <reified InstanceType : Any> mutableInstance(
     tag: String? = null,
     scope: String? = null
 ): IMutableDelegate<InstanceType> = mutableGetter {

@@ -28,4 +28,4 @@ package com.rasalexman.kodi.annotations
         AnnotationTarget.VALUE_PARAMETER
 )
 @Retention(AnnotationRetention.SOURCE)
-annotation class IgnoreInstance
+public annotation class IgnoreInstance
