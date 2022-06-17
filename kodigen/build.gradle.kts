@@ -8,6 +8,8 @@ plugins {
 
 val codePath: String by rootProject.extra
 val kodiVersion: String by rootProject.extra
+val apiKotlinVersion: String by extra
+val jvmVersion: String by extra
 
 val srcDirs = listOf(codePath)
 group = "com.rasalexman.kodigen"

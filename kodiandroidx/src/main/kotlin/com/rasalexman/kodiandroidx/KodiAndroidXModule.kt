@@ -13,7 +13,6 @@ import android.content.Context
 import android.content.RestrictionsManager
 import android.content.pm.LauncherApps
 import android.content.pm.ShortcutManager
-import android.hardware.ConsumerIrManager
 import android.hardware.SensorManager
 import android.hardware.camera2.CameraManager
 import android.hardware.display.DisplayManager
@@ -33,7 +32,6 @@ import android.nfc.NfcManager
 import android.os.*
 import android.os.health.SystemHealthManager
 import android.os.storage.StorageManager
-import android.print.PrintManager
 import android.telecom.TelecomManager
 import android.telephony.CarrierConfigManager
 import android.telephony.SubscriptionManager
@@ -41,7 +39,6 @@ import android.telephony.TelephonyManager
 import android.view.LayoutInflater
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityManager
-import android.view.accessibility.CaptioningManager
 import android.view.inputmethod.InputMethodManager
 import android.view.textservice.TextServicesManager
 import com.rasalexman.kodi.core.*
@@ -107,10 +104,10 @@ val kodiAndroidXManagers by lazy {
 
         bind<BluetoothManager>() with provider { instance<Context>().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager }
 
-        bind<AppOpsManager>() with provider { instance<Context>().getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager }
-        bind<CaptioningManager>() with provider { instance<Context>().getSystemService(Context.CAPTIONING_SERVICE) as CaptioningManager }
-        bind<ConsumerIrManager>() with provider { instance<Context>().getSystemService(Context.CONSUMER_IR_SERVICE) as ConsumerIrManager }
-        bind<PrintManager>() with provider { instance<Context>().getSystemService(Context.PRINT_SERVICE) as PrintManager }
+//        bind<AppOpsManager>() with provider { instance<Context>().getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager }
+//        bind<CaptioningManager>() with provider { instance<Context>().getSystemService(Context.CAPTIONING_SERVICE) as CaptioningManager }
+//        bind<ConsumerIrManager>() with provider { instance<Context>().getSystemService(Context.CONSUMER_IR_SERVICE) as ConsumerIrManager }
+//        bind<PrintManager>() with provider { instance<Context>().getSystemService(Context.PRINT_SERVICE) as PrintManager }
     }
 }
 

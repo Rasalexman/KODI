@@ -5,6 +5,8 @@ plugins {
 }
 
 val kodiVersion: String by rootProject.extra
+val apiKotlinVersion: String by extra
+val jvmVersion: String by extra
 group = "com.rasalexman.kodiandroidx"
 version = kodiVersion
 

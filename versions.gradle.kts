@@ -1,18 +1,18 @@
 //------ APP VERSION
 extra["appVersion"] = "1.2.5"
-extra["kodiVersion"] = "1.6.4"
+extra["kodiVersion"] = "1.7.0"
 extra["reflectVersion"] = "1.1.48"
 
 
 //------ CONFIG DATA
 extra["appId"] = "com.mincor.kodiexample"
+extra["groupNameKsp"] = "com.rasalexman.kodiksp"
 extra["minSdkVersion"] = 18
-extra["buildSdkVersion"] = 31
-extra["toolsVersion"] = "31.0.0"
-extra["apiVersion"] = "1.6"
+extra["buildSdkVersion"] = 32
+extra["apiKotlinVersion"] = "1.7"
 extra["jvmVersion"] = "11"
-extra["agpVersion"] = "7.2.1" //"7.0.4"
-extra["kotlinVersion"] = "1.6.21"
+extra["agpVersion"] = "7.2.1"
+extra["kotlinVersion"] = "1.7.0"
 extra["jitpackPath"] = "https://jitpack.io"
 extra["pluginsPath"] = "https://plugins.gradle.org/m2/"
 extra["codePath"] = "src/main/kotlin"
@@ -40,8 +40,8 @@ val sticky = "1.1.5"
 val coil = "1.4.0"
 val kotPref = "2.13.2"
 val fastAdapterLib = "5.6.0"
-val ksp = "1.6.21-1.0.5"
-val kotlinpoet = "1.11.0"
+val ksp = "1.7.0-1.0.6"
+val kotlinpoet = "1.12.0"
 val autoService = "1.0.1"
 
 //----- extra navigation

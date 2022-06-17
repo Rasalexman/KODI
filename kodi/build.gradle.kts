@@ -6,6 +6,8 @@ plugins {
 
 val codePath: String by rootProject.extra
 val kodiVersion: String by rootProject.extra
+val apiKotlinVersion: String by extra
+val jvmVersion: String by extra
 
 val srcDirs = listOf(codePath)
 group = "com.rasalexman.kodi"
@@ -19,9 +21,9 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions {
-        this.apiVersion = "1.6"
-        this.languageVersion = "1.6"
-        this.jvmTarget = "11"
+        this.apiVersion = apiKotlinVersion
+        this.languageVersion = apiKotlinVersion
+        this.jvmTarget = jvmVersion
     }
 }
 
