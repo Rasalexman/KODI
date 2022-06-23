@@ -1,6 +1,7 @@
 plugins {
     id("java-library")
     kotlin("jvm")
+    //kotlin("multiplatform")
     id("maven-publish")
 }
 
@@ -12,6 +13,15 @@ val jvmVersion: String by extra
 val srcDirs = listOf(codePath)
 group = "com.rasalexman.kodi"
 version = kodiVersion
+
+//kotlin {
+//    //jvm()
+//    sourceSets {
+//        val commonMain by getting {
+//            kotlin.srcDir("src/main/kotlin")
+//        }
+//    }
+//}
 
 sourceSets {
     getByName("main") {

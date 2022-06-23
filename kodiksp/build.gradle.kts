@@ -24,7 +24,7 @@ kotlin {
     sourceSets {
         val jvmMain by getting {
             dependencies {
-                implementation(project(":kodi"))
+                api(project(":kodi"))
                 implementation(kotlinpoetKsp)
                 implementation(kspapi)
             }
