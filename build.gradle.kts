@@ -27,13 +27,13 @@ buildscript {
 
 allprojects {
     apply(from="${rootDir}/versions.gradle.kts")
-    val apiVersion: String by extra
+    val kotlinApiVersion: String by extra
     val jvmVersion: String by extra
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions {
-            this.apiVersion = apiVersion
-            this.languageVersion = apiVersion
+            this.apiVersion = kotlinApiVersion
+            this.languageVersion = kotlinApiVersion
             this.jvmTarget = jvmVersion
             this.freeCompilerArgs += listOf(
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",

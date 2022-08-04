@@ -4,7 +4,6 @@ import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ksp.KotlinPoetKspPreview
 import com.squareup.kotlinpoet.ksp.writeTo
 import java.io.IOException
 import java.util.*
@@ -42,7 +41,6 @@ class KodiCodeGenerator(
         modulesCodeMap.clear()
     }
 
-    @OptIn(KotlinPoetKspPreview::class)
     private fun processModules(moduleName: String, moduleElements: List<CodeBlock>) {
         val lowerModuleName = moduleName.apply { this.first().lowercaseChar() }
         val packageName = "${KODI_GENERATED_PATH}${moduleName.lowercase(Locale.ENGLISH)}"
