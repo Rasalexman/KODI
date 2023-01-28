@@ -8,10 +8,7 @@ import com.mincor.kodiexample.data.model.local.GenreEntity
 import com.mincor.kodiexample.providers.database.dao.IGenresDao
 import com.rasalexman.kodi.annotations.BindSingle
 
-@BindSingle(
-        toClass = IGenresLocalDataSource::class,
-        toModule = LDSName
-)
+@BindSingle(toClass = IGenresLocalDataSource::class, toModule = LDSName)
 class GenresLocalDataSource(
     private val genresDao: IGenresDao
 ) : IGenresLocalDataSource {

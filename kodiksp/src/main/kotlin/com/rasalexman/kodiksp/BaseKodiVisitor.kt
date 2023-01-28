@@ -55,6 +55,13 @@ abstract class BaseKodiVisitor(
             "You cannot use `@%s` annotation property `toClass: KClass<out Any>` to bind on method %s with java classes. Please specify it with `T::class`"
     }
 
+    override fun visitDefNonNullReference(
+        reference: KSDefNonNullReference,
+        data: String
+    ): ModuleBlock? {
+        return null
+    }
+
     protected fun processBindElement(element: KSDeclaration, elementType: String): ModuleBlock {
         val bindingData = getKspDataFromAnnotation(element, elementType)
         val toClass = bindingData.toClass

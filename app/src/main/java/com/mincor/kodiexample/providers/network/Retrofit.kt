@@ -1,5 +1,6 @@
 package com.mincor.kodiexample.providers.network
 
+import android.annotation.SuppressLint
 import com.mincor.kodiexample.BuildConfig
 import com.mincor.kodiexample.common.Consts.Modules.ProvidersName
 import com.rasalexman.kodi.annotations.BindProvider
@@ -21,14 +22,18 @@ private val SERVER_ERROR_CODES = listOf(404, 504, 400, 401, 500, 403)
 ///-------------- NETWORK CONSTANTS ----////
 const val NETWORK_AVAILABLE_AGE = 60
 
+@SuppressLint("CustomX509TrustManager")
 fun getUnsafeOkHttpClient(): OkHttpClient.Builder {
     try {
         // Create a trust manager that does not validate certificate chains
         return OkHttpClient.Builder().apply {
-            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+            val trustAllCerts = arrayOf<TrustManager>(
+            object : X509TrustManager {
                 override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+                @SuppressLint("TrustAllX509TrustManager")
                 @Throws(CertificateException::class)
                 override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
+                @SuppressLint("TrustAllX509TrustManager")
                 @Throws(CertificateException::class)
                 override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
             })
@@ -71,7 +76,7 @@ fun createOkHttpClient(cache: Cache? = null): OkHttpClient {
 
     httpClient.addInterceptor { chain ->
         val request = chain.request()
-        val originalHttpUrl = request.url()
+        val originalHttpUrl = request.url
 
         val url = originalHttpUrl.newBuilder()
             .addQueryParameter("api_key", BuildConfig.ApiKey)
@@ -87,8 +92,8 @@ fun createOkHttpClient(cache: Cache? = null): OkHttpClient {
 
     httpClient.addNetworkInterceptor { chain ->
         val originalResponse = chain.proceed(chain.request())
-        return@addNetworkInterceptor if (SERVER_ERROR_CODES.contains(originalResponse.code())) {
-            return@addNetworkInterceptor originalResponse.newBuilder().code(200).body(originalResponse.body()).build()
+        return@addNetworkInterceptor if (SERVER_ERROR_CODES.contains(originalResponse.code)) {
+            return@addNetworkInterceptor originalResponse.newBuilder().code(200).body(originalResponse.body).build()
         } else originalResponse
     }
 

@@ -33,7 +33,9 @@ class GenresCacheDataSource (
     }
 }
 
-interface IGenresCacheDataSource {
+interface IGenresCacheDataSource : IBaseDataSource {
     suspend fun putGenresInCache(genresList: List<GenreEntity>)
     suspend fun getGenresFromCache(): SResult<List<GenreEntity>>
 }
+
+interface IBaseDataSource

@@ -2,22 +2,16 @@ package com.mincor.kodiexample.providers
 
 import android.content.Context
 import coil.ImageLoader
-import coil.util.CoilUtils
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
 import com.mincor.kodiexample.common.Consts
 import com.mincor.kodiexample.providers.network.api.IMovieApi
 import com.mincor.kodiexample.providers.network.createWebServiceApi
 import com.rasalexman.kodi.annotations.BindProvider
 import com.rasalexman.kodi.annotations.BindSingle
-import okhttp3.Cache
 import okhttp3.OkHttpClient
 
 object ProviderUtils {
-
-    @BindSingle(
-        toClass = Cache::class,
-        toModule = Consts.Modules.ProvidersName
-    )
-    fun createCache(context: Context): Cache = CoilUtils.createDefaultCache(context)
 
     @BindProvider(
         toClass = IMovieApi::class,
@@ -32,12 +26,15 @@ object ProviderUtils {
     )
     fun createImageLoader(context: Context) =
         ImageLoader.Builder(context)
-            .availableMemoryPercentage(0.5)
-            .bitmapPoolPercentage(0.5)
+            .memoryCache {
+                MemoryCache.Builder(context)
+                    .maxSizePercent(0.5)
+                    .build()
+            }
             .crossfade(true)
-            .okHttpClient {
-                OkHttpClient.Builder()
-                    .cache(CoilUtils.createDefaultCache(context))
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(context.cacheDir.resolve("image_cache"))
                     .build()
             }.build()
 }

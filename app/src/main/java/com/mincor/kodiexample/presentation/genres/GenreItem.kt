@@ -4,7 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.annotation.Keep
 import androidx.core.view.forEachIndexed
-import coil.clear
+import coil.dispose
 import coil.load
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.IItemVHFactory
@@ -52,9 +52,9 @@ data class GenreItem(
         override fun unbindView(item: GenreItem) {
             itemBinding.apply {
                 titleTextView.text = null
-                imageView1.clear()
-                imageView2.clear()
-                imageView3.clear()
+                imageView1.dispose()
+                imageView2.dispose()
+                imageView3.dispose()
             }
         }
     }

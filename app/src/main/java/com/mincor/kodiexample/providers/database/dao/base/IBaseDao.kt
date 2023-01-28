@@ -2,7 +2,7 @@ package com.mincor.kodiexample.providers.database.dao.base
 
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Update
 
 interface IBaseDao<T> {

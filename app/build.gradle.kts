@@ -4,14 +4,13 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("androidx.navigation.safeargs.kotlin")
-    id("com.google.devtools.ksp") version "1.7.10-1.0.6"
+    id("com.google.devtools.ksp") version "1.8.0-1.0.9"
     //kotlin("kapt")
 }
 
 android {
 
     val buildSdkVersion: Int by extra
-    val minSdkVersion: Int by extra
     val appVersion: String by extra
     val appId: String by extra
     val codePath: String by rootProject.extra
@@ -20,7 +19,7 @@ android {
     compileSdk = buildSdkVersion
     defaultConfig {
         applicationId = appId
-        minSdk = minSdkVersion
+        minSdk = 21
         targetSdk = buildSdkVersion
         version = appVersion
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
@@ -168,8 +167,8 @@ dependencies {
 
     debugImplementation(leakCanary)
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     ksp(project(":kodiksp"))
     //kapt(project(":kodigen"))
