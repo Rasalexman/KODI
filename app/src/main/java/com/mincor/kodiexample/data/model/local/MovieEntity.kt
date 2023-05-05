@@ -11,7 +11,7 @@ import com.mincor.kodiexample.presentation.movies.MovieUI
 data class MovieEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    val voteCount: Int,
+    val voteCount: Long,
     val voteAverage: Double,
     val isVideo: Boolean,
     val title: String,
@@ -24,8 +24,8 @@ data class MovieEntity(
     val releaseDate: Long,
     val adult: Boolean,
     val overview: String,
-    val revenue: Int,
-    val runtime: Int,
+    val revenue: Long,
+    val runtime: Long,
     val status: String,
     val tagline: String,
     val budget: Long,

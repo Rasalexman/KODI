@@ -6,7 +6,7 @@ import com.mincor.kodiexample.data.model.local.MovieEntity
 
 data class MovieModel(
     val id: Int?,
-    val vote_count: Int?,
+    val vote_count: Long?,
     val vote_average: Double?,
     val video: Boolean?,
     val title: String?,
@@ -19,8 +19,8 @@ data class MovieModel(
     val release_date: String?,
     val adult: Boolean?,
     val overview: String?,
-    val revenue: Int?,
-    val runtime: Int?,
+    val revenue: Long?,
+    val runtime: Long?,
     val status: String?,
     val tagline: String?,
     val budget: Long?
@@ -28,7 +28,7 @@ data class MovieModel(
     override fun convertTo(): MovieEntity {
         return MovieEntity(
             id = id ?: 0,
-            voteCount = vote_count ?: 0,
+            voteCount = vote_count ?: 0L,
             voteAverage = vote_average ?: 0.0,
             isVideo = video ?: false,
             title = title.orEmpty(),
@@ -41,8 +41,8 @@ data class MovieModel(
             releaseDate = release_date?.let { Consts.MODEL_DATE_FORMATTER.parse(release_date)?.time } ?: 0L,
             adult = adult ?: false,
             overview = overview.orEmpty(),
-            revenue = revenue ?: 0,
-            runtime = runtime ?: 0,
+            revenue = revenue ?: 0L,
+            runtime = runtime ?: 0L,
             status = status.orEmpty(),
             tagline = tagline.orEmpty(),
             budget = budget ?: 0L

@@ -4,8 +4,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("androidx.navigation.safeargs.kotlin")
-    id("com.google.devtools.ksp") version "1.8.0-1.0.9"
-    //kotlin("kapt")
+    id("com.google.devtools.ksp") version "1.8.21-1.0.11"
 }
 
 android {
@@ -13,11 +12,12 @@ android {
     val buildSdkVersion: Int by extra
     val appVersion: String by extra
     val appId: String by extra
-    val codePath: String by rootProject.extra
-    val srcDirs = listOf(codePath)
+//    val codePath: String by rootProject.extra
+//    val srcDirs = listOf(codePath)
 
     compileSdk = buildSdkVersion
     defaultConfig {
+        namespace = "com.mincor.kodiexample"
         applicationId = appId
         minSdk = 21
         targetSdk = buildSdkVersion
@@ -61,11 +61,11 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    sourceSets {
-        getByName("main") {
-            java.setSrcDirs(srcDirs)
-        }
-    }
+//    sourceSets {
+//        getByName("main") {
+//            java.setSrcDirs(srcDirs)
+//        }
+//    }
 
     kotlin {
         sourceSets.release {

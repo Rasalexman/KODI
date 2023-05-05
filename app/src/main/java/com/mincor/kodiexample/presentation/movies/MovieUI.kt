@@ -13,7 +13,7 @@ import com.mincor.kodiexample.presentation.base.BaseRecyclerUI
 
 data class MovieUI(
         val id: Int,
-        val voteCount: Int,
+        val voteCount: Long,
         val voteAverage: Double,
         val isVideo: Boolean,
         val title: String,

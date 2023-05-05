@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import com.mincor.kodiexample.R
 
-
 class MovieImageView : androidx.appcompat.widget.AppCompatImageView {
 
     private var heightProc: Float = DEFAULT_VALUE
