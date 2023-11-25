@@ -14,8 +14,8 @@ android {
 
     compileSdk = buildSdkVersion
     defaultConfig {
+        namespace = "com.rasalexman.kodireflect"
         minSdk = minSdkVersion
-        targetSdk = buildSdkVersion
         version = reflectVersion
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -31,11 +31,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    packagingOptions {
+    packaging {
         resources.excludes.add("META-INF/notice.txt")
     }
 
@@ -68,8 +68,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 afterEvaluate {

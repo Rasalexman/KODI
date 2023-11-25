@@ -17,8 +17,8 @@ android {
 
     compileSdk = buildSdkVersion
     defaultConfig {
+        namespace = "com.rasalexman.kodiandroidx"
         minSdk = minSdkVersion
-        targetSdk = buildSdkVersion
         version = kodiVersion
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -41,11 +41,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    packagingOptions {
+    packaging {
         resources.excludes.add("META-INF/notice.txt")
     }
 
@@ -66,7 +66,7 @@ afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("release") {
-                from(components["release"])
+                from(components.getByName("release"))
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = "com.rasalexman.kodiandroidx"
@@ -74,7 +74,7 @@ afterEvaluate {
                 version = kodiVersion
             }
             create<MavenPublication>("debug") {
-                from(components["debug"])
+                from(components.getByName("debug"))
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = "com.rasalexman.kodiandroidx"

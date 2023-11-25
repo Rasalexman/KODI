@@ -1,17 +1,17 @@
 //------ APP VERSION
-extra["appVersion"] = "1.2.9"
-extra["kodiVersion"] = "1.6.8"
-extra["reflectVersion"] = "1.1.51"
+extra["appVersion"] = "1.3.0"
+extra["kodiVersion"] = "1.7.0"
+extra["reflectVersion"] = "1.1.52"
 
 
 //------ CONFIG DATA
 extra["appId"] = "com.mincor.kodiexample"
 extra["minSdkVersion"] = 18
 extra["buildSdkVersion"] = 33
-extra["kotlinApiVersion"] = "1.8"
-extra["jvmVersion"] = "11"
-extra["agpVersion"] = "7.4.2"
-extra["kotlinVersion"] = "1.8.21"
+extra["kotlinApiVersion"] = "1.9"
+extra["jvmVersion"] = "17"
+extra["agpVersion"] = "8.1.4"
+extra["kotlinVersion"] = "1.9.20"
 extra["jitpackPath"] = "https://jitpack.io"
 extra["pluginsPath"] = "https://plugins.gradle.org/m2/"
 extra["codePath"] = "src/main/kotlin"
@@ -20,7 +20,7 @@ extra["resPath"] = "src/main/res"
 //------- LIBS VERSIONS
 val navigation = "2.5.3"
 val leakcanary = "2.10"
-val coroutines = "1.7.0-RC"
+val coroutines = "1.7.3"
 val core: String = "1.10.0"
 val constraintLayout = "2.1.4"
 val material = "1.8.0"
@@ -39,9 +39,9 @@ val sticky = "1.1.5"
 val coil = "2.3.0"
 val kotPref = "2.13.2"
 val fastAdapterLib = "5.7.0"
-val ksp = "1.8.21-1.0.11"
-val kotlinpoet = "1.13.1"
-val autoService = "1.0.1"
+val ksp = "1.9.20-1.0.14"
+val kotlinpoet = "1.15.1"
+val autoService = "1.1.1"
 
 //----- extra navigation
 extra["navigation"] = navigation
