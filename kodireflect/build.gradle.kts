@@ -31,8 +31,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     packaging {
@@ -68,8 +68,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 afterEvaluate {
@@ -97,7 +97,7 @@ afterEvaluate {
         repositories {
             maven {
                 name = "kodireflect"
-                url = uri("${buildDir}/publishing-repository")
+                url = uri("${layout.buildDirectory}/publishing-repository")
             }
         }
     }

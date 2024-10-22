@@ -38,8 +38,8 @@ java {
             java.setSrcDirs(srcDirs)
         }
     }
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 
     withJavadocJar()
     withSourcesJar()
@@ -72,7 +72,7 @@ publishing {
     repositories {
         maven {
             name = "kodigen"
-            url = uri("${buildDir}/publishing-repository")
+            url = uri("${layout.buildDirectory}/publishing-repository")
         }
     }
 }

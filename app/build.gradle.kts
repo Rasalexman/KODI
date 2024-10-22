@@ -4,7 +4,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("androidx.navigation.safeargs.kotlin")
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    id("com.google.devtools.ksp") version "1.9.24-1.0.20"
 }
 
 android {
@@ -57,8 +57,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
 //    sourceSets {
@@ -168,8 +168,8 @@ dependencies {
 
     debugImplementation(leakCanary)
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test:runner:1.5.2")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
     ksp(project(":kodiksp"))
     //kapt(project(":kodigen"))
