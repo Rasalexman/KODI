@@ -43,4 +43,4 @@ dependencyResolutionManagement {
 }
 rootProject.name= "KODI"
 include(":app", ":kodi", ":kodispatcher", ":kodigen", ":kodiksp", ":kodiandroidx", ":kodireflect")
-
+include(":kodikmp")

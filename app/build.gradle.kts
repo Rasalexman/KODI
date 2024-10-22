@@ -4,23 +4,24 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("androidx.navigation.safeargs.kotlin")
-    id("com.google.devtools.ksp") version "1.9.24-1.0.20"
+    id("com.google.devtools.ksp") version "2.0.21-1.0.25"
 }
 
 android {
 
-    val buildSdkVersion: Int by extra
-    val appVersion: String by extra
+    val targetSdkVersion: Int = libs.versions.android.compileSdk.get().toInt()
+    val minSdkVersion = libs.versions.android.minSdk.get().toInt()
+    val appVersion: String = libs.versions.appVersion.get()
     val appId: String by extra
 //    val codePath: String by rootProject.extra
 //    val srcDirs = listOf(codePath)
 
-    compileSdk = buildSdkVersion
+    compileSdk = targetSdkVersion
     defaultConfig {
         namespace = "com.mincor.kodiexample"
         applicationId = appId
-        minSdk = 21
-        targetSdk = buildSdkVersion
+        minSdk = minSdkVersion
+        targetSdk = targetSdkVersion
         version = appVersion
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
@@ -167,9 +168,9 @@ dependencies {
     implementation(sticky)
 
     debugImplementation(leakCanary)
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test:runner:1.6.2")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.runner)
+    androidTestImplementation(libs.espresso.core)
 
     ksp(project(":kodiksp"))
     //kapt(project(":kodigen"))

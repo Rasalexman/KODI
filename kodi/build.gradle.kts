@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     id("java-library")
     kotlin("jvm")
@@ -5,9 +9,8 @@ plugins {
 }
 
 val codePath: String by rootProject.extra
-val kodiVersion: String by rootProject.extra
+val kodiVersion: String = libs.versions.kodiVersion.get()
 val kotlinApiVersion: String by extra
-val jvmVersion: String by extra
 
 val srcDirs = listOf(codePath)
 group = "com.rasalexman.kodi"
@@ -19,11 +22,11 @@ sourceSets {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        this.apiVersion = kotlinApiVersion
-        this.languageVersion = kotlinApiVersion
-        this.jvmTarget = jvmVersion
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        apiVersion.set(KotlinVersion.KOTLIN_2_0)
+        languageVersion.set(KotlinVersion.KOTLIN_2_0)
+        jvmTarget.set(JvmTarget.JVM_21)
     }
 }
 

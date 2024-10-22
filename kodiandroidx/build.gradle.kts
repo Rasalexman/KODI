@@ -4,18 +4,18 @@ plugins {
     id("maven-publish")
 }
 
-val kodiVersion: String by rootProject.extra
+val kodiVersion: String = libs.versions.kodiVersion.get()
 group = "com.rasalexman.kodiandroidx"
 version = kodiVersion
 
 android {
 
-    val buildSdkVersion: Int by rootProject.extra
+    val targetSdkVersion: Int by rootProject.extra
     val minSdkVersion: Int by rootProject.extra
     val codePath: String by rootProject.extra
     val srcDirs = listOf(codePath)
 
-    compileSdk = buildSdkVersion
+    compileSdk = targetSdkVersion
     defaultConfig {
         namespace = "com.rasalexman.kodiandroidx"
         minSdk = minSdkVersion

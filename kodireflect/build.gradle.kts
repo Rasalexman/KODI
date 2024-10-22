@@ -1,3 +1,7 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -9,10 +13,10 @@ group = "com.rasalexman.kodireflect"
 version = reflectVersion
 
 android {
-    val buildSdkVersion: Int by rootProject.extra
+    val targetSdkVersion: Int by rootProject.extra
     val minSdkVersion: Int by rootProject.extra
 
-    compileSdk = buildSdkVersion
+    compileSdk = targetSdkVersion
     defaultConfig {
         namespace = "com.rasalexman.kodireflect"
         minSdk = minSdkVersion
@@ -53,18 +57,20 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        this.freeCompilerArgs += listOf(
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        apiVersion.set(KotlinVersion.KOTLIN_2_0)
+        languageVersion.set(KotlinVersion.KOTLIN_2_0)
+        jvmTarget.set(JvmTarget.JVM_21)
+        freeCompilerArgs.addAll(listOf(
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=kotlin.RequiresOptIn"
-        )
+        ))
     }
 }
 
 dependencies {
-    val kotlinVersion: String by rootProject.extra
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation(libs.kotlin.reflect)
 }
 
 java {

@@ -7,7 +7,7 @@ plugins {
 
 
 val codePath: String by rootProject.extra
-val kodiVersion: String by rootProject.extra
+val kodiVersion: String = libs.versions.kodiVersion.get()
 
 val srcDirs = listOf(codePath)
 group = "com.rasalexman.kodigen"
@@ -16,14 +16,6 @@ version = kodiVersion
 sourceSets {
     getByName("main") {
         java.setSrcDirs(srcDirs)
-    }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        this.freeCompilerArgs += listOf(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-        )
     }
 }
 

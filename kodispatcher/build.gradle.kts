@@ -6,8 +6,8 @@ plugins {
 }
 
 val codePath: String by rootProject.extra
-val kodiVersion: String by rootProject.extra
-val kotlinVersion: String by rootProject.extra
+val kodiVersion: String = libs.versions.kodiVersion.get()
+val kotlinVersion: String = libs.versions.kotlin.get()
 
 val srcDirs = listOf(codePath)
 
