@@ -17,8 +17,8 @@
 package com.rasalexman.kodi.delegates
 
 import com.rasalexman.kodi.core.CanThrowException
+import com.rasalexman.kodi.core.InstanceInitializer
 import com.rasalexman.kodi.core.Kodi
-import com.rasalexman.kodi.core.LambdaWithParamAndReturn
 import com.rasalexman.kodi.core.throwKodiException
 
 /**
@@ -52,7 +52,7 @@ interface IMutableDelegate<T> : IImmutableDelegate<T> {
  *
  * @param init - func to hold at immutable instance
  */
-open class ImmutableDelegate<T>(private val init: LambdaWithParamAndReturn<T>) : IImmutableDelegate<T> {
+open class ImmutableDelegate<T>(private val init: InstanceInitializer<T>) : IImmutableDelegate<T> {
 
     /**
      * Value holder
@@ -79,7 +79,7 @@ open class ImmutableDelegate<T>(private val init: LambdaWithParamAndReturn<T>) :
  *
  * @param init - func to hold at immutable instance
  */
-class MutableDelegate<T>(init: LambdaWithParamAndReturn<T>) : ImmutableDelegate<T>(init),
+class MutableDelegate<T>(init: InstanceInitializer<T>) : ImmutableDelegate<T>(init),
     IMutableDelegate<T> {
     /**
      * Standard delegation function overriding
@@ -129,11 +129,11 @@ sealed class Optional<out T> {
 /**
  * high order immutable delegate wrapper
  */
-inline fun <reified T> immutableGetter(noinline init: LambdaWithParamAndReturn<T>): IImmutableDelegate<T> =
+inline fun <reified T> immutableGetter(noinline init: InstanceInitializer<T>): IImmutableDelegate<T> =
     ImmutableDelegate(init)
 
 /**
  * high order mutable delegate wrapper
  */
-inline fun <reified T> mutableGetter(noinline init: LambdaWithParamAndReturn<T>): IMutableDelegate<T> =
+inline fun <reified T> mutableGetter(noinline init: InstanceInitializer<T>): IMutableDelegate<T> =
     MutableDelegate(init)

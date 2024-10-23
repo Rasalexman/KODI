@@ -15,16 +15,13 @@
 package com.rasalexman.kodi.core
 
 import com.rasalexman.kodi.delegates.immutableGetter
+import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Lambda wrapper withScope generic return Type
  */
 internal typealias LambdaWithReturn<T> = () -> T
-
-/**
- * Lambda wrapper for getters delegates
- */
-internal typealias LambdaWithParamAndReturn<T> = IKodi.() -> T
 
 /**
  * Main storage abstraction
@@ -71,14 +68,6 @@ internal interface IKodiStorage<V> {
     fun removeModule(module: IKodiModule)
 
     /**
-     * Remove [KodiTagWrapper] from module set
-     *
-     * @param - [KodiTagWrapper] to remove from [IKodiModule] moduleInstancesSet
-     * @return [Boolean]
-     */
-    fun removeFromModule(instanceTag: KodiTagWrapper): Boolean
-
-    /**
      * Check if given [KodiTagWrapper] has been added to any [IKodiModule]
      *
      * @param - [KodiTagWrapper] to check
@@ -111,17 +100,23 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
     /**
      * All instances holders storage
      */
-    private val instancesStore by immutableGetter { mutableMapOf<String, KodiHolder<out Any>>() }
+    private val instancesStore: MutableMap<String, KodiHolder<out Any>> by immutableGetter {
+        ConcurrentHashMap<String, KodiHolder<out Any>>()
+    }
 
     /**
      *  Kodi modules set
      */
-    private val modulesSet by immutableGetter { mutableSetOf<IKodiModule>() }
+    private val modulesSet: MutableSet<IKodiModule> by immutableGetter {
+        Collections.synchronizedSet<IKodiModule>(mutableSetOf())
+    }
 
     /**
      * Kodi scopes sets
      */
-    private val scopes by immutableGetter { mutableMapOf<String, MutableSet<String>>() }
+    private val scopes: MutableMap<String, MutableSet<String>> by immutableGetter {
+        ConcurrentHashMap<String, MutableSet<String>>()
+    }
 
     /**
      * Add [IKodiModule] to Kodi Module Storage set
@@ -132,7 +127,9 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
     override fun addModule(module: IKodiModule) {
         val initializer = module.instanceInitializer
         module.initializer()
-        modulesSet.add(module)
+        synchronized(modulesSet) {
+            modulesSet.add(module)
+        }
     }
 
     /**
@@ -142,29 +139,15 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
      * @param module - [IKodiModule] instance to remove
      */
     override fun removeModule(module: IKodiModule) {
-        if (modulesSet.remove(module)) {
-            val moduleScope = module.scope
-            val moduleInstanceSet = module.moduleInstancesSet.toSet()
-            moduleInstanceSet.forEach { tag ->
-                removeInstance(tag, moduleScope)
+        synchronized(modulesSet) {
+            if (modulesSet.remove(module)) {
+                val moduleScope = module.scope
+                val moduleInstanceSet = module.moduleInstancesSet.toSet()
+                moduleInstanceSet.forEach { tag ->
+                    removeInstance(tag, moduleScope)
+                }
+                module.moduleInstancesSet.clear()
             }
-            module.moduleInstancesSet.clear()
-        }
-    }
-
-    /**
-     * Remove [KodiTagWrapper] from module set
-     *
-     * @param - [KodiTagWrapper] to remove from [IKodiModule] moduleInstancesSet
-     *
-     * @return [Boolean]
-     */
-    override fun removeFromModule(instanceTag: KodiTagWrapper): Boolean {
-        return if (instanceTag.isNotEmpty()) {
-            val localModuleSet = modulesSet.toSet()
-            localModuleSet.find { it.moduleInstancesSet.remove(instanceTag) } != null
-        } else {
-            false
         }
     }
 
@@ -203,8 +186,10 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
         scope: KodiScopeWrapper,
         defaultValue: LambdaWithReturn<KodiHolder<out Any>>
     ): KodiHolder<out Any> {
-        val key = createKey(tag, scope)
-        return instancesStore.getOrPut(key, defaultValue)
+        synchronized(instancesStore) {
+            val key = createKey(tag, scope)
+            return instancesStore.getOrPut(key, defaultValue)
+        }
     }
 
     /**
@@ -219,8 +204,10 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
         tag: KodiTagWrapper,
         scope: KodiScopeWrapper
     ): KodiHolder<out Any>? {
-        val key = getKey(tag, scope)
-        return instancesStore[key]
+        synchronized(instancesStore) {
+            val key = getKey(tag, scope)
+            return instancesStore[key]
+        }
     }
 
     /**
@@ -244,26 +231,28 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
      * @return - optional [KodiHolder]
      */
     override fun removeInstance(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean {
-        return tag.takeIf { it.isNotEmpty() }?.let {
-            // if we has scope to delete instance, create key and remove current instance
-            val key = getKey(tag, scope, false)
+        synchronized(instancesStore) {
+            return tag.takeIf { it.isNotEmpty() }?.let {
+                // if we has scope to delete instance, create key and remove current instance
+                val key = getKey(tag, scope, false)
 
-            val isRemoved = instancesStore.remove(key)?.apply {
-                clear()
-            } != null
+                val isRemoved = instancesStore.remove(key)?.apply {
+                    clear()
+                } != null
 
-            if (isRemoved) {
-                val originalTag = tag.asOriginal()
-                val localScopes = scopes[originalTag]
-                localScopes?.apply {
-                    remove(key)
-                    if (isEmpty()) {
-                        scopes.remove(originalTag)
+                if (isRemoved) {
+                    val originalTag = tag.asOriginal()
+                    val localScopes = scopes[originalTag]
+                    localScopes?.apply {
+                        remove(key)
+                        if (isEmpty()) {
+                            scopes.remove(originalTag)
+                        }
                     }
                 }
-            }
-            isRemoved
-        }.or { false }
+                isRemoved
+            }.or { false }
+        }
     }
 
     /**
@@ -274,11 +263,13 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
      * @return [Boolean] - is references deleted
      */
     override fun removeAllScope(scope: KodiScopeWrapper): Boolean {
-        val scopedList = takeFilteredKeys(scope.toString())
-        scopedList.forEach {
-            instancesStore.remove(it)?.clear()
+        synchronized(instancesStore) {
+            val scopedList = takeFilteredKeys(scope.toString())
+            scopedList.forEach {
+                instancesStore.remove(it)?.clear()
+            }
+            return scopedList.isNotEmpty()
         }
-        return scopedList.isNotEmpty()
     }
 
     /**
@@ -286,9 +277,11 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
      * Warning!!! - this action cannot be reverted
      */
     override fun clearAll() {
-        instancesStore.clear()
-        modulesSet.clear()
-        scopes.clear()
+        synchronized(instancesStore) {
+            instancesStore.clear()
+            modulesSet.clear()
+            scopes.clear()
+        }
     }
 
     /**
@@ -298,8 +291,10 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
      * @return [List] of store keys
      */
     private fun takeFilteredKeys(filter: String): List<String> {
-        val localInstanceStore = instancesStore.toMap()
-        return localInstanceStore.filterKeys { it.contains(filter, true) }.keys.toList()
+        synchronized(instancesStore) {
+            val localInstanceStore = instancesStore.toMap()
+            return localInstanceStore.filterKeys { it.contains(filter, true) }.keys.toList()
+        }
     }
 
 
@@ -328,15 +323,17 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
         scope: KodiScopeWrapper,
         withCopy: Boolean = true
     ): String {
-        val instanceKey = "${scope.asString()}_${tag.asString()}"
+        synchronized(instancesStore) {
+            val instanceKey = "${scope.asString()}_${tag.asString()}"
 
-        if(withCopy) {
-            val localStore = instancesStore.toMap()
-            if(!localStore.containsKey(instanceKey)) {
-                return localStore.addKeyIfNotExist(instanceKey, tag.asOriginal())
+            if (withCopy) {
+                val localStore = instancesStore.toMap()
+                if (!localStore.containsKey(instanceKey)) {
+                    return localStore.addKeyIfNotExist(instanceKey, tag.asOriginal())
+                }
             }
+            return instanceKey
         }
-        return instanceKey
     }
 
     /**
