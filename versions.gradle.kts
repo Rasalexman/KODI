@@ -4,6 +4,7 @@ extra["reflectVersion"] = "1.1.54"
 
 //------ CONFIG DATA
 extra["appId"] = "com.mincor.kodiexample"
+extra["kodiKmpNamespace"] = "com.rasalexman.kodi.kmp"
 extra["minSdkVersion"] = 19
 extra["targetSdkVersion"] = 34
 extra["jitpackPath"] = "https://jitpack.io"

@@ -1,6 +1,6 @@
 package com.rasalexman.kodi.kmp.core
 
-import com.rasalexman.kodi.kmp.wrapper.KodiScopeWrapper
+import com.rasalexman.kodi.kmp.wrapper.KodiKeyWrapper
 import com.rasalexman.kodi.kmp.wrapper.KodiTagWrapper
 
 /**
@@ -15,7 +15,7 @@ interface IKodiModule : IKodi {
     /**
      * Module Scope for all elements
      */
-    var scope: KodiScopeWrapper
+    var scope: KodiKeyWrapper
 
     /**
      * Set of current module binding types

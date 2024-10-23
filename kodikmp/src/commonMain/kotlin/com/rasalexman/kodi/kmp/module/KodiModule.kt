@@ -3,7 +3,7 @@ package com.rasalexman.kodi.kmp.module
 import com.rasalexman.kodi.kmp.common.defaultScope
 import com.rasalexman.kodi.kmp.core.IKodiModule
 import com.rasalexman.kodi.kmp.core.ModuleInitializer
-import com.rasalexman.kodi.kmp.wrapper.KodiScopeWrapper
+import com.rasalexman.kodi.kmp.wrapper.KodiKeyWrapper
 import com.rasalexman.kodi.kmp.wrapper.KodiTagWrapper
 
 
@@ -18,7 +18,7 @@ internal data class KodiModule(
     /**
      * Module Scope. It's Lazy initializing
      */
-    override var scope: KodiScopeWrapper = defaultScope
+    override var scope: KodiKeyWrapper = defaultScope
 
     /**
      * Set of all instances that includes in this module

@@ -7,6 +7,10 @@ plugins {
     alias(libs.plugins.vanniktech.mavenPublish)
 }
 
+val kodiKmpNamespace: String by extra
+group = kodiKmpNamespace
+version = libs.versions.kodiKmpVersion.get()
+
 kotlin {
     jvm()
     androidTarget {
@@ -35,7 +39,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.rasalexman.kodi.kmp"
+    namespace = kodiKmpNamespace
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {

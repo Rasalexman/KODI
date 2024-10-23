@@ -18,8 +18,9 @@ import com.rasalexman.kodi.kmp.core.IKodiModule
 import com.rasalexman.kodi.kmp.core.IKodiStorage
 import com.rasalexman.kodi.kmp.delegates.immutableGetter
 import com.rasalexman.kodi.kmp.extensions.or
+import com.rasalexman.kodi.kmp.extensions.toKeyBy
 import com.rasalexman.kodi.kmp.holder.KodiHolder
-import com.rasalexman.kodi.kmp.wrapper.KodiScopeWrapper
+import com.rasalexman.kodi.kmp.wrapper.KodiKeyWrapper
 import com.rasalexman.kodi.kmp.wrapper.KodiTagWrapper
 
 /**
@@ -115,7 +116,7 @@ abstract class KodiStorage : IKodiStorage {
      * [KodiTagWrapper] for retrieve value from map
      *
      * @param scope
-     * [KodiScopeWrapper] - scope wrapper for instances
+     * [KodiKeyWrapper] - scope wrapper for instances
      *
      * @param defaultValue
      * [LambdaWithReturn] `fun` to create value instance for saving in storage
@@ -124,7 +125,7 @@ abstract class KodiStorage : IKodiStorage {
      */
     internal fun createOrGet(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper,
+        scope: KodiKeyWrapper,
         defaultValue: LambdaWithReturn<KodiHolder<out Any>>
     ): KodiHolder<out Any> {
         val key = createKey(tag, scope)
@@ -135,13 +136,13 @@ abstract class KodiStorage : IKodiStorage {
      * Get [KodiHolder] instance from storage
      *
      * @param tag [KodiTagWrapper] - for retrieve instance by tag
-     * @param scope [KodiScopeWrapper] - current scope or [defaultScope]
+     * @param scope [KodiKeyWrapper] - current scope or defaultScope
      *
      * @return [KodiHolder] current holder instance
      */
     override fun getHolder(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper
+        scope: KodiKeyWrapper
     ): KodiHolder<out Any>? {
         val key = getKey(tag, scope)
         return instancesStore[key]
@@ -163,11 +164,11 @@ abstract class KodiStorage : IKodiStorage {
      * Remove current instance from storage by given key
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] current scope data
+     * @param scope - [KodiKeyWrapper] current scope data
      *
      * @return - optional [KodiHolder]
      */
-    override fun removeInstance(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean {
+    override fun removeInstance(tag: KodiTagWrapper, scope: KodiKeyWrapper): Boolean {
         return tag.takeIf { it.isNotEmpty() }?.let {
             // if we has scope to delete instance, create key and remove current instance
             val key = getKey(tag, scope, false)
@@ -197,7 +198,7 @@ abstract class KodiStorage : IKodiStorage {
      *
      * @return [Boolean] - is references deleted
      */
-    override fun removeAllScope(scope: KodiScopeWrapper): Boolean {
+    override fun removeAllScope(scope: KodiKeyWrapper): Boolean {
         val scopedList = takeFilteredKeys(scope.toString())
         scopedList.forEach {
             instancesStore.remove(it)?.clear()
@@ -231,28 +232,29 @@ abstract class KodiStorage : IKodiStorage {
      * Create key for all data instances
      *
      * @param tag - [KodiTagWrapper]
-     * @param scope - [KodiScopeWrapper]
-     * @param withCopy - [Boolean] does we need to add copied instance to graph
+     * @param scope - [KodiKeyWrapper]
      *
      * @return [String] of generated storage key
      */
-    protected open fun createKey(
+    private fun createKey(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper,
-        withCopy: Boolean = true
+        scope: KodiKeyWrapper,
     ): String {
-        val instanceKey = "${scope.asString()}_${tag.asString()}"
+        val instanceKey = scope toKeyBy tag
         val tagScopes = scopes.getOrPut(tag.asOriginal()) { mutableSetOf() }
         tagScopes.add(instanceKey)
         return instanceKey
     }
 
-    protected open fun getKey(
+    /**
+     * Пуе ф
+     */
+    private fun getKey(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper,
+        scope: KodiKeyWrapper,
         withCopy: Boolean = true
     ): String {
-        val instanceKey = "${scope.asString()}_${tag.asString()}"
+        val instanceKey = scope toKeyBy tag
         if(withCopy) {
             val localStore = instancesStore.toMap()
             if(!localStore.containsKey(instanceKey)) {

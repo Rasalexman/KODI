@@ -1,11 +1,11 @@
 package com.rasalexman.kodi.kmp.common
 
-import com.rasalexman.kodi.kmp.wrapper.KodiScopeWrapper
+import com.rasalexman.kodi.kmp.wrapper.KodiKeyWrapper
 
 /**
  * Default SCOPE name for all instances that doest have a scope name in bindings
  */
-internal val defaultScope = KodiScopeWrapper("DEFAULT_SCOPE")
+internal val defaultScope = KodiKeyWrapper("DEFAULT_SCOPE")
 
 
 /**

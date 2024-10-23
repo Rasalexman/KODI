@@ -33,9 +33,9 @@ sealed class KodiHolder<T : Any> {
     fun IKodi.holderValue(): T = get(this)
 
     /**
-     * Local Holder scope [KodiScopeWrapper]
+     * Local Holder scope [KodiKeyWrapper]
      */
-    var scope: KodiScopeWrapper = defaultScope
+    var scope: KodiKeyWrapper = defaultScope
         private set
 
     /**
@@ -45,7 +45,7 @@ sealed class KodiHolder<T : Any> {
         private set
 
     internal val storageKey: String
-        get() = "${scope.asString()}_${tag.asString()}"
+        get() = scope toKeyBy tag
 
     /**
      * Add [KodiTagWrapper] to current Holder
@@ -70,10 +70,10 @@ sealed class KodiHolder<T : Any> {
     /**
      * Add Instance Tag to moduleScope
      *
-     * @param scopeWrapper - [KodiScopeWrapper] to add instance tag
+     * @param scopeWrapper - [KodiKeyWrapper] to add instance tag
      * @return [KodiHolder]
      */
-    internal infix fun <T : Any> KodiHolder<T>.scopeWith(scopeWrapper: KodiScopeWrapper): KodiHolder<T> {
+    internal infix fun <T : Any> KodiHolder<T>.scopeWith(scopeWrapper: KodiKeyWrapper): KodiHolder<T> {
         if (scopeWrapper.isNotEmpty() && scope != scopeWrapper) scope = scopeWrapper
         return this
     }

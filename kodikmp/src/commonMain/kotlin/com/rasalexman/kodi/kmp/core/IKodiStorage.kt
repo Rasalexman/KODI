@@ -1,7 +1,7 @@
 package com.rasalexman.kodi.kmp.core
 
 import com.rasalexman.kodi.kmp.holder.KodiHolder
-import com.rasalexman.kodi.kmp.wrapper.KodiScopeWrapper
+import com.rasalexman.kodi.kmp.wrapper.KodiKeyWrapper
 import com.rasalexman.kodi.kmp.wrapper.KodiTagWrapper
 
 /**
@@ -21,16 +21,16 @@ internal interface IKodiStorage {
      * Remove current instance from storage by given key
      *
      * @param tag - [KodiTagWrapper] key to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] String representing the moduleScope
+     * @param scope - [KodiKeyWrapper] String representing the moduleScope
      */
-    fun removeInstance(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean
+    fun removeInstance(tag: KodiTagWrapper, scope: KodiKeyWrapper): Boolean
 
     /**
      * Remove moduleScope by it tag wrapper
      *
      * @param scope String representing the moduleScope
      */
-    fun removeAllScope(scope: KodiScopeWrapper): Boolean
+    fun removeAllScope(scope: KodiKeyWrapper): Boolean
 
     /**
      * Add [IKodiModule] to Kodi Module Storage set
@@ -74,9 +74,9 @@ internal interface IKodiStorage {
      * Get [KodiHolder] instance from storage
      *
      * @param tag [KodiTagWrapper] - for retrieve instance by tag
-     * @param scope [KodiScopeWrapper] - current scope or [defaultScope]
+     * @param scope [KodiKeyWrapper] - current scope or defaultScope
      *
      * @return [KodiHolder] current holder instance
      */
-    fun getHolder(tag: KodiTagWrapper, scope: KodiScopeWrapper): KodiHolder<out Any>?
+    fun getHolder(tag: KodiTagWrapper, scope: KodiKeyWrapper): KodiHolder<out Any>?
 }
