@@ -6,7 +6,6 @@ extra["reflectVersion"] = "1.1.54"
 extra["appId"] = "com.mincor.kodiexample"
 extra["minSdkVersion"] = 19
 extra["targetSdkVersion"] = 34
-extra["kotlinApiVersion"] = "2.0"
 extra["jitpackPath"] = "https://jitpack.io"
 extra["pluginsPath"] = "https://plugins.gradle.org/m2/"
 extra["codePath"] = "src/main/kotlin"
@@ -40,7 +39,6 @@ val autoService = "1.1.1"
 
 //----- extra navigation
 extra["navigation"] = navigation
-extra["kspVersion"] = ksp
 
 //------- Libs path
 extra["leakCanary"] = "com.squareup.leakcanary:leakcanary-android:$leakcanary"

@@ -10,7 +10,6 @@ plugins {
 
 val codePath: String by rootProject.extra
 val kodiVersion: String = libs.versions.kodiVersion.get()
-val kotlinApiVersion: String by extra
 
 val srcDirs = listOf(codePath)
 group = "com.rasalexman.kodiksp"
@@ -22,17 +21,17 @@ sourceSets {
     }
 }
 
-tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions {
-        apiVersion.set(KotlinVersion.KOTLIN_2_0)
-        languageVersion.set(KotlinVersion.KOTLIN_2_0)
-        jvmTarget.set(JvmTarget.JVM_21)
-        freeCompilerArgs.addAll(listOf(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-opt-in=kotlin.RequiresOptIn"
-        ))
-    }
-}
+//tasks.withType<KotlinJvmCompile>().configureEach {
+//    compilerOptions {
+//        apiVersion.set(KotlinVersion.KOTLIN_2_0)
+//        languageVersion.set(KotlinVersion.KOTLIN_2_0)
+//        jvmTarget.set(JvmTarget.JVM_21)
+//        freeCompilerArgs.addAll(listOf(
+//            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+//            "-opt-in=kotlin.RequiresOptIn"
+//        ))
+//    }
+//}
 
 tasks.register<Jar>(name = "sourceJar") {
     from(sourceSets["main"].java.srcDirs)

@@ -12,10 +12,15 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.rasalexman.kodi.core
+package com.rasalexman.kodi.kmp.storage
 
-import com.rasalexman.kodi.delegates.immutableGetter
-import java.util.concurrent.ConcurrentHashMap
+import com.rasalexman.kodi.kmp.core.IKodiModule
+import com.rasalexman.kodi.kmp.core.IKodiStorage
+import com.rasalexman.kodi.kmp.delegates.immutableGetter
+import com.rasalexman.kodi.kmp.extensions.or
+import com.rasalexman.kodi.kmp.holder.KodiHolder
+import com.rasalexman.kodi.kmp.wrapper.KodiScopeWrapper
+import com.rasalexman.kodi.kmp.wrapper.KodiTagWrapper
 
 /**
  * Lambda wrapper withScope generic return Type
@@ -23,101 +28,24 @@ import java.util.concurrent.ConcurrentHashMap
 internal typealias LambdaWithReturn<T> = () -> T
 
 /**
- * Main storage abstraction
- */
-internal interface IKodiStorage<V> {
-
-    /**
-     * Is there any instance by given key in instanceMap storage
-     *
-     * @param tag
-     * The instance key to retrieve
-     */
-    fun hasInstance(tag: KodiTagWrapper): Boolean
-
-    /**
-     * Remove current instance from storage by given key
-     *
-     * @param tag - [KodiTagWrapper] key to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] String representing the moduleScope
-     */
-    fun removeInstance(tag: KodiTagWrapper, scope: KodiScopeWrapper): Boolean
-
-    /**
-     * Remove moduleScope by it tag wrapper
-     *
-     * @param scope String representing the moduleScope
-     */
-    fun removeAllScope(scope: KodiScopeWrapper): Boolean
-
-    /**
-     * Add [IKodiModule] to Kodi Module Storage set
-     * Also it bind all dependencies into Kodi graph
-     *
-     * @param module - [IKodiModule] instance to remove
-     */
-    fun addModule(module: IKodiModule)
-
-    /**
-     * Remove module from Kodi Module Storage set
-     * Also it remove all instances of this module from dependency graph
-     *
-     * @param module - [IKodiModule] instance to remove
-     */
-    fun removeModule(module: IKodiModule)
-
-    /**
-     * Remove [KodiTagWrapper] from module set
-     *
-     * @param - [KodiTagWrapper] to remove from [IKodiModule] moduleInstancesSet
-     * @return [Boolean]
-     */
-    fun removeFromModule(instanceTag: KodiTagWrapper): Boolean
-
-    /**
-     * Check if given [KodiTagWrapper] has been added to any [IKodiModule]
-     *
-     * @param - [KodiTagWrapper] to check
-     * @return [Boolean]
-     */
-    fun hasModuleByTag(instanceTag: KodiTagWrapper): Boolean
-
-    /**
-     * Remove all instances and scopes from dependency graph
-     * Warning!!! - this action cannot be reverted
-     */
-    fun clearAll()
-
-    /**
-     * Get [KodiHolder] instance from storage
-     *
-     * @param tag [KodiTagWrapper] - for retrieve instance by tag
-     * @param scope [KodiScopeWrapper] - current scope or [defaultScope]
-     *
-     * @return [KodiHolder] current holder instance
-     */
-    fun getHolder(tag: KodiTagWrapper, scope: KodiScopeWrapper): KodiHolder<out Any>?
-}
-
-/**
  * Main instance and scopes class
  */
-abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
+abstract class KodiStorage : IKodiStorage {
 
     /**
      * All instances holders storage
      */
-    private val instancesStore by immutableGetter { ConcurrentHashMap<String, KodiHolder<out Any>>() }
+    private val instancesStore by immutableGetter { mutableMapOf<String, KodiHolder<out Any>>() }
 
     /**
      *  Kodi modules set
      */
-    private val modulesSet by immutableGetter { ConcurrentHashMap.newKeySet<IKodiModule>() }
+    private val modulesSet by immutableGetter { mutableSetOf<IKodiModule>() }
 
     /**
      * Kodi scopes sets
      */
-    private val scopes by immutableGetter { ConcurrentHashMap<String, MutableSet<String>>() }
+    private val scopes by immutableGetter { mutableMapOf<String, MutableSet<String>>() }
 
     /**
      * Add [IKodiModule] to Kodi Module Storage set
@@ -128,9 +56,7 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
     override fun addModule(module: IKodiModule) {
         val initializer = module.instanceInitializer
         module.initializer()
-        synchronized(modulesSet) {
-            modulesSet.add(module)
-        }
+        modulesSet.add(module)
     }
 
     /**
@@ -201,10 +127,8 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
         scope: KodiScopeWrapper,
         defaultValue: LambdaWithReturn<KodiHolder<out Any>>
     ): KodiHolder<out Any> {
-        synchronized(instancesStore) {
-            val key = createKey(tag, scope)
-            return instancesStore.getOrPut(key, defaultValue)
-        }
+        val key = createKey(tag, scope)
+        return instancesStore.getOrPut(key, defaultValue)
     }
 
     /**
@@ -219,10 +143,8 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
         tag: KodiTagWrapper,
         scope: KodiScopeWrapper
     ): KodiHolder<out Any>? {
-        synchronized(instancesStore) {
-            val key = getKey(tag, scope)
-            return instancesStore[key]
-        }
+        val key = getKey(tag, scope)
+        return instancesStore[key]
     }
 
     /**
@@ -331,7 +253,6 @@ abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
         withCopy: Boolean = true
     ): String {
         val instanceKey = "${scope.asString()}_${tag.asString()}"
-
         if(withCopy) {
             val localStore = instancesStore.toMap()
             if(!localStore.containsKey(instanceKey)) {

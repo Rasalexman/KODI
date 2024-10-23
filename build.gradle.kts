@@ -24,7 +24,7 @@ buildscript {
         maven { url = uri(pluginsPath) }
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:${libs.versions.agp.get()}")
+        classpath("com.android.tools.build:gradle:${libs.versions.androidGradlePlugin.get()}")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$navigation")
 
@@ -35,17 +35,17 @@ buildscript {
 
 allprojects {
     apply(from="${rootDir}/versions.gradle.kts")
-    tasks.withType<KotlinJvmCompile>().configureEach {
-        compilerOptions {
-            apiVersion.set(KotlinVersion.KOTLIN_2_0)
-            languageVersion.set(KotlinVersion.KOTLIN_2_0)
-            jvmTarget.set(JvmTarget.JVM_21)
-            freeCompilerArgs.addAll(listOf(
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=kotlin.RequiresOptIn"
-            ))
-        }
-    }
+//    tasks.withType<KotlinJvmCompile>().configureEach {
+//        compilerOptions {
+//            apiVersion.set(KotlinVersion.KOTLIN_2_0)
+//            languageVersion.set(KotlinVersion.KOTLIN_2_0)
+//            jvmTarget.set(JvmTarget.JVM_21)
+//            freeCompilerArgs.addAll(listOf(
+//                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+//                "-opt-in=kotlin.RequiresOptIn"
+//            ))
+//        }
+//    }
 }
 
 tasks.register("clean", Delete::class) {
