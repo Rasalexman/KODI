@@ -1,7 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
 plugins {
     id("java-library")
     kotlin("jvm")
@@ -60,4 +56,8 @@ publishing {
             url = uri("${layout.buildDirectory}/publishing-repository")
         }
     }
+}
+
+dependencies {
+    api(project(":kodikmp"))
 }

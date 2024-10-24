@@ -1,8 +1,9 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
-    id("maven-publish")
 }
 
 val kodiKmpNamespace: String by extra
@@ -59,25 +60,36 @@ android {
     }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("kodi") {
-            from(components["kotlin"])
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
 
-            // You can then customize attributes of the publication as shown below.
-            groupId = kodiKmpNamespace
-            artifactId = "kodi"
-            version = kodiVersion
+    signAllPublications()
 
-            //artifact(tasks["sourcesJar"])
-            //artifact(tasks["javadocJar"])
+    coordinates(group.toString(), "kodikmp", version.toString())
+
+    pom {
+        name = "Kotlin Dependency Injection Library"
+        description = "Multiplatform dependency injection."
+        inceptionYear = "2024"
+        url = "https://github.com/Rasalexman/KODI/"
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
         }
-    }
-
-    repositories {
-        maven {
-            name = "kodi"
-            url = uri("${layout.buildDirectory}/publishing-repository")
+        developers {
+            developer {
+                id = "rasalexman"
+                name = "Aleksandr Minkin"
+                url = "https://github.com/Rasalexman"
+            }
+        }
+        scm {
+            url = "https://github.com/Rasalexman/KODI/"
+            connection = "scm:git:git://github.com/Rasalexman/KODI.git"
+            developerConnection = "scm:git:ssh://git@github.com:Rasalexman/KODI.git"
         }
     }
 }

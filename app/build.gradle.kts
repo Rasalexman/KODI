@@ -13,8 +13,6 @@ android {
     val minSdkVersion = libs.versions.android.minSdk.get().toInt()
     val appVersion: String = libs.versions.appVersion.get()
     val appId: String by extra
-//    val codePath: String by rootProject.extra
-//    val srcDirs = listOf(codePath)
 
     compileSdk = targetSdkVersion
     defaultConfig {

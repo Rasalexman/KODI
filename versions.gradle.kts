@@ -1,7 +1,3 @@
-//------ APP VERSION
-extra["reflectVersion"] = "1.1.54"
-
-
 //------ CONFIG DATA
 extra["appId"] = "com.mincor.kodiexample"
 extra["kodiKmpNamespace"] = "com.rasalexman.kodi"

@@ -1,14 +1,10 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
 plugins {
     id("com.android.library")
     kotlin("android")
     id("maven-publish")
 }
 
-val reflectVersion: String by rootProject.extra
+val reflectVersion: String = libs.versions.kodiReflectVersion.get()
 group = "com.rasalexman.kodireflect"
 version = reflectVersion
 
@@ -54,18 +50,6 @@ android {
             // Prefer modules that are part of this build (multi-project or composite build) over external modules.
             preferProjectModules()
         }
-    }
-}
-
-tasks.withType<KotlinJvmCompile>().configureEach {
-    compilerOptions {
-        apiVersion.set(KotlinVersion.KOTLIN_2_0)
-        languageVersion.set(KotlinVersion.KOTLIN_2_0)
-        jvmTarget.set(JvmTarget.JVM_21)
-        freeCompilerArgs.addAll(listOf(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-opt-in=kotlin.RequiresOptIn"
-        ))
     }
 }
 

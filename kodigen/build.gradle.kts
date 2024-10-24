@@ -2,7 +2,7 @@ plugins {
     id("java-library")
     id("kotlin")
     id("maven-publish")
-    kotlin("kapt")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 
