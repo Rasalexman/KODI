@@ -1,9 +1,8 @@
-import com.vanniktech.maven.publish.SonatypeHost
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.vanniktech.mavenPublish)
+    id("maven-publish")
+//    alias(libs.plugins.vanniktech.mavenPublish)
 }
 
 val kodiKmpNamespace: String by extra
@@ -60,39 +59,61 @@ android {
     }
 }
 
-mavenPublishing {
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components.getByName("kotlin"))
 
-    signAllPublications()
-
-    coordinates(group.toString(), "kodikmp", version.toString())
-
-    pom {
-        name = "Kotlin Dependency Injection Library"
-        description = "Multiplatform dependency injection."
-        inceptionYear = "2024"
-        url = "https://github.com/Rasalexman/KODI/"
-        licenses {
-            license {
-                name = "The Apache License, Version 2.0"
-                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
-                distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                // You can then customize attributes of the publication as shown below.
+                groupId = "com.rasalexman.kodi"
+                artifactId = "kodikmp"
+                version = kodiVersion
             }
         }
-        developers {
-            developer {
-                id = "rasalexman"
-                name = "Aleksandr Minkin"
-                url = "https://github.com/Rasalexman"
+
+        repositories {
+            maven {
+                name = "kodikmp"
+                url = uri(layout.buildDirectory.dir("repo"))
             }
-        }
-        scm {
-            url = "https://github.com/Rasalexman/KODI/"
-            connection = "scm:git:git://github.com/Rasalexman/KODI.git"
-            developerConnection = "scm:git:ssh://git@github.com:Rasalexman/KODI.git"
         }
     }
 }
+
+//mavenPublishing {
+//    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+//
+//    signAllPublications()
+//
+//    coordinates(group.toString(), "kodikmp", version.toString())
+//
+//    pom {
+//        name = "Kotlin Dependency Injection Library"
+//        description = "Multiplatform dependency injection."
+//        inceptionYear = "2024"
+//        url = "https://github.com/Rasalexman/KODI/"
+//        licenses {
+//            license {
+//                name = "The Apache License, Version 2.0"
+//                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+//                distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+//            }
+//        }
+//        developers {
+//            developer {
+//                id = "rasalexman"
+//                name = "Aleksandr Minkin"
+//                url = "https://github.com/Rasalexman"
+//            }
+//        }
+//        scm {
+//            url = "https://github.com/Rasalexman/KODI/"
+//            connection = "scm:git:git://github.com/Rasalexman/KODI.git"
+//            developerConnection = "scm:git:ssh://git@github.com:Rasalexman/KODI.git"
+//        }
+//    }
+//}
 
 dependencies {
     testImplementation(libs.junit)

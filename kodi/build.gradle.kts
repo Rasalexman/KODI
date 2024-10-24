@@ -4,11 +4,12 @@ plugins {
     id("maven-publish")
 }
 
+val kodiKmpNamespace: String by extra
 val codePath: String by rootProject.extra
 val kodiVersion: String = libs.versions.kodiVersion.get()
 
 val srcDirs = listOf(codePath)
-group = "com.rasalexman.kodi"
+group = kodiKmpNamespace
 version = kodiVersion
 
 sourceSets {
@@ -41,7 +42,7 @@ publishing {
             from(components["kotlin"])
 
             // You can then customize attributes of the publication as shown below.
-            groupId = "com.rasalexman.kodi"
+            groupId = kodiKmpNamespace
             artifactId = "kodi"
             version = kodiVersion
 

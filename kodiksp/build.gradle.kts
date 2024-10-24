@@ -1,18 +1,15 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
 plugins {
     id("java-library")
     kotlin("jvm")
     id("maven-publish")
 }
 
+val kodiKmpNamespace: String by extra
 val codePath: String by rootProject.extra
 val kodiVersion: String = libs.versions.kodiVersion.get()
 
 val srcDirs = listOf(codePath)
-group = "com.rasalexman.kodiksp"
+group = kodiKmpNamespace
 version = kodiVersion
 
 sourceSets {
@@ -20,18 +17,6 @@ sourceSets {
         java.setSrcDirs(srcDirs)
     }
 }
-
-//tasks.withType<KotlinJvmCompile>().configureEach {
-//    compilerOptions {
-//        apiVersion.set(KotlinVersion.KOTLIN_2_0)
-//        languageVersion.set(KotlinVersion.KOTLIN_2_0)
-//        jvmTarget.set(JvmTarget.JVM_21)
-//        freeCompilerArgs.addAll(listOf(
-//            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-//            "-opt-in=kotlin.RequiresOptIn"
-//        ))
-//    }
-//}
 
 tasks.register<Jar>(name = "sourceJar") {
     from(sourceSets["main"].java.srcDirs)
@@ -66,7 +51,7 @@ publishing {
         create<MavenPublication>("kodiksp") {
             from(components["kotlin"])
             // You can then customize attributes of the publication as shown below.
-            groupId = "com.rasalexman.kodiksp"
+            groupId = kodiKmpNamespace
             artifactId = "kodiksp"
             version = kodiVersion
 
