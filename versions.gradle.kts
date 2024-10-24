@@ -1,7 +1,7 @@
 //------ APP VERSION
-extra["appVersion"] = "1.3.2"
-extra["kodiVersion"] = "1.7.2"
-extra["reflectVersion"] = "1.1.54"
+extra["appVersion"] = "1.3.3"
+extra["kodiVersion"] = "1.7.3"
+extra["reflectVersion"] = "1.1.55"
 
 
 //------ CONFIG DATA
