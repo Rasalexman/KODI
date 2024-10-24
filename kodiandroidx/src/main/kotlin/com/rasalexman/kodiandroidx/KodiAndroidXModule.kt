@@ -125,11 +125,6 @@ val kodiAndroidXManagers by lazy {
         bind<UserManager>() with provider { instance<Context>().getSystemService(Context.USER_SERVICE) as UserManager }
 
         bind<BluetoothManager>() with provider { instance<Context>().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager }
-
-        bind<AppOpsManager>() with provider { instance<Context>().getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager }
-        bind<CaptioningManager>() with provider { instance<Context>().getSystemService(Context.CAPTIONING_SERVICE) as CaptioningManager }
-        bind<ConsumerIrManager>() with provider { instance<Context>().getSystemService(Context.CONSUMER_IR_SERVICE) as ConsumerIrManager }
-        bind<PrintManager>() with provider { instance<Context>().getSystemService(Context.PRINT_SERVICE) as PrintManager }
     }
 }
 
