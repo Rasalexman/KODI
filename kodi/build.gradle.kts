@@ -24,6 +24,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
         this.apiVersion = kotlinApiVersion
         this.languageVersion = kotlinApiVersion
         this.jvmTarget = jvmVersion
+        this.freeCompilerArgs += listOf("-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 }
 
