@@ -12,16 +12,7 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.rasalexman.kodi.kmp.storage
-
-import com.rasalexman.kodi.kmp.core.IKodiModule
-import com.rasalexman.kodi.kmp.core.IKodiStorage
-import com.rasalexman.kodi.kmp.delegates.immutableGetter
-import com.rasalexman.kodi.kmp.extensions.or
-import com.rasalexman.kodi.kmp.extensions.toKeyBy
-import com.rasalexman.kodi.kmp.holder.KodiHolder
-import com.rasalexman.kodi.kmp.wrapper.KodiKeyWrapper
-import com.rasalexman.kodi.kmp.wrapper.KodiTagWrapper
+package com.rasalexman.kodi.core
 
 /**
  * Lambda wrapper withScope generic return Type
@@ -29,9 +20,86 @@ import com.rasalexman.kodi.kmp.wrapper.KodiTagWrapper
 internal typealias LambdaWithReturn<T> = () -> T
 
 /**
+ * Main storage abstraction
+ */
+internal interface IKodiStorage<V> {
+
+    /**
+     * Is there any instance by given key in instanceMap storage
+     *
+     * @param tag
+     * The instance key to retrieve
+     */
+    fun hasInstance(tag: KodiTagWrapper): Boolean
+
+    /**
+     * Remove current instance from storage by given key
+     *
+     * @param tag - [KodiTagWrapper] key to remove value if it's exist
+     * @param scope - [KodiKeyWrapper] String representing the moduleScope
+     */
+    fun removeInstance(tag: KodiTagWrapper, scope: KodiKeyWrapper): Boolean
+
+    /**
+     * Remove moduleScope by it tag wrapper
+     *
+     * @param scope String representing the moduleScope
+     */
+    fun removeAllScope(scope: KodiKeyWrapper): Boolean
+
+    /**
+     * Add [IKodiModule] to Kodi Module Storage set
+     * Also it bind all dependencies into Kodi graph
+     *
+     * @param module - [IKodiModule] instance to remove
+     */
+    fun addModule(module: IKodiModule)
+
+    /**
+     * Remove module from Kodi Module Storage set
+     * Also it remove all instances of this module from dependency graph
+     *
+     * @param module - [IKodiModule] instance to remove
+     */
+    fun removeModule(module: IKodiModule)
+
+    /**
+     * Remove [KodiTagWrapper] from module set
+     *
+     * @param - [KodiTagWrapper] to remove from [IKodiModule] moduleInstancesSet
+     * @return [Boolean]
+     */
+    fun removeFromModule(instanceTag: KodiTagWrapper): Boolean
+
+    /**
+     * Check if given [KodiTagWrapper] has been added to any [IKodiModule]
+     *
+     * @param - [KodiTagWrapper] to check
+     * @return [Boolean]
+     */
+    fun hasModuleByTag(instanceTag: KodiTagWrapper): Boolean
+
+    /**
+     * Remove all instances and scopes from dependency graph
+     * Warning!!! - this action cannot be reverted
+     */
+    fun clearAll()
+
+    /**
+     * Get [KodiHolder] instance from storage
+     *
+     * @param tag [KodiTagWrapper] - for retrieve instance by tag
+     * @param scope [KodiKeyWrapper] - current scope or [defaultScope]
+     *
+     * @return [KodiHolder] current holder instance
+     */
+    fun getHolder(tag: KodiTagWrapper, scope: KodiKeyWrapper): KodiHolder<out Any>?
+}
+
+/**
  * Main instance and scopes class
  */
-abstract class KodiStorage : IKodiStorage {
+abstract class KodiStorage : IKodiStorage<KodiHolder<out Any>> {
 
     /**
      * All instances holders storage
@@ -136,7 +204,7 @@ abstract class KodiStorage : IKodiStorage {
      * Get [KodiHolder] instance from storage
      *
      * @param tag [KodiTagWrapper] - for retrieve instance by tag
-     * @param scope [KodiKeyWrapper] - current scope or defaultScope
+     * @param scope [KodiKeyWrapper] - current scope or [defaultScope]
      *
      * @return [KodiHolder] current holder instance
      */
@@ -236,7 +304,7 @@ abstract class KodiStorage : IKodiStorage {
      *
      * @return [String] of generated storage key
      */
-    private fun createKey(
+    protected open fun createKey(
         tag: KodiTagWrapper,
         scope: KodiKeyWrapper,
     ): String {
@@ -246,18 +314,15 @@ abstract class KodiStorage : IKodiStorage {
         return instanceKey
     }
 
-    /**
-     * Пуе ф
-     */
-    private fun getKey(
+    protected open fun getKey(
         tag: KodiTagWrapper,
         scope: KodiKeyWrapper,
         withCopy: Boolean = true
     ): String {
         val instanceKey = scope toKeyBy tag
-        if(withCopy) {
+        if (withCopy) {
             val localStore = instancesStore.toMap()
-            if(!localStore.containsKey(instanceKey)) {
+            if (!localStore.containsKey(instanceKey)) {
                 return localStore.addKeyIfNotExist(instanceKey, tag.asOriginal())
             }
         }

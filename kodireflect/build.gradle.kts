@@ -13,8 +13,8 @@ group = "com.rasalexman.kodireflect"
 version = reflectVersion
 
 android {
-    val targetSdkVersion: Int by rootProject.extra
-    val minSdkVersion: Int by rootProject.extra
+    val targetSdkVersion: Int = libs.versions.android.compileSdk.get().toInt()
+    val minSdkVersion: Int = libs.versions.android.minSdk.get().toInt()
 
     compileSdk = targetSdkVersion
     defaultConfig {
@@ -35,8 +35,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     packaging {
@@ -74,8 +74,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 afterEvaluate {

@@ -1,30 +1,47 @@
-package com.rasalexman.kodi.kmp
+// Copyright (c) 2020 Aleksandr Minkin aka Rasalexman (sphc@yandex.ru)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+// and associated documentation files (the "Software"), to deal in the Software without restriction,
+// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+// WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+// THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import com.rasalexman.kodi.kmp.common.CanThrowException
-import com.rasalexman.kodi.kmp.common.HOLDER_NULL_ERROR
-import com.rasalexman.kodi.kmp.common.INITIALIZER_NULL_ERROR
-import com.rasalexman.kodi.kmp.common.SCOPE_EMPTY_ERROR
-import com.rasalexman.kodi.kmp.common.TAG_EMPTY_ERROR
-import com.rasalexman.kodi.kmp.core.IKodi
-import com.rasalexman.kodi.kmp.core.IKodiModule
-import com.rasalexman.kodi.kmp.core.InstanceInitializer
-import com.rasalexman.kodi.kmp.delegates.IImmutableDelegate
-import com.rasalexman.kodi.kmp.delegates.IMutableDelegate
-import com.rasalexman.kodi.kmp.delegates.immutableGetter
-import com.rasalexman.kodi.kmp.delegates.mutableGetter
-import com.rasalexman.kodi.kmp.extensions.asScope
-import com.rasalexman.kodi.kmp.extensions.asTag
-import com.rasalexman.kodi.kmp.extensions.genericName
-import com.rasalexman.kodi.kmp.extensions.throwKodiException
-import com.rasalexman.kodi.kmp.extensions.withModuleScope
-import com.rasalexman.kodi.kmp.holder.KodiHolder
-import com.rasalexman.kodi.kmp.storage.KodiStorage
-import com.rasalexman.kodi.kmp.wrapper.KodiTagWrapper
+@file:Suppress("unused")
+
+package com.rasalexman.kodi.core
+
+import com.rasalexman.kodi.core.KodiHolder.*
 
 /**
- * Main Instance Holder object
+ * Annotation for mark some throwable functions
+ *
+ * @param message - string for user log output
+ */
+@Target(AnnotationTarget.FUNCTION)
+annotation class CanThrowException(
+    val message: String = "Check that the 'tag' is added to the dependency graph, otherwise it will fall with RuntimeException"
+)
+
+private const val TAG_EMPTY_ERROR = "Parameter 'tag' cannot be empty string"
+internal const val SCOPE_EMPTY_ERROR = "Parameter 'scopeName' cannot be empty string"
+private const val HOLDER_NULL_ERROR = "There is no 'KodiHolder' instance in dependency graph"
+private const val INITIALIZER_NULL_ERROR = "There is no typed initializer passed throw an exception"
+
+/**
+ * Main Singleton object for manipulate instances
  */
 object Kodi : KodiStorage(), IKodi
+
+/**
+ * Simple implementing interface for di functionality
+ */
+interface IKodi
 
 /**
  * Initialize KODI dependencies
@@ -34,7 +51,6 @@ object Kodi : KodiStorage(), IKodi
 inline fun <reified ReturnType : Any> kodi(block: IKodi.() -> ReturnType): ReturnType {
     return Kodi.block()
 }
-
 
 /**
  * Bind Any Generic type withScope some instance or KodiHolder types
@@ -173,7 +189,7 @@ fun IKodi.unbindAll() {
  * @param scope - String of instance scope
  *
  * @return [InstanceType]
- * @throws IllegalAccessException - if there is no tag in dependency graph
+ * @throws ClassCastException - if there is no tag in dependency graph
  */
 @CanThrowException(HOLDER_NULL_ERROR)
 inline fun <reified InstanceType : Any> IKodi.instance(
@@ -220,7 +236,7 @@ inline fun <reified InstanceType : Any> IKodi.holder(
 inline fun <reified SingleType : Any> IKodi.single(
     noinline init: InstanceInitializer<SingleType>
 ): KodiHolder<SingleType> {
-    return createHolder<KodiHolder.KodiSingle<SingleType>, SingleType>(init = init)
+    return createHolder<KodiSingle<SingleType>, SingleType>(init = init)
 }
 
 /**
@@ -233,7 +249,7 @@ inline fun <reified SingleType : Any> IKodi.single(
 inline fun <reified ProviderType : Any> IKodi.provider(
     noinline init: InstanceInitializer<ProviderType>
 ): KodiHolder<ProviderType> {
-    return createHolder<KodiHolder.KodiProvider<ProviderType>, ProviderType>(init = init)
+    return createHolder<KodiProvider<ProviderType>, ProviderType>(init = init)
 }
 
 /**
@@ -246,13 +262,13 @@ inline fun <reified ProviderType : Any> IKodi.provider(
 inline fun <reified ConstantType : Any> IKodi.constant(
     noinline init: InstanceInitializer<ConstantType>
 ): KodiHolder<ConstantType> {
-    return createHolder<KodiHolder.KodiConstant<ConstantType>, ConstantType>(init = init)
+    return createHolder<KodiConstant<ConstantType>, ConstantType>(init = init)
 }
 
 
 /**
  * Create [KodiHolder] with given [InstanceInitializer]
- * It's also apply scope [KodiScopeWrapper] from [IKodiModule]
+ * It's also apply scope [KodiKeyWrapper] from [IKodiModule]
  *
  * @param init - noinline [InstanceInitializer]
  *
@@ -263,9 +279,9 @@ inline fun <reified HolderType : KodiHolder<ReturnType>, reified ReturnType : An
     noinline init: InstanceInitializer<ReturnType>
 ): HolderType {
     return when (HolderType::class) {
-        KodiHolder.KodiSingle::class -> KodiHolder.KodiSingle(init)
-        KodiHolder.KodiProvider::class -> KodiHolder.KodiProvider(init)
-        KodiHolder.KodiConstant::class -> KodiHolder.KodiConstant(init())
+        KodiSingle::class -> KodiSingle(init)
+        KodiProvider::class -> KodiProvider(init)
+        KodiConstant::class -> KodiConstant(init())
         else -> throwKodiException<ClassCastException>("There is no type holder like \'${genericName<ReturnType>()}\'")
     }.withModuleScope(this) as HolderType
 }

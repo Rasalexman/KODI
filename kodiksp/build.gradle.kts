@@ -44,8 +44,8 @@ java {
             java.setSrcDirs(srcDirs)
         }
     }
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     withJavadocJar()
     withSourcesJar()
@@ -53,7 +53,7 @@ java {
 
 
 dependencies {
-    api(project(":kodi"))
+    api(project(":kodikmp"))
     val kotlinpoetKsp: String by rootProject.extra
     val kspapi: String by rootProject.extra
 

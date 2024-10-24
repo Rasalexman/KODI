@@ -12,14 +12,12 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.rasalexman.kodi.kmp.extensions
+package com.rasalexman.kodi.core
 
-import com.rasalexman.kodi.kmp.common.defaultScope
-import com.rasalexman.kodi.kmp.core.IKodi
-import com.rasalexman.kodi.kmp.core.IKodiModule
-import com.rasalexman.kodi.kmp.holder.KodiHolder
-import com.rasalexman.kodi.kmp.wrapper.KodiKeyWrapper
-import com.rasalexman.kodi.kmp.wrapper.KodiTagWrapper
+/**
+ * Default SCOPE name for all instances that doest have a scope name in bindings
+ */
+internal val defaultScope = KodiKeyWrapper("DEFAULT_SCOPE")
 
 /**
  * String moduleScope name to Scope Wrapper
@@ -46,7 +44,7 @@ inline fun <reified T : Any> Any?.asTag(): KodiTagWrapper {
  * Create unique key with scope and tag combination to use as reference to instance in storage
  * @param instanceTag - [KodiTagWrapper] to add instance tag
  */
-inline infix fun KodiKeyWrapper.toKeyBy(instanceTag: KodiTagWrapper): String {
+infix fun KodiKeyWrapper.toKeyBy(instanceTag: KodiTagWrapper): String {
     return "${this.asString()}_${instanceTag.asString()}"
 }
 

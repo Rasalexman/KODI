@@ -17,8 +17,8 @@ import com.rasalexman.kodi.core.KodiHolder
 import com.rasalexman.kodi.core.KodiKeyWrapper
 import com.rasalexman.kodi.core.KodiStorage
 import com.rasalexman.kodi.core.KodiTagWrapper
+import com.rasalexman.kodi.core.immutableGetter
 import com.rasalexman.kodi.core.toKeyBy
-import com.rasalexman.kodi.delegates.immutableGetter
 
 /**
  * Instance Listener function

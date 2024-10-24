@@ -10,8 +10,8 @@ version = kodiVersion
 
 android {
 
-    val targetSdkVersion: Int by rootProject.extra
-    val minSdkVersion: Int by rootProject.extra
+    val targetSdkVersion: Int = libs.versions.android.compileSdk.get().toInt()
+    val minSdkVersion: Int = libs.versions.android.minSdk.get().toInt()
     val codePath: String by rootProject.extra
     val srcDirs = listOf(codePath)
 
@@ -41,8 +41,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     packaging {
@@ -59,7 +59,7 @@ android {
 dependencies {
     val coreKtx: String by rootProject.extra
     implementation(coreKtx)
-    api(project(":kodi"))
+    api(project(":kodikmp"))
 }
 
 afterEvaluate {

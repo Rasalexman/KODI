@@ -1,7 +1,15 @@
 package com.rasalexman.kodiandroidx
 
 import android.accounts.AccountManager
-import android.app.*
+import android.app.ActivityManager
+import android.app.AlarmManager
+import android.app.AppOpsManager
+import android.app.DownloadManager
+import android.app.KeyguardManager
+import android.app.NotificationManager
+import android.app.SearchManager
+import android.app.UiModeManager
+import android.app.WallpaperManager
 import android.app.admin.DevicePolicyManager
 import android.app.job.JobScheduler
 import android.app.usage.NetworkStatsManager
@@ -30,7 +38,13 @@ import android.net.ConnectivityManager
 import android.net.nsd.NsdManager
 import android.net.wifi.p2p.WifiP2pManager
 import android.nfc.NfcManager
-import android.os.*
+import android.os.BatteryManager
+import android.os.Build
+import android.os.DropBoxManager
+import android.os.Environment
+import android.os.HardwarePropertiesManager
+import android.os.PowerManager
+import android.os.UserManager
 import android.os.health.SystemHealthManager
 import android.os.storage.StorageManager
 import android.print.PrintManager
@@ -44,7 +58,12 @@ import android.view.accessibility.AccessibilityManager
 import android.view.accessibility.CaptioningManager
 import android.view.inputmethod.InputMethodManager
 import android.view.textservice.TextServicesManager
-import com.rasalexman.kodi.core.*
+import com.rasalexman.kodi.core.bind
+import com.rasalexman.kodi.core.import
+import com.rasalexman.kodi.core.instance
+import com.rasalexman.kodi.core.kodiModule
+import com.rasalexman.kodi.core.provider
+import com.rasalexman.kodi.core.with
 import java.io.File
 
 const val CACHE_DIR = "cache"

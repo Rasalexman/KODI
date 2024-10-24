@@ -30,15 +30,15 @@ java {
             java.setSrcDirs(srcDirs)
         }
     }
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     withJavadocJar()
     withSourcesJar()
 }
 
 dependencies {
-    compileOnly(project(":kodi"))
+    compileOnly(project(":kodikmp"))
     val kotlinpoet: String by rootProject.extra
     val autoService: String by rootProject.extra
 

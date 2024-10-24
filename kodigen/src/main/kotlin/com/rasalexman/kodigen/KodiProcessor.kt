@@ -90,9 +90,9 @@ class KodiProcessor : AbstractProcessor() {
 
     override fun getSupportedAnnotationTypes(): Set<String> {
         return setOf(
-                BindSingle::class.java.canonicalName,
-                BindProvider::class.java.canonicalName
-        )
+            BindSingle::class.java.canonicalName,
+            BindProvider::class.java.canonicalName,
+        ) as Set<String>
     }
 
     override fun getSupportedOptions(): Set<String?>? {

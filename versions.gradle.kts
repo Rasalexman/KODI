@@ -4,12 +4,11 @@ extra["reflectVersion"] = "1.1.54"
 
 //------ CONFIG DATA
 extra["appId"] = "com.mincor.kodiexample"
-extra["kodiKmpNamespace"] = "com.rasalexman.kodi.kmp"
-extra["minSdkVersion"] = 19
-extra["targetSdkVersion"] = 34
+extra["kodiKmpNamespace"] = "com.rasalexman.kodi"
 extra["jitpackPath"] = "https://jitpack.io"
 extra["pluginsPath"] = "https://plugins.gradle.org/m2/"
 extra["codePath"] = "src/main/kotlin"
+extra["codePathKmp"] = "src/commonMain/kotlin"
 extra["resPath"] = "src/main/res"
 
 //------- LIBS VERSIONS

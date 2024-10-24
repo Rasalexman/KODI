@@ -1,24 +1,22 @@
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
+    id("maven-publish")
 }
 
 val kodiKmpNamespace: String by extra
+val codePathKmp: String by rootProject.extra
+val kodiVersion: String = libs.versions.kodiVersion.get()
+
+val srcDirs = listOf(codePathKmp)
 group = kodiKmpNamespace
-version = libs.versions.kodiKmpVersion.get()
+version = kodiVersion
 
 kotlin {
     jvm()
     androidTarget {
         publishLibraryVariants("release")
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
-        }
     }
     iosX64()
     iosArm64()
@@ -56,8 +54,31 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("kodi") {
+            from(components["kotlin"])
+
+            // You can then customize attributes of the publication as shown below.
+            groupId = kodiKmpNamespace
+            artifactId = "kodi"
+            version = kodiVersion
+
+            //artifact(tasks["sourcesJar"])
+            //artifact(tasks["javadocJar"])
+        }
+    }
+
+    repositories {
+        maven {
+            name = "kodi"
+            url = uri("${layout.buildDirectory}/publishing-repository")
+        }
     }
 }
 

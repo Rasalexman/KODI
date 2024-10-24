@@ -14,12 +14,7 @@
 
 @file:Suppress("unused")
 
-package com.rasalexman.kodi.kmp.delegates
-
-import com.rasalexman.kodi.kmp.Kodi
-import com.rasalexman.kodi.kmp.common.CanThrowException
-import com.rasalexman.kodi.kmp.core.InstanceInitializer
-import com.rasalexman.kodi.kmp.extensions.throwKodiException
+package com.rasalexman.kodi.core
 
 /**
  * Base immutable realization provider
