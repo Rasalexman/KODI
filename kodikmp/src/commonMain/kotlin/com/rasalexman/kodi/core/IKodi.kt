@@ -12,15 +12,11 @@
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 // THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-@file:Suppress("unused", "UNCHECKED_CAST")
+@file:Suppress("unused")
 
 package com.rasalexman.kodi.core
 
 import com.rasalexman.kodi.core.KodiHolder.*
-import com.rasalexman.kodi.delegates.IImmutableDelegate
-import com.rasalexman.kodi.delegates.IMutableDelegate
-import com.rasalexman.kodi.delegates.immutableGetter
-import com.rasalexman.kodi.delegates.mutableGetter
 
 /**
  * Annotation for mark some throwable functions
@@ -193,7 +189,7 @@ fun IKodi.unbindAll() {
  * @param scope - String of instance scope
  *
  * @return [InstanceType]
- * @throws IllegalAccessException - if there is no tag in dependency graph
+ * @throws ClassCastException - if there is no tag in dependency graph
  */
 @CanThrowException(HOLDER_NULL_ERROR)
 inline fun <reified InstanceType : Any> IKodi.instance(
@@ -214,7 +210,7 @@ inline fun <reified InstanceType : Any> IKodi.instance(
  *
  * @param tag - String instance tag (Optional)
  * @param scope - String of instance scope
- * @throws IllegalAccessException - if there is no tag in dependency graph it's crash
+ * @throws IllegalStateException - if there is no tag in dependency graph it's crash
  */
 @CanThrowException(HOLDER_NULL_ERROR)
 inline fun <reified InstanceType : Any> IKodi.holder(
@@ -225,7 +221,7 @@ inline fun <reified InstanceType : Any> IKodi.holder(
     val tagToWrap = tag.asTag<InstanceType>()
     val scopeToWrap = scope.asScope()
     return Kodi.getHolder(tag = tagToWrap, scope = scopeToWrap)
-        ?: throwKodiException<IllegalAccessException>(
+        ?: throwKodiException<IllegalStateException>(
             message = "There is no tag `${tagToWrap.asString()}` in dependency graph with scope `${scopeToWrap.asString()}` injected into IKodi instance [$instance]"
         )
 }
@@ -272,7 +268,7 @@ inline fun <reified ConstantType : Any> IKodi.constant(
 
 /**
  * Create [KodiHolder] with given [InstanceInitializer]
- * It's also apply scope [KodiScopeWrapper] from [IKodiModule]
+ * It's also apply scope [KodiKeyWrapper] from [IKodiModule]
  *
  * @param init - noinline [InstanceInitializer]
  *

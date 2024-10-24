@@ -2,12 +2,12 @@ plugins {
     id("java-library")
     id("kotlin")
     id("maven-publish")
-    kotlin("kapt")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 
 val codePath: String by rootProject.extra
-val kodiVersion: String by rootProject.extra
+val kodiVersion: String = libs.versions.kodiVersion.get()
 
 val srcDirs = listOf(codePath)
 group = "com.rasalexman.kodigen"
@@ -16,14 +16,6 @@ version = kodiVersion
 sourceSets {
     getByName("main") {
         java.setSrcDirs(srcDirs)
-    }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        this.freeCompilerArgs += listOf(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-        )
     }
 }
 
@@ -46,7 +38,7 @@ java {
 }
 
 dependencies {
-    compileOnly(project(":kodi"))
+    compileOnly(project(":kodikmp"))
     val kotlinpoet: String by rootProject.extra
     val autoService: String by rootProject.extra
 

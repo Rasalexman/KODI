@@ -4,15 +4,15 @@ plugins {
     id("maven-publish")
 }
 
-val reflectVersion: String by rootProject.extra
+val reflectVersion: String = libs.versions.kodiReflectVersion.get()
 group = "com.rasalexman.kodireflect"
 version = reflectVersion
 
 android {
-    val buildSdkVersion: Int by rootProject.extra
-    val minSdkVersion: Int by rootProject.extra
+    val targetSdkVersion: Int = libs.versions.android.compileSdk.get().toInt()
+    val minSdkVersion: Int = libs.versions.android.minSdk.get().toInt()
 
-    compileSdk = buildSdkVersion
+    compileSdk = targetSdkVersion
     defaultConfig {
         namespace = "com.rasalexman.kodireflect"
         minSdk = minSdkVersion
@@ -53,18 +53,8 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        this.freeCompilerArgs += listOf(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-opt-in=kotlin.RequiresOptIn"
-        )
-    }
-}
-
 dependencies {
-    val kotlinVersion: String by rootProject.extra
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation(libs.kotlin.reflect)
 }
 
 java {

@@ -1,20 +1,10 @@
-//------ APP VERSION
-extra["appVersion"] = "1.3.4"
-extra["kodiVersion"] = "1.7.4"
-extra["reflectVersion"] = "1.1.56"
-
-
 //------ CONFIG DATA
 extra["appId"] = "com.mincor.kodiexample"
-extra["minSdkVersion"] = 18
-extra["buildSdkVersion"] = 35
-extra["kotlinApiVersion"] = "1.9"
-extra["jvmVersion"] = "17"
-extra["agpVersion"] = "8.7.1"
-extra["kotlinVersion"] = "1.9.24"
+extra["kodiKmpNamespace"] = "com.rasalexman.kodi"
 extra["jitpackPath"] = "https://jitpack.io"
 extra["pluginsPath"] = "https://plugins.gradle.org/m2/"
 extra["codePath"] = "src/main/kotlin"
+extra["codePathKmp"] = "src/commonMain/kotlin"
 extra["resPath"] = "src/main/res"
 
 //------- LIBS VERSIONS
@@ -39,13 +29,12 @@ val sticky = "1.1.5"
 val coil = "2.3.0"
 val kotPref = "2.13.2"
 val fastAdapterLib = "5.7.0"
-val ksp = "1.9.24-1.0.20"
-val kotlinpoet = "1.17.0"
+val ksp = "2.0.21-1.0.25"
+val kotlinpoet = "1.18.1"
 val autoService = "1.1.1"
 
 //----- extra navigation
 extra["navigation"] = navigation
-extra["kspVersion"] = ksp
 
 //------- Libs path
 extra["leakCanary"] = "com.squareup.leakcanary:leakcanary-android:$leakcanary"

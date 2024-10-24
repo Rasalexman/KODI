@@ -4,27 +4,17 @@ plugins {
     id("maven-publish")
 }
 
+val kodiKmpNamespace: String by extra
 val codePath: String by rootProject.extra
-val kodiVersion: String by rootProject.extra
-val kotlinApiVersion: String by extra
-val jvmVersion: String by extra
+val kodiVersion: String = libs.versions.kodiVersion.get()
 
 val srcDirs = listOf(codePath)
-group = "com.rasalexman.kodi"
+group = kodiKmpNamespace
 version = kodiVersion
 
 sourceSets {
     getByName("main") {
         java.setSrcDirs(srcDirs)
-    }
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        this.apiVersion = kotlinApiVersion
-        this.languageVersion = kotlinApiVersion
-        this.jvmTarget = jvmVersion
-        this.freeCompilerArgs += listOf("-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 }
 
@@ -52,7 +42,7 @@ publishing {
             from(components["kotlin"])
 
             // You can then customize attributes of the publication as shown below.
-            groupId = "com.rasalexman.kodi"
+            groupId = kodiKmpNamespace
             artifactId = "kodi"
             version = kodiVersion
 
@@ -67,4 +57,8 @@ publishing {
             url = uri("${layout.buildDirectory}/publishing-repository")
         }
     }
+}
+
+dependencies {
+    api(project(":kodikmp"))
 }
