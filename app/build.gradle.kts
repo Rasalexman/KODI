@@ -4,23 +4,18 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("androidx.navigation.safeargs.kotlin")
-    id("com.google.devtools.ksp") version "1.9.24-1.0.20"
+    id("com.google.devtools.ksp") version libs.versions.ksp
 }
 
 android {
 
-    val buildSdkVersion: Int by extra
-    val appVersion: String by extra
     val appId: String by extra
-//    val codePath: String by rootProject.extra
-//    val srcDirs = listOf(codePath)
-
-    compileSdk = buildSdkVersion
+    val appVersion: String by extra
+    compileSdk = 36
     defaultConfig {
         namespace = "com.mincor.kodiexample"
         applicationId = appId
-        minSdk = 21
-        targetSdk = buildSdkVersion
+        minSdk = 23
         version = appVersion
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
@@ -42,6 +37,16 @@ android {
         }
     }
 
+    lint {
+        baseline = file("lint-baseline.xml")
+        disable.add("RestrictedApi")
+    }
+
+    publishing {
+        singleVariant("debug") {}
+        singleVariant("release") {}
+    }
+
     applicationVariants.forEach { variant ->
         variant.outputs.forEach { output ->
             val outputImpl = output as BaseVariantOutputImpl
@@ -57,8 +62,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
 //    sourceSets {
@@ -104,76 +109,44 @@ dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(project(":kodispatcher"))
 
-    val settings = rootProject.extra
-    val viewpager2: String by settings
-    val paging: String by settings
-    val coreKtx: String by settings
-    val constraintlayout: String by settings
-    val navigationFragment: String by settings
-    val navigationUI: String by settings
-    val material: String by settings
-    val livedataKtx: String by settings
-    val viewmodelKtx: String by settings
-    val leakCanary: String by settings
-    val swiperefreshlayout: String by settings
-    val roomRuntime: String by settings
-    val roomKtx: String by settings
-    val roomKapt: String by settings
-    val retrofit: String by settings
-    val moshi: String by settings
-    val logging: String by settings
-    val coroutinesmanager: String by settings
-    val timber: String by settings
-    val sticky: String by settings
-    val coil: String by settings
-    val kotpref: String by settings
-    val kotprefSupport: String by settings
+    implementation(libs.coreKtx)
+    implementation(libs.constraintlayout)
+    implementation(libs.navigationFragment)
+    implementation(libs.navigationUI)
+    implementation(libs.viewpager)
+    implementation(libs.paging)
+    implementation(libs.swiperefreshlayout)
+    implementation(libs.material)
 
-    implementation(coreKtx)
-    implementation(constraintlayout)
-    implementation(navigationFragment)
-    implementation(navigationUI)
-    implementation(viewpager2)
-    implementation(paging)
-    implementation(swiperefreshlayout)
-    implementation(material)
+    implementation(libs.roomRuntime)
+    implementation(libs.roomKtx)
 
-    implementation(roomRuntime)
-    implementation(roomKtx)
+    implementation(libs.retrofit)
+    implementation(libs.moshi)
+    implementation(libs.logging)
 
-    implementation(retrofit)
-    implementation(moshi)
-    implementation(logging)
+    implementation(libs.viewmodelKtx)
 
-    implementation(livedataKtx)
-    implementation(viewmodelKtx)
+    implementation(libs.fastadapterCore)
+    implementation(libs.fastadapterUI)
+    implementation(libs.fastadapterDiff)
+    implementation(libs.fastadapterScroll)
 
-    val fastadapterCore: String by settings
-    val fastadapterUI: String by settings
-    val fastadapterDiff: String by settings
-    val fastadapterScroll: String by settings
-    implementation(fastadapterCore)
-    implementation(fastadapterUI)
-    implementation(fastadapterDiff)
-    implementation(fastadapterScroll)
+    implementation(libs.kotpref)
 
-    implementation(kotpref)
-    implementation(kotprefSupport)
+    implementation(libs.coil)
 
-    implementation(coil)
+    implementation(libs.coroutinesmanager)
+    implementation(libs.timber)
+    implementation(libs.sticky)
 
-    implementation(coroutinesmanager)
-    implementation(timber)
-    implementation(sticky)
-
-    debugImplementation(leakCanary)
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test:runner:1.6.2")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    debugImplementation(libs.leakCanary)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.runner)
+    androidTestImplementation(libs.espresso)
 
     ksp(project(":kodiksp"))
-    //kapt(project(":kodigen"))
-    ksp(roomKapt)
+    ksp(libs.roomCompiler)
 }
 /*
 configurations.all {

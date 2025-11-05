@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("java-library")
     kotlin("jvm")
@@ -6,8 +8,7 @@ plugins {
 
 val codePath: String by rootProject.extra
 val kodiVersion: String by rootProject.extra
-val kotlinApiVersion: String by extra
-val jvmVersion: String by extra
+val kotlinApiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2
 
 val srcDirs = listOf(codePath)
 group = "com.rasalexman.kodi"
@@ -20,11 +21,11 @@ sourceSets {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        this.apiVersion = kotlinApiVersion
-        this.languageVersion = kotlinApiVersion
-        this.jvmTarget = jvmVersion
-        this.freeCompilerArgs += listOf("-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_21
+        apiVersion.set(kotlinApiVersion)
+        languageVersion.set(kotlinApiVersion)
+        this.freeCompilerArgs = listOf("-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
     }
 }
 
@@ -39,8 +40,8 @@ java {
             java.setSrcDirs(srcDirs)
         }
     }
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 
     withJavadocJar()
     withSourcesJar()

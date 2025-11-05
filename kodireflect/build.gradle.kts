@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -9,10 +11,9 @@ group = "com.rasalexman.kodireflect"
 version = reflectVersion
 
 android {
-    val buildSdkVersion: Int by rootProject.extra
     val minSdkVersion: Int by rootProject.extra
 
-    compileSdk = buildSdkVersion
+    compileSdk = 36
     defaultConfig {
         namespace = "com.rasalexman.kodireflect"
         minSdk = minSdkVersion
@@ -30,9 +31,18 @@ android {
         }
     }
 
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
+
+    publishing {
+        singleVariant("debug") {}
+        singleVariant("release") {}
+    }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     packaging {
@@ -53,9 +63,13 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        this.freeCompilerArgs += listOf(
+val kotlinApiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_2
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().all {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_21
+        apiVersion.set(kotlinApiVersion)
+        languageVersion.set(kotlinApiVersion)
+        this.freeCompilerArgs = listOf(
             "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=kotlin.RequiresOptIn"
         )
@@ -63,13 +77,12 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 dependencies {
-    val kotlinVersion: String by rootProject.extra
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation(libs.reflect)
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 afterEvaluate {

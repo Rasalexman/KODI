@@ -1,0 +1,75 @@
+[versions]
+
+agp = "8.13.0"
+kotlin = "2.2.21"
+minSdkVersion = "18"
+
+#------- LIBS VERSIONS
+navigation = "2.9.6"
+leakcanary = "2.14"
+core = "1.17.0"
+constraintLayout = "2.2.1"
+material = "1.13.0"
+viewPager2 = "1.1.0"
+lifecycle = "2.9.4"
+paging = "3.3.6"
+swiperefreshlayout = "1.1.0"
+room = "2.8.3"
+retrofit = "3.0.0"
+retrofitLogging = "3.0.0"
+coroutinesManager = "1.4.4"
+timber = "5.0.1"
+sticky = "1.1.5"
+coil = "2.7.0"
+kotPref = "2.13.2"
+fastAdapterLib = "5.7.0"
+ksp = "2.3.0"
+kotlinpoet = "2.2.0"
+autoService = "1.1.1"
+
+#---- TESTS
+junit = "4.13.2"
+runner = "1.7.0"
+espresso = "3.7.0"
+
+[libraries]
+leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
+coreKtx = { module = "androidx.core:core-ktx", version.ref = "core" }
+constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }
+navigationUI = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
+navigationFragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+viewpager = { module = "androidx.viewpager2:viewpager2", version.ref = "viewPager2" }
+swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+paging = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
+viewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
+roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
+roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
+logging = { module = "com.github.ihsanbal:LoggingInterceptor", version.ref = "retrofitLogging" }
+coroutinesmanager = { module = "com.github.Rasalexman:coroutinesmanager", version.ref = "coroutinesManager" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+sticky = { module = "com.github.Rasalexman:Sticky", version.ref = "sticky" }
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+kotpref = { module = "com.chibatching.kotpref:kotpref", version.ref = "kotPref" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+kotlinpoetKsp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoet" }
+autoService = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
+kspapi = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+
+fastadapterCore = { module = "com.mikepenz:fastadapter", version.ref = "fastAdapterLib" }
+fastadapterUI = { module = "com.mikepenz:fastadapter-extensions-ui", version.ref = "fastAdapterLib" }
+fastadapterDiff = { module = "com.mikepenz:fastadapter-extensions-diff", version.ref = "fastAdapterLib" }
+fastadapterPaged = { module = "com.mikepenz:fastadapter-extensions-paged", version.ref = "fastAdapterLib" }
+fastadapterScroll = { module = "com.mikepenz:fastadapter-extensions-scroll", version.ref = "fastAdapterLib" }
+
+junit = { module = "junit:junit", version.ref = "junit" }
+runner = { module = "androidx.test:runner", version.ref = "runner" }
+espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+
+agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+kgp = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+safeargs = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigation" }

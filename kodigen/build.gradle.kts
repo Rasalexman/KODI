@@ -19,13 +19,6 @@ sourceSets {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        this.freeCompilerArgs += listOf(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-        )
-    }
-}
 
 tasks.register<Jar>(name = "sourceJar") {
     from(sourceSets["main"].java.srcDirs)
@@ -38,8 +31,8 @@ java {
             java.setSrcDirs(srcDirs)
         }
     }
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 
     withJavadocJar()
     withSourcesJar()
@@ -47,12 +40,10 @@ java {
 
 dependencies {
     compileOnly(project(":kodi"))
-    val kotlinpoet: String by rootProject.extra
-    val autoService: String by rootProject.extra
 
-    implementation(kotlinpoet)
-    implementation(autoService)
-    kapt(autoService)
+    implementation(libs.kotlinpoet)
+    implementation(libs.autoService)
+    kapt(libs.autoService)
 }
 
 publishing {

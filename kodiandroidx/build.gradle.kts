@@ -10,12 +10,11 @@ version = kodiVersion
 
 android {
 
-    val buildSdkVersion: Int by rootProject.extra
     val minSdkVersion: Int by rootProject.extra
     val codePath: String by rootProject.extra
     val srcDirs = listOf(codePath)
 
-    compileSdk = buildSdkVersion
+    compileSdk = 36
     defaultConfig {
         namespace = "com.rasalexman.kodiandroidx"
         minSdk = minSdkVersion
@@ -34,6 +33,15 @@ android {
         }
     }
 
+    publishing {
+        singleVariant("debug") {}
+        singleVariant("release") {}
+    }
+
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
+
     sourceSets {
         getByName("main") {
             java.setSrcDirs(srcDirs)
@@ -41,24 +49,18 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     packaging {
         resources.excludes.add("META-INF/notice.txt")
     }
-
-    kotlinOptions {
-        this.freeCompilerArgs += listOf(
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-        )
-    }
 }
 
 dependencies {
     val coreKtx: String by rootProject.extra
-    implementation(coreKtx)
+    implementation(libs.coreKtx)
     api(project(":kodi"))
 }
 
