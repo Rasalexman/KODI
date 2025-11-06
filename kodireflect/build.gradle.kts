@@ -6,14 +6,15 @@ plugins {
     id("maven-publish")
 }
 
-val reflectVersion: String by rootProject.extra
+val reflectVersion: String = libs.versions.kodiReflectVersion.get()
 group = "com.rasalexman.kodireflect"
 version = reflectVersion
 
 android {
-    val minSdkVersion: Int by rootProject.extra
+    val targetSdkVersion: Int = libs.versions.android.compileSdk.get().toInt()
+    val minSdkVersion: Int = libs.versions.android.minSdk.get().toInt()
 
-    compileSdk = 36
+    compileSdk = targetSdkVersion
     defaultConfig {
         namespace = "com.rasalexman.kodireflect"
         minSdk = minSdkVersion

@@ -9,13 +9,17 @@ plugins {
 
 android {
 
+    val targetSdkVersion: Int = libs.versions.android.compileSdk.get().toInt()
+    val minSdkVersion = libs.versions.android.minSdk.get().toInt()
+    val appVersion: String = libs.versions.appVersion.get()
     val appId: String by extra
-    val appVersion: String by extra
-    compileSdk = 36
+
+    compileSdk = targetSdkVersion
     defaultConfig {
         namespace = "com.mincor.kodiexample"
         applicationId = appId
-        minSdk = 23
+        minSdk = minSdkVersion
+        targetSdk = targetSdkVersion
         version = appVersion
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true

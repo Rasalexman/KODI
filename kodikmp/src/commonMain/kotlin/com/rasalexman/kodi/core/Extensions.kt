@@ -17,14 +17,14 @@ package com.rasalexman.kodi.core
 /**
  * Default SCOPE name for all instances that doest have a scope name in bindings
  */
-internal val defaultScope = KodiScopeWrapper("DEFAULT_SCOPE")
+internal val defaultScope = KodiKeyWrapper("DEFAULT_SCOPE")
 
 /**
  * String moduleScope name to Scope Wrapper
  */
-fun String?.asScope(): KodiScopeWrapper {
+fun String?.asScope(): KodiKeyWrapper {
   return this?.takeIf { it.isNotEmpty() }?.let {
-      KodiScopeWrapper(scopeTag = it)
+      KodiKeyWrapper(key = it)
   } ?: defaultScope
 }
 
@@ -35,17 +35,25 @@ inline fun <reified T : Any> Any?.asTag(): KodiTagWrapper {
     val originalTag = genericName<T>()
     val instanceTag = (this as? String)?.takeIf { it.isNotEmpty() } ?: originalTag
     return KodiTagWrapper(
-        instanceTag = KodiInstanceTagWrapper(instanceTag),
-        originalTag = KodiOriginalTagWrapper(originalTag)
+        instanceTag = KodiKeyWrapper(instanceTag),
+        originalTag = KodiKeyWrapper(originalTag)
     )
+}
+
+/**
+ * Create unique key with scope and tag combination to use as reference to instance in storage
+ * @param instanceTag - [KodiTagWrapper] to add instance tag
+ */
+infix fun KodiKeyWrapper.toKeyBy(instanceTag: KodiTagWrapper): String {
+    return "${this.asString()}_${instanceTag.asString()}"
 }
 
 /**
  * Add Instance Tag to moduleScope
  *
- * @param scopeWrapper - [KodiScopeWrapper] to add instance tag
+ * @param scopeWrapper - [KodiKeyWrapper] to add instance tag
  */
-infix fun<T : Any> KodiHolder<T>.at(scopeWrapper: KodiScopeWrapper): KodiHolder<T> {
+infix fun<T : Any> KodiHolder<T>.at(scopeWrapper: KodiKeyWrapper): KodiHolder<T> {
     return this.scopeWith(scopeWrapper)
 }
 

@@ -2,12 +2,12 @@ plugins {
     id("java-library")
     id("kotlin")
     id("maven-publish")
-    kotlin("kapt")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 
 val codePath: String by rootProject.extra
-val kodiVersion: String by rootProject.extra
+val kodiVersion: String = libs.versions.kodiVersion.get()
 
 val srcDirs = listOf(codePath)
 group = "com.rasalexman.kodigen"
@@ -18,7 +18,6 @@ sourceSets {
         java.setSrcDirs(srcDirs)
     }
 }
-
 
 tasks.register<Jar>(name = "sourceJar") {
     from(sourceSets["main"].java.srcDirs)
@@ -39,7 +38,7 @@ java {
 }
 
 dependencies {
-    compileOnly(project(":kodi"))
+    compileOnly(project(":kodikmp"))
 
     implementation(libs.kotlinpoet)
     implementation(libs.autoService)

@@ -14,6 +14,8 @@
 
 package com.rasalexman.kodi.core
 
+import kotlin.jvm.JvmInline
+
 /**
  * Inline instanceTag wrapper for storing injectable class
  *
@@ -22,8 +24,8 @@ package com.rasalexman.kodi.core
  */
 //@JvmInline
 data class KodiTagWrapper(
-    private val instanceTag: KodiInstanceTagWrapper,
-    private val originalTag: KodiOriginalTagWrapper
+    private val instanceTag: KodiKeyWrapper,
+    private val originalTag: KodiKeyWrapper,
 ) {
 
     /**
@@ -55,7 +57,10 @@ data class KodiTagWrapper(
          * This means that [KodiHolder] instance is no in dependency graph
          */
         fun emptyTag(): KodiTagWrapper {
-            return KodiTagWrapper(KodiInstanceTagWrapper(""), KodiOriginalTagWrapper(""))
+            return KodiTagWrapper(
+                instanceTag = KodiKeyWrapper(""),
+                originalTag = KodiKeyWrapper(""),
+            )
         }
     }
 }
@@ -63,7 +68,7 @@ data class KodiTagWrapper(
 /**
  * Typealias for merge tag with scope
  */
-internal typealias KodiTagScopeWrappers = Pair<KodiTagWrapper, KodiScopeWrapper>
+internal typealias KodiTagScopeWrappers = Pair<KodiTagWrapper, KodiKeyWrapper>
 
 /**
  * Bind instanceTag withScope available instance holders
@@ -98,31 +103,19 @@ infix fun KodiTagWrapper.at(scopeName: String): KodiTagScopeWrappers {
 /**
  * Scope wrapper class
  *
- * @param scopeTag - String tag for moduleScope `key` storage
+ * @param key - String tag for moduleScope `key` storage
  */
 @JvmInline
-value class KodiScopeWrapper(private val scopeTag: String) {
+value class KodiKeyWrapper(private val key: String) {
     /**
-     * Is Wrapper [scopeTag] empty
+     * Is Wrapper [key] empty
      *
      * @return [Boolean]
      */
-    fun isNotEmpty(): Boolean = this.scopeTag.isNotEmpty()
+    fun isNotEmpty(): Boolean = this.key.isNotEmpty()
 
     /**
      * Return a [String] representation of Wrapper
      */
-    fun asString(): String = this.scopeTag
-}
-
-@JvmInline
-value class KodiInstanceTagWrapper(private val value: String) {
-    fun isNotEmpty(): Boolean = value.isNotEmpty()
-    fun asString(): String = this.value
-}
-
-@JvmInline
-value class KodiOriginalTagWrapper(private val value: String) {
-    fun isNotEmpty(): Boolean = value.isNotEmpty()
-    fun asString(): String = this.value
+    fun asString(): String = this.key
 }

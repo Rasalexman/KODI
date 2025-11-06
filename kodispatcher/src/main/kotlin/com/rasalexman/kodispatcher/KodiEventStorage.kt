@@ -14,10 +14,11 @@
 package com.rasalexman.kodispatcher
 
 import com.rasalexman.kodi.core.KodiHolder
-import com.rasalexman.kodi.core.KodiScopeWrapper
+import com.rasalexman.kodi.core.KodiKeyWrapper
 import com.rasalexman.kodi.core.KodiStorage
 import com.rasalexman.kodi.core.KodiTagWrapper
-import com.rasalexman.kodi.delegates.immutableGetter
+import com.rasalexman.kodi.core.immutableGetter
+import com.rasalexman.kodi.core.toKeyBy
 
 /**
  * Instance Listener function
@@ -62,13 +63,13 @@ internal interface IKodiEventStorage<V> {
      * Add binding listeners to the list
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] current scope data
+     * @param scope - [KodiKeyWrapper] current scope data
      * @param listener - [Handler] function for handle binding event
      * @param event - [KodiEvent] event type
      */
     fun<T : Any> addListener(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper,
+        scope: KodiKeyWrapper,
         listener: KodiHolderHandler<T>,
         event: KodiEvent
     ): Boolean
@@ -77,24 +78,24 @@ internal interface IKodiEventStorage<V> {
      * Check if instance has binding listeners
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] current scope data
+     * @param scope - [KodiKeyWrapper] current scope data
      * @param event - [KodiEvent] event type
      *
      */
-    fun hasListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper, event: KodiEvent): Boolean
+    fun hasListeners(tag: KodiTagWrapper, scope: KodiKeyWrapper, event: KodiEvent): Boolean
 
     /**
      * Remove instance from binding listeners list
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] current scope data
+     * @param scope - [KodiKeyWrapper] current scope data
      * @param handler - [Handler] binding handler
      * @param event - [KodiEvent] event type
      *
      */
     fun<T : Any> removeListener(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper,
+        scope: KodiKeyWrapper,
         handler: KodiHolderHandler<T>,
         event: KodiEvent
     ): Boolean
@@ -103,22 +104,22 @@ internal interface IKodiEventStorage<V> {
      * Clear all binding listeners by input parameters
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] current scope data
+     * @param scope - [KodiKeyWrapper] current scope data
      * @param event - [KodiEvent] event type
      */
-    fun removeAllListeners(tag: KodiTagWrapper, scope: KodiScopeWrapper, event: KodiEvent): Boolean
+    fun removeAllListeners(tag: KodiTagWrapper, scope: KodiKeyWrapper, event: KodiEvent): Boolean
 
     /**
      * Notify all binding listeners that instance is already added to dependency graph
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] current scope data
+     * @param scope - [KodiKeyWrapper] current scope data
      * @param kodiHolder - [KodiHolder] with instance of listening
      * @param event - [KodiEvent] event type
      **/
      fun<T : Any> notifyListeners(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper,
+        scope: KodiKeyWrapper,
         kodiHolder: KodiHolder<T>,
         event: KodiEvent
     ): Boolean
@@ -138,14 +139,14 @@ abstract class KodiEventStorage : KodiStorage(), IKodiEventStorage<KodiHolder<ou
      * Add binding listeners to the list
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] current scope data
+     * @param scope - [KodiKeyWrapper] current scope data
      * @param listener - [Handler] function for handle events
      * @param event - [KodiEvent] event type
      */
     @Suppress("UNCHECKED_CAST")
     override fun<T : Any> addListener(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper,
+        scope: KodiKeyWrapper,
         listener: KodiHolderHandler<T>,
         event: KodiEvent
     ): Boolean {
@@ -162,7 +163,7 @@ abstract class KodiEventStorage : KodiStorage(), IKodiEventStorage<KodiHolder<ou
      * Remove instance from binding listeners list
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] current scope data
+     * @param scope - [KodiKeyWrapper] current scope data
      * @param handler - [AnyKodiHolderHandler] function for handle events
      * @param event - [KodiEvent] event type
      *
@@ -171,7 +172,7 @@ abstract class KodiEventStorage : KodiStorage(), IKodiEventStorage<KodiHolder<ou
     @Suppress("UNCHECKED_CAST")
     override fun<T : Any> removeListener(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper,
+        scope: KodiKeyWrapper,
         handler: KodiHolderHandler<T>,
         event: KodiEvent
     ): Boolean {
@@ -193,12 +194,12 @@ abstract class KodiEventStorage : KodiStorage(), IKodiEventStorage<KodiHolder<ou
      * Clear all binding listeners by input parameters
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] current scope data
+     * @param scope - [KodiKeyWrapper] current scope data
      * @param event - [KodiEvent] event type
      */
     override fun removeAllListeners(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper,
+        scope: KodiKeyWrapper,
         event: KodiEvent
     ): Boolean {
         return try {
@@ -218,14 +219,14 @@ abstract class KodiEventStorage : KodiStorage(), IKodiEventStorage<KodiHolder<ou
      * Check if instance has binding listeners
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] current scope data
+     * @param scope - [KodiKeyWrapper] current scope data
      * @param event - [KodiEvent] event type
      *
      * @return [Boolean] does it has [KodiEvent] listener
      */
     override fun hasListeners(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper,
+        scope: KodiKeyWrapper,
         event: KodiEvent
     ): Boolean {
         val key = createKey(tag, scope)
@@ -236,14 +237,14 @@ abstract class KodiEventStorage : KodiStorage(), IKodiEventStorage<KodiHolder<ou
      * Notify all binding listeners that instance is already binding to dependency scope
      *
      * @param tag - [KodiTagWrapper] to remove value if it's exist
-     * @param scope - [KodiScopeWrapper] current scope data
+     * @param scope - [KodiKeyWrapper] current scope data
      * @param kodiHolder - [KodiHolder] current instance of listening
      * @param event - [KodiEvent] event type
      */
     @Suppress("UNCHECKED_CAST")
     override fun<T : Any> notifyListeners(
         tag: KodiTagWrapper,
-        scope: KodiScopeWrapper,
+        scope: KodiKeyWrapper,
         kodiHolder: KodiHolder<T>,
         event: KodiEvent
     ): Boolean {
@@ -274,8 +275,8 @@ abstract class KodiEventStorage : KodiStorage(), IKodiEventStorage<KodiHolder<ou
     /**
      *
      */
-    override fun createKey(tag: KodiTagWrapper, scope: KodiScopeWrapper, withCopy: Boolean): String {
-        return "${scope.asString()}_${tag.asString()}"
+    override fun createKey(tag: KodiTagWrapper, scope: KodiKeyWrapper): String {
+        return scope toKeyBy tag
     }
 
     /**
