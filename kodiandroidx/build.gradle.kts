@@ -60,7 +60,6 @@ android {
 }
 
 dependencies {
-    val coreKtx: String by rootProject.extra
     implementation(libs.coreKtx)
     api(project(":kodikmp"))
 }
